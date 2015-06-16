@@ -1,0 +1,41 @@
+body {
+	margin-left: 10px;	
+}
+
+#editor {
+    width: 500px;
+    height: 30%;
+    border: 1px solid black;
+    padding: 5px;
+}
+#board, #components {
+    height: 60%;
+    padding: 5px;
+    background: #EEE;
+    margin: 10px;
+    padding:10px;
+}
+
+#components {
+	width: 120px;	
+}
+
+#board {
+	width: 550px;
+}
+
+.board-hover {
+	border: 1px solid black;
+}
+
+.row {
+	margin-top: 5px;
+}
+
+.e-component-variable {
+		
+}
+
+.e-component-table {
+	
+}

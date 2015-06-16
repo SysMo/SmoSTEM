@@ -1,0 +1,46 @@
+<html>
+<head>
+    <!-- jQuery -->
+	<script src="/static/ext/jquery.min.js"></script>
+	<!-- jQuery Class (not official) -->
+	<script src="/static/ext/jquery.class.js"></script>
+    <!-- jQuery UI -->
+	<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="/static/ext/bootstrap.min.css"> 
+    <script src="/static/ext/bootstrap.min.js"></script>
+	<!-- Angular -->
+	<script src="/static/ext/angular/angular.min.js"></script>
+	<script src="/static/ext/angular/angular-resource.min.js"></script>
+	<!-- Ace -->	
+	<script src="/static/ext/ace/ace.js"></script>
+	<script src="/static/ext/ace/ext-static_highlight.js"></script>
+	<!-- Stem -->
+	<link rel="stylesheet" href="/static/css/Stem.css">
+	<script src="/static/js/StemCore.js"></script>
+	
+	
+</head>
+<body ng-app="Stem" ng-controller="StemCtrl">
+  
+  {% include 'angular/AngularStemTemplates.html' %}
+  {% block BodyContent %}
+  {% raw %}
+  <h1>Models</h1>
+  <button type="button" class="btn btn-primary" ng-click="modelCollection.createEditNewModel()">New</button>
+  <br><br>
+  <div ng-repeat="model in modelCollection.models">
+  	<h2>{{model.name}}</h2>
+  	<div>{{model.description}}</div>
+  	<div>Created: {{model.creationDate}}</div>
+  	<div class="btn-group" role="group" aria-label="Model buttons">
+  		<button class="btn btn-primary" ng-click="modelCollection.editModel(model)">Edit</button>
+  		<button class="btn btn-primary" ng-click="modelCollection.deleteModel(model)">Delete</button>
+  	</div>
+  	<br>
+  </div>
+  {% endraw %}
+  {% endblock %}
+</body>
+</html>
