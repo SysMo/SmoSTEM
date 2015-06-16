@@ -1,8 +1,28 @@
 {% extends "StemBase.html" %}
 
+{% block PageSettings %}
+modelID: '{{modelID}}',    
+{% endblock %}
+
 {% block BodyContent %}
 {% raw %}
-<h1>ModelEditor</h1>
-
+<div ng-controller="ModelEditorCtrl">
+  <h1>{{activeModel.name}}</h1>
+  <div>{{activeModel.description}}</div>
+    <div class="btn-group" role="group" aria-label="Model buttons">
+      <button class="btn btn-primary" ng-click="model.save()">Save</button>
+      <button class="btn btn-primary" ng-click="model.compute()">Compute</button>
+      <button class="btn btn-primary" ng-click="model.editProperties()">Properties</button>
+    </div>
+  <div id="ModelComponentsToolbar">
+    <ul style="list-style-type: none; padding: 0px;">
+      <li id="components_FieldGroup"><img src='/static/img/FieldGroup.png'>&nbsp; Group</li>
+      <li id="components_Variable"><img src='/static/img/Variable.png'>&nbsp; Variable</li>
+  <!--     <li id="components_table"><img src='/static/img/Table.png'>&nbsp; Table</li> -->
+    </ul>
+  </div>
+  <div class="ModelInterface">
+  </div>
+</div>
 {% endraw %}
 {% endblock %}

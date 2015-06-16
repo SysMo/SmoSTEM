@@ -1,7 +1,14 @@
 var Stem = angular.module('Stem',['ngResource']);
-Stem.controller('StemCtrl', function($scope, ModelCollection){
+
+Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, ModelCollection){
 	$scope.modelCollection = new ModelCollection();
 	$scope.modelCollection.loadModels();
+});
+
+Stem.controller('ModelEditorCtrl', function($scope, 
+		PageSettings, Model){
+	$scope.activeModel =  new Model();
+	$scope.activeModel.loadModel(PageSettings.modelID);
 });
 
 /** Model collection provides storage of models and 
@@ -23,10 +30,8 @@ Stem.factory('ModelCollection', function(ModelDefinitionAPI, $location){
 			var newModel = new ModelDefinitionAPI();
 			newModel.name = 'WebName';
 			newModel.description = 'WebDescription';
-			collection = this;
-			ModelDefinitionAPI.save(newModel, function() {
-				console.log("New model created");
-				collection.loadModels();
+			newModel.$save(function() {
+				window.location.href = '/ModelEditor/' + newModel._id;	
 			});
 		},
 		// open model editor
@@ -46,7 +51,29 @@ Stem.factory('ModelCollection', function(ModelDefinitionAPI, $location){
 	return ModelCollection;
 });
 
+Stem.factory('Model', function(ModelDefinitionAPI) {
+	var Model = Class.extend({
+		init: function() {
+			
+		},
+		loadModel: function(modelID) {
+			model = this;			
+			modelData = ModelDefinitionAPI.get({_id: modelID}, function() {
+				model.name = modelData.name;
+				model.description = modelData.description;
+				model.variableValues = modelData.variableValues;
+				model.interfaceGroups = modelData.interfaceGroups;
+			});
+		}
+	});
+	return Model;
+});
+
 // Provides the API for manipulating and querying models on the server
 Stem.factory('ModelDefinitionAPI', function($resource) {
-	return $resource('/stem/api/ModelDefinitions/:_id');
+	return $resource('/stem/api/ModelDefinitions/:_id', 
+		{ _id: '@_id' }, {				
+			update: 'PUT'
+		}
+	);
 });

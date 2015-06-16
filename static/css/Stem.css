@@ -8,7 +8,7 @@ body {
     border: 1px solid black;
     padding: 5px;
 }
-#board, #components {
+#board, #ModelComponentsToolbar {
     height: 60%;
     padding: 5px;
     background: #EEE;
@@ -16,9 +16,15 @@ body {
     padding:10px;
 }
 
-#components {
-	width: 120px;	
+/* Contains components to assemble models */
+#ModelComponentsToolbar {
+	width: 120px;
 }
+
+#ModelComponentsToolbar > ul > li {
+	margin-top: 10px;
+} 
+
 
 #board {
 	width: 550px;

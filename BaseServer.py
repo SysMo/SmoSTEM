@@ -64,7 +64,7 @@ class ModelDefinitionAPI(MethodView):
 		# create a new model definition
 		modelDefinition = {
 			'name': postData.get('name', u'Untitled'),
-			'description:': postData.get('description', u''),
+			'description': postData.get('description', u''),
 			'creationDate': datetime.datetime.utcnow()
 		}
 		newModelID = stemDB.modelDefinitions.insert(modelDefinition)
