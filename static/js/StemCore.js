@@ -2,7 +2,7 @@ var Stem = angular.module('Stem',['ngResource']);
 
 // Page with model list
 Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, ModelService, ServerErrorHandler){
-	$scope.models = ModelService.query(function(data) {
+	$scope.models = ModelService.modelDefinitionResource.query(function(data) {
 	}, ServerErrorHandler);
 	// Open model editor
 	$scope.editModel = function(model) {
@@ -11,7 +11,7 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, ModelServi
 	// Delete model on the server and reload models
 	$scope.deleteModel = function(model) {
 		model.$delete();
-		$scope.models = ModelService.query(function(data) {
+		$scope.models = ModelService.modelDefinitionResource.query(function(data) {
 		}, ServerErrorHandler);	}
 	// Create a new model and open model editor
 	$scope.createModel = function(model) {
@@ -26,15 +26,14 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, ModelServi
 // Page with model editor
 Stem.controller('ModelEditorCtrl', function($scope, 
 		PageSettings, ModelService){
-	$scope.model =  ModelService.get({_id: PageSettings.modelID});
+	$scope.model =  ModelService.modelDefinitionResource.get({_id: PageSettings.modelID});
 	$scope.save = function() {
-		
+		ModelService.modelDefinitionResource.update({_id: PageSettings.modelID}, {name: $scope.model.name, description: $scope.model.description});
 	};
 	$scope.compute = function() {
-		
-	};
-	$scope.editProperties = function() {
-		
+		ModelService.computeResource.compute({_id: PageSettings.modelID}, {params: 3}, function(responseData) {
+			console.log(responseData.message);
+		});
 	};
 });
 
@@ -48,10 +47,19 @@ Stem.factory('ServerErrorHandler', function() {
 
 
 //Provides the API for querying and manipulating models on the server
-Stem.factory('ModelService', function($resource) {
-	return $resource('/stem/api/ModelDefinitions/:_id', 
-		{ _id: '@_id' }, {				
-			update: 'PUT'
-		}
-	);
+Stem.factory('ModelService', function($resource) {  
+	return {
+		modelDefinitionResource: $resource('/stem/api/ModelDefinitions/:_id', 
+							{ _id: '@_id' }, 
+							{				
+								update: { method:'PUT' }
+							}
+						),
+		computeResource: $resource('/stem/api/ModelDefinitions/compute/:_id', 
+							{ _id: '@_id' }, 
+							{
+								compute: { method:'POST' }
+							}
+						)
+	};
 });

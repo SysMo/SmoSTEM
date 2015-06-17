@@ -29,18 +29,18 @@ def registerAPI(view, endpoint, url, pk='id', pk_type='string'):
 					 view_func=view_func, methods=['GET',])
 	app.add_url_rule(url, view_func=view_func, methods=['POST',])
 	app.add_url_rule('%s/<%s:%s>' % (url, pk_type, pk), view_func=view_func,
-					 methods=['GET', 'PUT', 'DELETE'])
+					 methods=['GET', 'PUT', 'DELETE', 'POST'])
 
 # Send JSON response on errors
-def make_json_error(ex):
-	response = jsonify(message=str(ex))
-	response.status_code = (ex.code
-	                        if isinstance(ex, HTTPException)
-	                        else 500)
-	return response
-
-for code in default_exceptions.iterkeys():
-	app.error_handler_spec[None][code] = make_json_error
+# def make_json_error(ex):
+# 	response = jsonify(message=str(ex))
+# 	response.status_code = (ex.code
+# 	                        if isinstance(ex, HTTPException)
+# 	                        else 500)
+# 	return response
+# 
+# for code in default_exceptions.iterkeys():
+# 	app.error_handler_spec[None][code] = make_json_error
 
 # Pages
 @app.route("/")
@@ -64,17 +64,13 @@ class ModelDefinitionAPI(MethodView):
 				model['creationDate'] = model['creationDate'].strftime('%Y-%m-%d %H:%M:%S')
 				model['_id'] = str(model['_id'])
 				models.append(model)
-			print models
 			return toJson(models)			
 		else:
 			# expose a single model definition
-			print modelID
 			model = stemDB.modelDefinitions.find_one({"_id": ObjectId(modelID)})
-			print model
-			
 			return toJson(model)
 
-	def post(self):
+	def post(self, modelID):
 		postData = request.json
 		# create a new model definition
 		modelDefinition = {
@@ -92,9 +88,20 @@ class ModelDefinitionAPI(MethodView):
 
 	def put(self, modelID):
 		# update a model definition
-		pass	
+		putData = request.json
+		stemDB.modelDefinitions.update({'_id': ObjectId(modelID)}, 
+									{'$set': {'name': putData.get('name'), 'description': putData.get('description')}}, 
+									upsert=False)
+		return jsonify({'status': 0})
+
+class ComputeAPI(MethodView):
+	def post(self, modelID):
+		print request.json
+		# perform computation
+		return jsonify({'status': 0, 'message': 'performed computatoin on ' + modelID})
 
 registerAPI(ModelDefinitionAPI, 'ModelDefinitionAPI', '/stem/api/ModelDefinitions', pk='modelID')
+registerAPI(ComputeAPI, 'ComputeAPI', '/stem/api/ModelDefinitions/compute', pk='modelID')
 
 @app.route("/compute", methods=['POST'])
 def compute():
