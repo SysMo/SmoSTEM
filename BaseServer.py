@@ -2,6 +2,8 @@ from flask import Flask
 from flask import render_template
 from flask import request
 from flask import jsonify
+from werkzeug.exceptions import default_exceptions
+from werkzeug.exceptions import HTTPException
 from flask.views import MethodView
 
 import datetime
@@ -11,7 +13,7 @@ from bson.objectid import ObjectId
 from pymongo import MongoClient
 
 app = Flask(__name__)
-app.debug = True
+#app.debug = True
 mongoClient = MongoClient()
 stemDB = mongoClient.stem
 
@@ -19,6 +21,7 @@ def toJson(data):
 	"""Convert Mongo object(s) to JSON"""
 	return json.dumps(data, default=json_util.default)
 
+# Register a RESTful API
 def registerAPI(view, endpoint, url, pk='id', pk_type='string'):
 	"""Utility function to register RESTful API"""
 	view_func = view.as_view(endpoint)
@@ -27,6 +30,17 @@ def registerAPI(view, endpoint, url, pk='id', pk_type='string'):
 	app.add_url_rule(url, view_func=view_func, methods=['POST',])
 	app.add_url_rule('%s/<%s:%s>' % (url, pk_type, pk), view_func=view_func,
 					 methods=['GET', 'PUT', 'DELETE'])
+
+# Send JSON response on errors
+def make_json_error(ex):
+	response = jsonify(message=str(ex))
+	response.status_code = (ex.code
+	                        if isinstance(ex, HTTPException)
+	                        else 500)
+	return response
+
+for code in default_exceptions.iterkeys():
+	app.error_handler_spec[None][code] = make_json_error
 
 # Pages
 @app.route("/")
@@ -57,6 +71,7 @@ class ModelDefinitionAPI(MethodView):
 			print modelID
 			model = stemDB.modelDefinitions.find_one({"_id": ObjectId(modelID)})
 			print model
+			
 			return toJson(model)
 
 	def post(self):
@@ -64,7 +79,7 @@ class ModelDefinitionAPI(MethodView):
 		# create a new model definition
 		modelDefinition = {
 			'name': postData.get('name', u'Untitled'),
-			'description': postData.get('description', u''),
+			'description': postData.get('description', u'Lorem ipsum dolores ....'),
 			'creationDate': datetime.datetime.utcnow()
 		}
 		newModelID = stemDB.modelDefinitions.insert(modelDefinition)

@@ -1,76 +1,54 @@
 var Stem = angular.module('Stem',['ngResource']);
 
-Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, ModelCollection){
-	$scope.modelCollection = new ModelCollection();
-	$scope.modelCollection.loadModels();
+// Page with model list
+Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, ModelService, ServerErrorHandler){
+	$scope.models = ModelService.query(function(data) {
+	}, ServerErrorHandler);
+	// Open model editor
+	$scope.editModel = function(model) {
+		window.location.href = '/ModelEditor/' + model._id;
+	}
+	// Delete model on the server and reload models
+	$scope.deleteModel = function(model) {
+		model.$delete();
+		$scope.models = ModelService.query(function(data) {
+		}, ServerErrorHandler);	}
+	// Create a new model and open model editor
+	$scope.createModel = function(model) {
+		var model = new ModelService();
+		model.$save(function() {
+			window.location.href = '/ModelEditor/' + model._id;	
+		});
+		
+	}
 });
 
+// Page with model editor
 Stem.controller('ModelEditorCtrl', function($scope, 
-		PageSettings, Model){
-	$scope.activeModel =  new Model();
-	$scope.activeModel.loadModel(PageSettings.modelID);
+		PageSettings, ModelService){
+	$scope.model =  ModelService.get({_id: PageSettings.modelID});
+	$scope.save = function() {
+		
+	};
+	$scope.compute = function() {
+		
+	};
+	$scope.editProperties = function() {
+		
+	};
 });
 
-/** Model collection provides storage of models and 
-	methods to create/update/delete models in the collection
-*/
-Stem.factory('ModelCollection', function(ModelDefinitionAPI, $location){
-	var ModelCollection = Class.extend({
-		init: function() {
-			this.models = [];		
-		},
-		// loads models from the server
-		loadModels: function() {
-			this.models = ModelDefinitionAPI.query(function() {
-				console.log("Models loaded");
-			});
-		},
-		// create a new model and opens model editor
-		createEditNewModel: function() {
-			var newModel = new ModelDefinitionAPI();
-			newModel.name = 'WebName';
-			newModel.description = 'WebDescription';
-			newModel.$save(function() {
-				window.location.href = '/ModelEditor/' + newModel._id;	
-			});
-		},
-		// open model editor
-		editModel: function(model) {
-			window.location.href = '/ModelEditor/' + model._id;
-		},
-		// delete a model
-		deleteModel: function(model) {
-			collection = this;
-			ModelDefinitionAPI.delete(model, function() {
-				console.log("Model deleted");
-				collection.loadModels();
-			});
-		}
-	});
-	
-	return ModelCollection;
+// To be used for logging erros on ngResource calls
+Stem.factory('ServerErrorHandler', function() {
+	// Currently a dummy implementation
+	return function(data) {
+		console.log(data);
+	}
 });
 
-Stem.factory('Model', function(ModelDefinitionAPI) {
-	var Model = Class.extend({
-		init: function() {
-			
-		},
-		loadModel: function(modelID) {
-			model = this;			
-			modelData = ModelDefinitionAPI.get({_id: modelID}, function() {
-				model.name = modelData.name;
-				model.description = modelData.description;
-				model.variableValues = modelData.variableValues;
-				model.interfaceGroups = modelData.interfaceGroups;
-			});
-		}
-	});
-	return Model;
-});
 
-// Provides the API for manipulating and querying models on the server
-Stem.factory('ModelDefinitionAPI', function($resource) {
+//Provides the API for querying and manipulating models on the server
+Stem.factory('ModelService', function($resource) {
 	return $resource('/stem/api/ModelDefinitions/:_id', 
 		{ _id: '@_id' }, {				
 			update: 'PUT'

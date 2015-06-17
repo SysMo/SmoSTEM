@@ -38,15 +38,15 @@
   {% raw %}
   <div ng-controller="ModelCollectionCtrl">
     <h1>Models</h1>
-    <button type="button" class="btn btn-primary" ng-click="modelCollection.createEditNewModel()">New</button>
+    <button type="button" class="btn btn-primary" ng-click="createModel()">New</button>
     <br><br>
-    <div ng-repeat="model in modelCollection.models">
+    <div ng-repeat="model in models">
     	<h2>{{model.name}}</h2>
-    	<div>{{model}}</div>
+    	<div>{{model.description}}</div>
     	<div>Created: {{model.creationDate}}</div>
     	<div class="btn-group" role="group" aria-label="Model buttons">
-    		<button class="btn btn-primary" ng-click="modelCollection.editModel(model)">Edit</button>
-    		<button class="btn btn-primary" ng-click="modelCollection.deleteModel(model)">Delete</button>
+    		<button class="btn btn-primary" ng-click="editModel(model)">Edit</button>
+    		<button class="btn btn-primary" ng-click="deleteModel(model)">Delete</button>
     	</div>
     	<br>
     </div>

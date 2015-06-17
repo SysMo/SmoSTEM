@@ -7,12 +7,12 @@ modelID: '{{modelID}}',
 {% block BodyContent %}
 {% raw %}
 <div ng-controller="ModelEditorCtrl">
-  <h1>{{activeModel.name}}</h1>
-  <div>{{activeModel.description}}</div>
+  <h1>{{model.name}}</h1>
+  <div>{{model.description}}</div>
     <div class="btn-group" role="group" aria-label="Model buttons">
-      <button class="btn btn-primary" ng-click="model.save()">Save</button>
-      <button class="btn btn-primary" ng-click="model.compute()">Compute</button>
-      <button class="btn btn-primary" ng-click="model.editProperties()">Properties</button>
+      <button class="btn btn-primary" ng-click="save()">Save</button>
+      <button class="btn btn-primary" ng-click="compute()">Compute</button>
+      <button class="btn btn-primary" ng-click="editProperties()">Properties</button>
     </div>
   <div id="ModelComponentsToolbar">
     <ul style="list-style-type: none; padding: 0px;">
