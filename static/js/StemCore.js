@@ -35,6 +35,8 @@ Stem.controller('ModelEditorCtrl', function($scope,
 			console.log(responseData.message);
 		});
 	};
+	$("#main").height(500);
+	
 });
 
 // To be used for logging erros on ngResource calls
@@ -62,4 +64,109 @@ Stem.factory('ModelService', function($resource) {
 							}
 						)
 	};
+});
+
+//Utility functions
+Stem.factory('stemUtil', function stemUtil () {
+	return {
+		guid: function () {
+		    function _p8(s) {
+		        var p = (Math.random().toString(16)+"000000000").substr(2,8);
+		        return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
+		    }
+		    return _p8() + _p8(true) + _p8(true) + _p8();
+		},
+	};
+})
+
+// User defined 'Classes'
+Stem.factory('stemClasses', function stemClasses(stemUtil) {
+	var classes = {};
+	function createInstanceCounter(klass) {
+		klass.instanceCounter = 0;
+	}
+	
+	classes.Variable = Class.extend({
+		type: 'stem.Variable',
+		init: function () {
+			// Create unique id
+			this.id = stemUtil.guid();			
+		},
+		edit: function() {
+			$( '#' + this.id +'-modal').modal( "show" );
+		},
+		del: function() {
+			this.parent.deleteVariable(this);
+		},
+	});
+	
+	classes.ScalarVariable = classes.Variable.extend({
+		type: 'stem.ScalarVariable',
+		init: function(name, description) {
+			this._super();
+			this.description = description || '';
+			this.name = name || ('v' + (classes.ScalarVariable.instanceCounter + 1).toString());
+			classes.ScalarVariable.instanceCounter++;
+			this.value = 0;
+		},
+	});
+	createInstanceCounter(classes.ScalarVariable);
+	
+	classes.TableVariable = classes.Variable.extend({
+		type: 'stem.TableVariable',
+		init: function(name, description, columns, data) {
+			this._super();
+			this.description = description || '';
+			this.name = name || ('T' + (classes.TableVariable.instanceCounter + 1).toString());
+			classes.TableVariable.instanceCounter++;
+			this.columns = columns || [{name : 'c1'}];
+			this.data = data || [[0]];
+		}
+	})
+	
+	createInstanceCounter(classes.TableVariable);
+	
+	classes.VariableContainer = Class.extend({
+		init: function() {
+			this.variables = [];
+		},
+		createScalarVariable: function(name, description) {
+			var variable = new classes.ScalarVariable(name, description);
+			variable.parent = this;
+			this.variables.push(variable);
+			return variable;
+		},
+		createTableVariable: function(name, description, columns, value) {
+			var variable = new classes.TableVariable(name, description, columns, value);
+			variable.parent = this;
+			this.variables.push(variable);
+			return variable;
+		},
+		addVariable: function(variable) {
+			variable.parent = this;
+			this.variables.push(variable);
+		},
+		deleteVariable: function(variable) {
+			var index = this.variables.indexOf(variable);
+			if (index >= 0) {
+				this.variables.splice(index, 1);
+			}
+		},
+		getValues: function() {
+			var values = {};
+			for (var i = 0; i < this.variables.length; i++) {
+				var variable = this.variables[i];
+				values[variable.name] = parseFloat(variable.value);
+			}
+			return values;
+		},
+		setValues: function(values) {
+			for (var i = 0; i < this.variables.length; i++) {
+				var variable = this.variables[i];
+				variable.value = values[variable.name];
+			}
+		},
+	});
+	
+	return classes;
 });

@@ -1,4 +1,5 @@
 {% raw %}
+<! -- Stem Modal -->
 <script type="text/ng-template" id="stem-modal.html">
 <div class="modal fade" id="{{stemModel._id.$oid}}-modal">
 	<div class="modal-dialog">
@@ -25,4 +26,92 @@
 	</div>
 </div>
 </script>
+
+<! -- Stem Layout -->
+<script type="text/ng-template" id="stem-layout.html">
+</script>
+
+<! -- Stem Board Droppable Area -->
+<script type="text/ng-template" id="stem-board-droppable-area.html">
+<div ng-repeat="var in areaVariables">
+  <div ng-switch on="var.type">
+    <div ng-switch-when="stem.ScalarVariable">
+      <div stem-scalar="var"></div>
+      <div stem-scalar-editor="var"></div>
+    </div>
+    <div ng-switch-when="stem.TableVariable">
+      <div stem-table="var"></div>
+    </div>
+    <div ng-switch-default>
+      Unimplemented type {{var.type}}
+    </div>
+  </div>
+</div>
+</script>
+
+<! -- Stem Board -->
+<script type="text/ng-template" id="stem-board.html">
+<div ng-switch on="layout">
+	<div ng-switch-when="columns" style="width: 1040px;">
+	  <div style="overflow: auto; width: 500px; height: 500px; background: white; border: 1px solid black; padding:10px; float:left;">
+		<div stem-board-droppable-area board="stemBoard" components-selector ="{{componentsSelector}}">
+		</div>
+	  </div>
+	  <div style="width: 40px; height: 500px; float: left;"></div>
+	  <div style="overflow: auto; width: 500px; height: 500px; background: white; border: 1px solid black; padding:10px; float: left;">
+		<div stem-board-droppable-area board="stemBoard" components-selector ="{{componentsSelector}}">
+		</div>
+	  </div>
+	</div>
+	<div ng-switch-when="canvas">
+	  <div style="overflow: auto; height: 500px; background: white; border: 1px solid black; padding:10px;">
+		<div stem-board-droppable-area board="stemBoard" components-selector ="{{componentsSelector}}">
+		</div>
+	  </div>
+	</div>
+</div>
+</script>
+
+<! -- Stem Scalar Editor -->
+<script type="text/ng-template" id="stem-scalar-editor.html">
+<div class="modal fade" id="{{stemScalar.id}}-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title">Properties</h4>
+			</div>
+			<div class="modal-body">
+				<form novalidate>
+					<div>name</div>
+					<input type="text" ng-model="stemScalar.name">
+					<div>description</div>
+					<input type="text" ng-model="stemScalar.description">
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+			</div>
+		</div>
+	</div>
+</div>
+</script>
+
+<! -- Stem Scalar -->
+<script type="text/ng-template" id="stem-scalar.html">
+<div id="{{stemScalar.id}}" style="width: 300px; margin: 5px; padding: 5px; border: solid 1px #AAA; background: #EEE;">
+  <div>{{stemScalar.description}}</div>
+  <div>
+    <div style="display: inline-block; width: 100px;">{{stemScalar.name}}</div>
+    <input style="display: inline-block; width: 100px;" type="text" ng-model="stemScalar.value">
+    <button ng-click="stemScalar.edit()">edit</button>
+    <button ng-click="stemScalar.del()">&times;</button>
+  </div>
+</div>
+</script>
+
+
 {% endraw %}

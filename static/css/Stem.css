@@ -8,40 +8,29 @@ body {
     border: 1px solid black;
     padding: 5px;
 }
-#board, #ModelComponentsToolbar {
+
+#ModelComponentsToolbar, #LayoutsToolbar {
     height: 60%;
-    padding: 5px;
     background: #EEE;
     margin: 10px;
     padding:10px;
+    
 }
 
 /* Contains components to assemble models */
-#ModelComponentsToolbar {
+#ModelComponentsToolbar, #LayoutsToolbar {
 	width: 120px;
 }
 
-#ModelComponentsToolbar > ul > li {
+#ModelComponentsToolbar > ul > li, #LayoutsToolbar > ul > li {
 	margin-top: 10px;
 } 
 
-
-#board {
-	width: 550px;
+.droppable-hover {
+	border: 4px solid blue;
 }
 
-.board-hover {
-	border: 1px solid black;
-}
-
-.row {
-	margin-top: 5px;
-}
-
-.e-component-variable {
-		
-}
-
-.e-component-table {
-	
+#main {
+	/* height: 500px; */ 
+	width: 1050px; 
 }
