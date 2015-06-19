@@ -15,7 +15,7 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, ModelServi
 		}, ServerErrorHandler);	}
 	// Create a new model and open model editor
 	$scope.createModel = function(model) {
-		var model = new ModelService();
+		var model = new ModelService.modelDefinitionResource();
 		model.$save(function() {
 			window.location.href = '/ModelEditor/' + model._id;	
 		});
@@ -49,7 +49,7 @@ Stem.factory('ServerErrorHandler', function() {
 //Provides the API for querying and manipulating models on the server
 Stem.factory('ModelService', function($resource) {  
 	return {
-		modelDefinitionResource: $resource('/stem/api/ModelDefinitions/:_id', 
+		modelDefinitionResource: $resource('/stem/api/Models/:_id', 
 							{ _id: '@_id' }, 
 							{				
 								update: { method:'PUT' }
