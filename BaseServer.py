@@ -44,14 +44,14 @@ class ModelAPI(MethodView):
 			'name': modelData.get('name', u'Untitled'),
 			'description': modelData.get('description', u'Lorem ipsum dolores ....'),
 			'created': datetime.datetime.utcnow(),
-			'layoutSections': modelData.get('layoutSections', []),
+			'board': modelData.get('board', {}),
 			'equations': modelData.get('equations', '')
 		}
 		return model
 	
 	def toJSTypes(self, model):
 		""" Convert BSON types to JS types suitable for rendering """
-		model['creationDate'] = model['creationDate'].strftime('%Y-%m-%d %H:%M:%S')
+		model['created'] = model['created'].strftime('%Y-%m-%d %H:%M:%S')
 		model['_id'] = str(model['_id'])
 	
 	
@@ -68,6 +68,7 @@ class ModelAPI(MethodView):
 		else:
 			# expose a single model
 			model = self.Models.find_one({"_id": ObjectId(modelID)})
+			self.toJSTypes(model)
 			return U.toJson(model)
 
 	def post(self, modelID):
@@ -94,7 +95,7 @@ class ModelAPI(MethodView):
 		self.Models.update({'_id': ObjectId(modelID)}, 
 			{'$set': {'name': putData.get('name'), 
 					'description': putData.get('description'),
-					'layoutSections': putData.get('layoutSections'),
+					'board': putData.get('board'),
 					'equations': putData.get('equations')
 					}
 			}, upsert=False)
