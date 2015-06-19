@@ -86,8 +86,8 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 		klass.instanceCounter = 0;
 	}
 	
-	classes.Variable = Class.extend({
-		type: 'stem.Variable',
+	classes.Field = Class.extend({
+		type: 'stem.Field',
 		init: function () {
 			// Create unique id
 			this.id = stemUtil.guid();			
@@ -96,77 +96,96 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 			$( '#' + this.id +'-modal').modal( "show" );
 		},
 		del: function() {
-			this.parent.deleteVariable(this);
+			this.parent.removeField(this);
 		},
 	});
 	
-	classes.ScalarVariable = classes.Variable.extend({
-		type: 'stem.ScalarVariable',
-		init: function(name, description) {
+	classes.ScalarField = classes.Field.extend({
+		type: 'stem.ScalarField',
+		init: function(name, label, value) {
 			this._super();
-			this.description = description || '';
-			this.name = name || ('v' + (classes.ScalarVariable.instanceCounter + 1).toString());
-			classes.ScalarVariable.instanceCounter++;
-			this.value = 0;
+			this.label = label || '';
+			this.name = name || ('v' + (classes.ScalarField.instanceCounter + 1).toString());
+			classes.ScalarField.instanceCounter++;
+			this.value = value || 0;
 		},
 	});
-	createInstanceCounter(classes.ScalarVariable);
+	createInstanceCounter(classes.ScalarField);
 	
-	classes.TableVariable = classes.Variable.extend({
-		type: 'stem.TableVariable',
-		init: function(name, description, columns, data) {
+	classes.TableField = classes.Field.extend({
+		type: 'stem.TableField',
+		init: function(name, label, columns, value) {
 			this._super();
-			this.description = description || '';
-			this.name = name || ('T' + (classes.TableVariable.instanceCounter + 1).toString());
-			classes.TableVariable.instanceCounter++;
+			this.label = label || '';
+			this.name = name || ('T' + (classes.TableField.instanceCounter + 1).toString());
+			classes.TableField.instanceCounter++;
 			this.columns = columns || [{name : 'c1'}];
-			this.data = data || [[0]];
+			this.value = value || [[0]];
 		}
-	})
+	});	
+	createInstanceCounter(classes.TableField);
 	
-	createInstanceCounter(classes.TableVariable);
+	classes.TextField = classes.Field.extend({
+		type: 'stem.TextField',
+		init: function(name, label, value) {
+			this._super();
+			this.label = label || '';
+			this.name = name || ('T' + (classes.TextField.instanceCounter + 1).toString());
+			classes.TextField.instanceCounter++;
+			this.value = value || '';
+		}
+	});	
+	createInstanceCounter(classes.TextField);
 	
-	classes.VariableContainer = Class.extend({
-		init: function() {
-			this.variables = [];
+	classes.Layout = Class.extend({
+		init: function(type, width, fields) {
+			this.type = type || 'grid';
+			this.width = width || 'wide';
+			this.fields = fields || [];
 		},
-		createScalarVariable: function(name, description) {
-			var variable = new classes.ScalarVariable(name, description);
-			variable.parent = this;
-			this.variables.push(variable);
-			return variable;
+		addField: function(field) {
+			field.parent = this;
+			this.fields.push(field);
 		},
-		createTableVariable: function(name, description, columns, value) {
-			var variable = new classes.TableVariable(name, description, columns, value);
-			variable.parent = this;
-			this.variables.push(variable);
-			return variable;
-		},
-		addVariable: function(variable) {
-			variable.parent = this;
-			this.variables.push(variable);
-		},
-		deleteVariable: function(variable) {
-			var index = this.variables.indexOf(variable);
+		removeField: function(field) {
+			var index = this.fields.indexOf(field);
 			if (index >= 0) {
-				this.variables.splice(index, 1);
+				this.fields.splice(index, 1);
 			}
 		},
-		getValues: function() {
-			var values = {};
-			for (var i = 0; i < this.variables.length; i++) {
-				var variable = this.variables[i];
-				values[variable.name] = parseFloat(variable.value);
-			}
-			return values;
+		createScalarField: function(name, label, value) {
+			var field = new classes.ScalarField(name, label);
+			this.addField(field);
+			return field;
 		},
-		setValues: function(values) {
-			for (var i = 0; i < this.variables.length; i++) {
-				var variable = this.variables[i];
-				variable.value = values[variable.name];
-			}
+		createTableField: function(name, label, columns, value) {
+			var field = new classes.TableField(name, lable, columns, value);
+			this.addField(field);
+			return field;
+		},
+		del: function() {
+			this.parent.removeLayout(this);
 		},
 	});
 	
+	classes.Board = Class.extend({
+		init: function(layouts, containerSelector, layoutsSelector, componentsSelector) {
+			this.layouts = layouts || [];
+			this.containerSelector = containerSelector || '#main';
+			this.layoutsSelector = layoutsSelector || '#LayoutsToolbar > ul > li';
+			this.componentsSelector = componentsSelector || '#ModelComponentsToolbar > ul > li';
+		},
+		addLayout: function(layout) {
+			layout.parent = this;
+			this.layouts.push(layout);
+		},
+		removeLayout: function(layout) {
+			var index = this.layouts.indexOf(layout);
+			if (index >= 0) {
+				this.layouts.splice(index, 1);
+			}
+		}
+	
+	});
 	return classes;
 });

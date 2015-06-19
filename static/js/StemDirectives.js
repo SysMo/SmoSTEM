@@ -8,16 +8,42 @@ Stem.directive('stemModal', [function() {
 	}
 }]);
 
-Stem.directive('stemLayout', function($compile) {
+Stem.directive('stemBoard', function(stemClasses) {
 	return {
-		restrict : 'A',
-		scope : {
-			layoutsSelector: '@',
+		restrict: 'A',
+		scope: {
+			stemBoard: '=',
 		},
-		templateUrl: "stem-layout.html",
+		templateUrl: "stem-board.html",
 		link: function (scope, element, attributes) {
-			// Initialize layouts library
-			$(scope.layoutsSelector).each(function(index, element){
+			scope.stemBoard = scope.stemBoard || new stemClasses.Board();
+			// Initialize droppable board
+			$(scope.stemBoard.containerSelector).droppable({
+				accept: scope.stemBoard.layoutsSelector,
+				hoverClass: 'droppable-hover',
+				drop: function( event, ui ) {
+					var layoutClassId = ui.draggable.context.id; // id of li element; is the same as component type
+					$('#'+layoutClassId).draggable("option", "revert", false);
+					var layout;
+					switch (layoutClassId) {
+					case 'grid_Wide':
+						//element.parent().append($compile('<div style="overflow: auto; margin-bottom: 10px;" stem-layout="null"></div>')(scope));
+						layout = new stemClasses.Layout('grid', 'wide');
+						scope.stemBoard.addLayout(layout);
+						break;
+					case 'grid_Narrow':
+						layout = new stemClasses.Layout('grid', 'narrow');
+						scope.stemBoard.addLayout(layout);
+						//element.parent().append($compile('<div style="overflow: auto; margin-bottom: 10px;" stem-layout="null"></div>')(scope));
+						break;
+					}
+					scope.$apply();
+					$(scope.stemBoard.containerSelector).height($(scope.stemBoard.containerSelector).height() + 500);
+				}
+			});
+			
+			// Initialize set of draggable layouts
+			$(scope.stemBoard.layoutsSelector).each(function(index, element){
 				$(element)
 				.draggable({
 					appendTo: "body",
@@ -32,41 +58,8 @@ Stem.directive('stemLayout', function($compile) {
 				});
 			});
 			
-			$('#main').droppable({
-				accept: scope.layoutsSelector,
-				hoverClass: 'droppable-hover',
-				drop: function( event, ui ) {
-					var layoutClassId = ui.draggable.context.id; // id of li element; is the same as component type
-					$('#'+layoutClassId).draggable("option", "revert", false);
-					var layout;
-					switch (layoutClassId) {
-					case 'columns_Layout':
-						element.parent().append($compile('<div style="overflow: auto; margin-bottom: 10px;" layout="columns" stem-board="eVars" components-selector ="#ModelComponentsToolbar > ul > li">')(scope));
-						break;
-					case 'canvas_Layout':
-						element.parent().append($compile('<div style="overflow: auto; margin-bottom: 10px;" layout="canvas" stem-board="eVars" components-selector ="#ModelComponentsToolbar > ul > li">')(scope));
-						break;
-					}
-					$('#main').height($('#main').height() + 500);
-				}
-			});
-		}
-	}
-});
-
-Stem.directive('stemBoard', function(stemClasses) {
-	return {
-		restrict: 'A',
-		scope: {
-			stemBoard: '=',
-			componentsSelector: '@',
-			layout: '@'
-		},
-		templateUrl: "stem-board.html",
-		link: function (scope, element, attributes) {
-			scope.stemBoard = scope.stemBoard || new stemClasses.VariableContainer();
-			// Initialize component library
-			$(scope.componentsSelector).each(function(index, element){
+			// Initialize set of draggable components
+			$(scope.stemBoard.componentsSelector).each(function(index, element){
 				$(element)
 				.draggable({
 					appendTo: "body",
@@ -84,35 +77,35 @@ Stem.directive('stemBoard', function(stemClasses) {
 	}
 });
 
-
-Stem.directive('stemBoardDroppableArea', function(stemClasses) {
+Stem.directive('stemLayout', function(stemClasses) {
 	return {
 		restrict : 'A',
 		scope: {
-			stemBoard: '=board',
-			componentsSelector: '@',
+			stemLayout: '=',
 		},
-		templateUrl: "stem-board-droppable-area.html",
+		templateUrl: "stem-layout.html",
+		replace: true,
 		link: function(scope, element, attributes) {
-			scope.areaVariables = [];
-			element.parent().droppable({
-				accept: scope.componentsSelector,
+			if (scope.stemLayout.width == 'narrow') {
+				element.css('width', '500px');
+			} else {
+				element.css('width', '1020px');
+			}
+			element.droppable({
+				accept: scope.stemLayout.parent.componentsSelector,
 				hoverClass: 'droppable-hover',
 				drop: function( event, ui ) {
-					var componentClassId = ui.draggable.context.id; // id of li element; is the same as component type
-					$('#'+componentClassId).draggable("option", "revert", false);
-					var component;
-					switch (componentClassId) {
-					case 'components_Variable':
-						component = new stemClasses.ScalarVariable(); 
-						scope.stemBoard.addVariable(component);
-						scope.areaVariables.push(component);
+					var fieldClassId = ui.draggable.context.id; // id of li element; is the same as component type
+					$('#'+fieldClassId).draggable("option", "revert", false);
+					var field;
+					switch (fieldClassId) {
+					case 'fields_Scalar':
+						field = new stemClasses.ScalarField(); 
+						scope.stemLayout.addField(field);
 						break;
-					case 'components_Table':
-						//component = scope.stemBoard.createTableVariable();
-						component = new stemClasses.TableVariable();
-						scope.stemBoard.addVariable(component);
-						scope.areaVariables.push(component);
+					case 'fields_Table':
+						field = new stemClasses.TableField();
+						scope.stemLayout.addField(field);
 						break;
 					}
 					scope.$apply();
@@ -122,25 +115,31 @@ Stem.directive('stemBoardDroppableArea', function(stemClasses) {
 	}
 });
 
-Stem.directive('stemScalarEditor', [function() {
+Stem.directive('stemFieldEditor', [function() {
 	return {
 		restrict : 'A',
 		scope : {
-			stemScalar : '=stemScalarEditor'
+			stemField : '=stemFieldEditor'
 		},
-		templateUrl: "stem-scalar-editor.html",
+		templateUrl: "stem-field-editor.html",
 	}
 }]);
 
-Stem.directive('stemScalar', [function() {
+Stem.directive('stemScalar', function() {
 	return {
 		restrict: 'A',
 		scope: {
 			stemScalar: '='
+		}, 
+		link: function(scope, element, attrs) {
+			scope.del = function() {
+				scope.stemScalar.del();
+				scope.$parent.areaVariables.splice(scope.$parent.areaVariables.indexOf(scope.stemScalar), 1);
+			}
 		},
-		templateUrl: "stem-scalar.html",
+		templateUrl: "stem-scalar.html"
 	}
-}]);
+});
 
 Stem.directive('stemTable', function(stemTable, $compile) {
 	return {
@@ -148,23 +147,10 @@ Stem.directive('stemTable', function(stemTable, $compile) {
 		scope: {
 			stemTable: '='
 		},
-		//templateUrl: "stem-table.html",
-		controller: function($scope) {
-			
-		},
+		templateUrl: "stem-table.html",
 		link: function(scope, element, attributes) {
-			var template = '\
-				<div id="{{stemTable.id}}" style="width: 450px; background: #EEE; margin: 5px; padding: 5px; border: solid 1px #AAA">\
-				  <div>{{stemTable.name}} : {{stemTable.description}}</div>\
-				  <table id="{{stemTable.id}}-table"></table>\
-				</div>';
-			
-			var el = angular.element(template);
-	        compiled = $compile(el);
-	        element.append(el);
-	        compiled(scope);
 	        scope.$watch(function () { return element[0].childNodes[0].childNodes[3]; }, function(newValue, oldValue) {
-				new stemTable.Table("#" + scope.stemTable.id + "-table", scope.stemTable.columns, scope.stemTable.data);
+				new stemTable.Table("#" + scope.stemTable.id + "-table", scope.stemTable.columns, scope.stemTable.value);
 			});
 		}
 	}

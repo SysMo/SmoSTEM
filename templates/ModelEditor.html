@@ -22,20 +22,20 @@ modelID: '{{modelID}}',
       <div id="LayoutsToolbar">
 	  	<span style="color: blue;">Layouts</span>
 	  	<ul style="list-style-type: none; padding: 0px;">
-	      <li id="columns_Layout">Columns</li>
-	      <li id="canvas_Layout">Canvas</li>
+	      <li id="grid_Wide">Grid(wide)</li>
+	      <li id="grid_Narrow">Grid(narrow)</li>
 	    </ul>
 	  </div>
 	  <div id="ModelComponentsToolbar">
 	  	<span style="color: blue;">Components</span>
 	    <ul style="list-style-type: none; padding: 0px;">
-	      <li id="components_Variable"><img src='/static/img/Variable.png'>&nbsp; Variable</li>
-	      <li id="components_Table"><img src='/static/img/Table.png'>&nbsp; Table</li>
+	      <li id="fields_Scalar"><img src='/static/img/Variable.png'>&nbsp; Variable</li>
+	      <li id="fields_Table"><img src='/static/img/Table.png'>&nbsp; Table</li>
 	    </ul>
 	  </div>
 	</div>
 	<div id="main" style="float: left; margin-left: 150px; margin-top: 10px;">
-	  <div stem-layout layouts-selector ="#LayoutsToolbar > ul > li"></div>
+	  <div stem-board="exampleBoard"></div>
 	</div>
   </div>
   <div class="ModelInterface">

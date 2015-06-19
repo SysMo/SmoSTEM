@@ -26,6 +26,10 @@ body {
 	margin-top: 10px;
 } 
 
+.ui-draggable:hover {
+	cursor: pointer;
+}
+
 .droppable-hover {
 	border: 4px solid blue;
 }

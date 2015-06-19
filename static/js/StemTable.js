@@ -1,10 +1,10 @@
 Stem.factory('stemTable', function() {
 	var stemTable = {};
-	stemTable.Table = function(idSelector, columns, data) {
+	stemTable.Table = function(idSelector, columns, value) {
 		this.idSelector = idSelector;
 		this.tableNode = $(idSelector)[0];
 		this.columns = columns;
-		this.data = data;
+		this.data = value;
 		this.renderTable();
 		
 	}

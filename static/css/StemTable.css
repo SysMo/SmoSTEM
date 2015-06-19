@@ -1,38 +1,38 @@
-input {
+div[stem-table] input {
     border: none;
     width: 80px;
     font-size: 14px;
     padding: 2px;
 }
 
-input:hover {
+div[stem-table] input:hover {
     background-color: #eee;
 }
 
-input:focus {
+div[stem-table] input:focus {
     background-color: #ccf;
 }
 
-input:not(:focus) {
+div[stem-table] input:not(:focus) {
     text-align: right;
 }
 
-table {
+div[stem-table] table {
     border-collapse: collapse;  
 }
 
-td {
+div[stem-table] td {
     border: 1px solid #999;
     padding: 0;
 }
 
-tr:first-child td, td:first-child {
+div[stem-table] tr:first-child td, div[stem-table] td:first-child {
     background-color: #ccc;
     padding: 1px 3px;
     font-weight: bold;
     text-align: center;
 }
 
-footer {
+div[stem-table] footer {
     font-size: 80%;
 }
