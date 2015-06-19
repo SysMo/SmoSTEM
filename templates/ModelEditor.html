@@ -7,20 +7,36 @@ modelID: '{{modelID}}',
 {% block BodyContent %}
 {% raw %}
 <div ng-controller="ModelEditorCtrl">
-  <h1>{{model.name}}</h1>
-  <div>{{model.description}}</div>
-    <div class="btn-group" role="group" aria-label="Model buttons">
-      <button class="btn btn-primary" ng-click="save()">Save</button>
-      <button class="btn btn-primary" ng-click="compute()">Compute</button>
-      <button class="btn btn-primary" data-toggle="modal" data-target="#{{model._id.$oid}}-modal">Properties</button>
-      <div stem-modal model="model"></div>
-    </div>
-  <div id="ModelComponentsToolbar">
-    <ul style="list-style-type: none; padding: 0px;">
-      <li id="components_FieldGroup"><img src='/static/img/FieldGroup.png'>&nbsp; Group</li>
-      <li id="components_Variable"><img src='/static/img/Variable.png'>&nbsp; Variable</li>
-  <!--     <li id="components_table"><img src='/static/img/Table.png'>&nbsp; Table</li> -->
-    </ul>
+  <div >
+	  <h1>{{model.name}}</h1>
+	  <div>{{model.description}}</div>
+	  <div class="btn-group" role="group" aria-label="Model buttons">
+	    <button class="btn btn-primary" ng-click="save()">Save</button>
+	    <button class="btn btn-primary" ng-click="compute()">Compute</button>
+	    <button class="btn btn-primary" data-toggle="modal" data-target="#{{model._id.$oid}}-modal">Properties</button>
+	  </div>
+  </div>
+  <div stem-modal model="model"></div>
+  <div>
+  	<div style="position: fixed;" id="ToolBars">
+      <div id="LayoutsToolbar">
+	  	<span style="color: blue;">Layouts</span>
+	  	<ul style="list-style-type: none; padding: 0px;">
+	      <li id="grid_Wide">Grid(wide)</li>
+	      <li id="grid_Narrow">Grid(narrow)</li>
+	    </ul>
+	  </div>
+	  <div id="ModelComponentsToolbar">
+	  	<span style="color: blue;">Components</span>
+	    <ul style="list-style-type: none; padding: 0px;">
+	      <li id="fields_Scalar"><img src='/static/img/Variable.png'>&nbsp; Variable</li>
+	      <li id="fields_Table"><img src='/static/img/Table.png'>&nbsp; Table</li>
+	    </ul>
+	  </div>
+	</div>
+	<div id="main" style="float: left; margin-left: 150px; margin-top: 10px;">
+	  <div stem-board="exampleBoard"></div>
+	</div>
   </div>
   <div class="ModelInterface">
   </div>

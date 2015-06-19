@@ -1,4 +1,5 @@
 {% raw %}
+<! -- Stem Modal -->
 <script type="text/ng-template" id="stem-modal.html">
 <div class="modal fade" id="{{stemModel._id.$oid}}-modal">
 	<div class="modal-dialog">
@@ -23,6 +24,89 @@
 			</div>
 		</div>
 	</div>
+</div>
+</script>
+
+<! -- Stem Layout -->
+<script type="text/ng-template" id="stem-layout.html">
+  <div style="overflow: auto; height: 500px; background: #EEE; padding: 10px; margin: 10px; float: left;">
+	<button class="close" ng-click="stemLayout.del()">&times;</button>
+	<div ng-repeat="field in stemLayout.fields">
+	  <div ng-switch on="field.type">
+	    <div ng-switch-when="stem.ScalarField">
+	      <div stem-scalar="field"></div>
+	      <div stem-field-editor="field"></div>
+	    </div>
+	    <div ng-switch-when="stem.TableField">
+	      <div stem-table="field"></div>
+	      <div stem-field-editor="field"></div>
+	    </div>
+	    <div ng-switch-default>
+	      Unimplemented type {{field.type}}
+	    </div>
+	  </div>
+	</div>
+  </div>
+</script>
+
+<! -- Stem Board -->
+<script type="text/ng-template" id="stem-board.html">
+<div ng-repeat="layout in stemBoard.layouts">
+	<div stem-layout="layout"></div>
+</div>
+</script>
+
+<! -- Stem Field Editor -->
+<script type="text/ng-template" id="stem-field-editor.html">
+<div class="modal fade" id="{{stemField.id}}-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title">Properties</h4>
+			</div>
+			<div class="modal-body">
+				<form novalidate>
+					<div>Name</div>
+					<input type="text" ng-model="stemField.name">
+					<div>Label</div>
+					<input type="text" ng-model="stemField.label">
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+			</div>
+		</div>
+	</div>
+</div>
+</script>
+
+<! -- Stem Scalar -->
+<script type="text/ng-template" id="stem-scalar.html">
+<div id="{{stemScalar.id}}" style="width: 300px; margin: 10px; padding: 5px; border: solid 1px #AAA; background: white;">
+  <div>
+    <div style="display: inline-block; width: 100px;" ng-click="stemScalar.edit()">
+    	<span style="color: blue; cursor: pointer;">{{stemScalar.name}}</span>
+    </div>
+    <input style="display: inline-block; width: 100px;" type="text" ng-model="stemScalar.value">
+    <button class="close" ng-click="stemScalar.del()">&times;</button>
+  </div>
+  <div>{{stemScalar.label}}</div>
+</div>
+</script>
+
+<! -- Stem Table -->
+<script type="text/ng-template" id="stem-table.html">
+<div id="{{stemTable.id}}" style="width: 450px; background: white; margin: 10px; padding: 5px; border: solid 1px #AAA">
+  <div ng-click="stemTable.edit()">
+  	<span style="color: blue; cursor: pointer;">{{stemTable.name}}</span>
+  	<button class="close" ng-click="stemTable.del()">&times;</button>
+  </div>
+  <div>{{stemTable.label}}</div>
+  <table id="{{stemTable.id}}-table"></table>
 </div>
 </script>
 {% endraw %}

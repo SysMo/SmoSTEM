@@ -1,0 +1,38 @@
+div[stem-table] input {
+    border: none;
+    width: 80px;
+    font-size: 14px;
+    padding: 2px;
+}
+
+div[stem-table] input:hover {
+    background-color: #eee;
+}
+
+div[stem-table] input:focus {
+    background-color: #ccf;
+}
+
+div[stem-table] input:not(:focus) {
+    text-align: right;
+}
+
+div[stem-table] table {
+    border-collapse: collapse;  
+}
+
+div[stem-table] td {
+    border: 1px solid #999;
+    padding: 0;
+}
+
+div[stem-table] tr:first-child td, div[stem-table] td:first-child {
+    background-color: #ccc;
+    padding: 1px 3px;
+    font-weight: bold;
+    text-align: center;
+}
+
+div[stem-table] footer {
+    font-size: 80%;
+}
