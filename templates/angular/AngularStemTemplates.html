@@ -86,13 +86,13 @@
 
 <! -- Stem Scalar -->
 <script type="text/ng-template" id="stem-scalar.html">
-<div id="{{stemScalar.id}}" style="width: 300px; margin: 10px; padding: 5px; border: solid 1px #AAA; background: white;">
+<div id="{{stemScalar.id}}" style="width: 300px; margin: 3px; padding: 5px; border: solid 1px #AAA; background: white;">
   <div>
     <div style="display: inline-block; width: 100px;" ng-click="stemScalar.edit()">
     	<span style="color: blue; cursor: pointer;">{{stemScalar.name}}</span>
     </div>
     <input style="display: inline-block; width: 100px;" type="text" ng-model="stemScalar.value">
-    <button class="close" ng-click="stemScalar.del()">&times;</button>
+    <button class="close" ng-click="$parent.removeField(stemScalar)">&times;</button>
   </div>
   <div>{{stemScalar.label}}</div>
 </div>
@@ -100,10 +100,10 @@
 
 <! -- Stem Table -->
 <script type="text/ng-template" id="stem-table.html">
-<div id="{{stemTable.id}}" style="width: 450px; background: white; margin: 10px; padding: 5px; border: solid 1px #AAA">
+<div id="{{stemTable.id}}" style="width: 450px; background: white; margin: 3px; padding: 5px; border: solid 1px #AAA">
   <div ng-click="stemTable.edit()">
   	<span style="color: blue; cursor: pointer;">{{stemTable.name}}</span>
-  	<button class="close" ng-click="stemTable.del()">&times;</button>
+  	<button class="close" ng-click="$parent.removeField(stemTable)">&times;</button>
   </div>
   <div>{{stemTable.label}}</div>
   <table id="{{stemTable.id}}-table"></table>

@@ -44,7 +44,9 @@ class ModelAPI(MethodView):
 			'name': modelData.get('name', u'Untitled'),
 			'description': modelData.get('description', u'Lorem ipsum dolores ....'),
 			'created': datetime.datetime.utcnow(),
-			'board': modelData.get('board', {}),
+			'board': modelData.get('board', {
+				'layouts': []
+			}),
 			'equations': modelData.get('equations', '')
 		}
 		return model

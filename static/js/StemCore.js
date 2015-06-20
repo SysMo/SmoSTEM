@@ -26,7 +26,15 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, ModelServi
 // Page with model editor
 Stem.controller('ModelEditorCtrl', function($scope, 
 		PageSettings, ModelService){
-	$scope.model =  ModelService.get({_id: PageSettings.modelID});
+	// Get the model object from the server
+	$scope.model =  ModelService.get({_id: PageSettings.modelID}, function() {
+		// Add the selectors for the different board parts
+		angular.extend($scope.model.board, {
+			containerSelector : '#main',
+			layoutsSelector: '#LayoutsToolbar > ul > li',
+			componentsSelector: '#ModelComponentsToolbar > ul > li'
+		});
+	});
 	$scope.save = function() {
 		$scope.model.$update();
 	};
@@ -134,49 +142,20 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 			this.width = width || 'wide';
 			this.fields = fields || [];
 		},
-		addField: function(field) {
-			field.parent = this;
-			this.fields.push(field);
-		},
-		removeField: function(field) {
-			var index = this.fields.indexOf(field);
-			if (index >= 0) {
-				this.fields.splice(index, 1);
-			}
-		},
-		createScalarField: function(name, label, value) {
-			var field = new classes.ScalarField(name, label);
-			this.addField(field);
-			return field;
-		},
-		createTableField: function(name, label, columns, value) {
-			var field = new classes.TableField(name, lable, columns, value);
-			this.addField(field);
-			return field;
-		},
-		del: function() {
-			this.parent.removeLayout(this);
-		},
+//		createScalarField: function(name, label, value) {
+//			var field = new classes.ScalarField(name, label);
+//			this.addField(field);
+//			return field;
+//		},
+//		createTableField: function(name, label, columns, value) {
+//			var field = new classes.TableField(name, lable, columns, value);
+//			this.addField(field);
+//			return field;
+//		},
+//		del: function() {
+//			this.parent.removeLayout(this);
+//		},
 	});
 	
-	classes.Board = Class.extend({
-		init: function(layouts, containerSelector, layoutsSelector, componentsSelector) {
-			this.layouts = layouts || [];
-			this.containerSelector = containerSelector || '#main';
-			this.layoutsSelector = layoutsSelector || '#LayoutsToolbar > ul > li';
-			this.componentsSelector = componentsSelector || '#ModelComponentsToolbar > ul > li';
-		},
-		addLayout: function(layout) {
-			layout.parent = this;
-			this.layouts.push(layout);
-		},
-		removeLayout: function(layout) {
-			var index = this.layouts.indexOf(layout);
-			if (index >= 0) {
-				this.layouts.splice(index, 1);
-			}
-		}
-	
-	});
 	return classes;
 });

@@ -35,7 +35,12 @@ modelID: '{{modelID}}',
 	  </div>
 	</div>
 	<div id="main" style="float: left; margin-left: 150px; margin-top: 10px;">
-	  <div stem-board="model.board"></div>
+		<div ng-if="model.board">
+	  		<div stem-board="model.board"></div>
+	  	</div>
+		<div ng-if="!model.board">
+	  		<div>Loading model</div>
+	  	</div>
 	</div>
   </div>
   <div class="ModelInterface">
