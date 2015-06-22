@@ -2,7 +2,7 @@ var Stem = angular.module('Stem',['ngResource']);
 
 // Page with model list
 Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, ModelService, ServerErrorHandler){
-	$scope.models = ModelService.modelDefinitionResource.query(function(data) {
+	$scope.models = ModelService.query(function(data) {
 	}, ServerErrorHandler);
 	// Open model editor
 	$scope.editModel = function(model) {
@@ -11,7 +11,7 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, ModelServi
 	// Delete model on the server and reload models
 	$scope.deleteModel = function(model) {
 		model.$delete();
-		$scope.models = ModelService.modelDefinitionResource.query(function(data) {
+		$scope.models = ModelService.query(function(data) {
 		}, ServerErrorHandler);	}
 	// Create a new model and open model editor
 	$scope.createModel = function(model) {
@@ -26,13 +26,21 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, ModelServi
 // Page with model editor
 Stem.controller('ModelEditorCtrl', function($scope, 
 		PageSettings, ModelService){
-	$scope.model =  ModelService.modelDefinitionResource.get({_id: PageSettings.modelID});
+	// Get the model object from the server
+	$scope.model =  ModelService.get({_id: PageSettings.modelID}, function() {
+		// Add the selectors for the different board parts
+		angular.extend($scope.model.board, {
+			containerSelector : '#main',
+			layoutsSelector: '#LayoutsToolbar > ul > li',
+			componentsSelector: '#ModelComponentsToolbar > ul > li'
+		});
+	});
 	$scope.save = function() {
-		ModelService.modelDefinitionResource.update({_id: PageSettings.modelID}, {name: $scope.model.name, description: $scope.model.description});
+		$scope.model.$update();
 	};
 	$scope.compute = function() {
-		ModelService.computeResource.compute({_id: PageSettings.modelID}, {params: 3}, function(responseData) {
-			console.log(responseData.message);
+		$scope.model.$compute({params: 3}, function(responseData) {
+			console.log(responseData);
 		});
 	};
 	$("#main").height(500);
@@ -50,21 +58,12 @@ Stem.factory('ServerErrorHandler', function() {
 
 //Provides the API for querying and manipulating models on the server
 Stem.factory('ModelService', function($resource) {  
-	return {
-		modelDefinitionResource: $resource('/stem/api/ModelDefinitions/:_id', 
-							{ _id: '@_id' }, 
-							{				
-								update: { method:'PUT' }
-							}
-						),
-		computeResource: $resource('/stem/api/ModelDefinitions/compute/:_id', 
-							{ _id: '@_id' }, 
-							{
-								compute: { method:'POST' }
-							}
-						)
-	};
-});
+	return $resource('/stem/api/Models/:_id', { _id: '@_id' }, 
+		{				
+			update: { method:'PUT' },
+			//compute: { method}
+		}
+)});
 
 //Utility functions
 Stem.factory('stemUtil', function stemUtil () {
@@ -144,49 +143,20 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 			this.fields = fields || [];
 			this.id = stemUtil.guid();
 		},
-		addField: function(field) {
-			field.parent = this;
-			this.fields.push(field);
-		},
-		removeField: function(field) {
-			var index = this.fields.indexOf(field);
-			if (index >= 0) {
-				this.fields.splice(index, 1);
-			}
-		},
-		createScalarField: function(name, label, value) {
-			var field = new classes.ScalarField(name, label);
-			this.addField(field);
-			return field;
-		},
-		createTableField: function(name, label, columns, value) {
-			var field = new classes.TableField(name, lable, columns, value);
-			this.addField(field);
-			return field;
-		},
-		del: function() {
-			this.parent.removeLayout(this);
-		},
+//		createScalarField: function(name, label, value) {
+//			var field = new classes.ScalarField(name, label);
+//			this.addField(field);
+//			return field;
+//		},
+//		createTableField: function(name, label, columns, value) {
+//			var field = new classes.TableField(name, lable, columns, value);
+//			this.addField(field);
+//			return field;
+//		},
+//		del: function() {
+//			this.parent.removeLayout(this);
+//		},
 	});
 	
-	classes.Board = Class.extend({
-		init: function(layouts, containerSelector, layoutsSelector, componentsSelector) {
-			this.layouts = layouts || [];
-			this.containerSelector = containerSelector || '#main';
-			this.layoutsSelector = layoutsSelector || '#LayoutsToolbar > ul > li';
-			this.componentsSelector = componentsSelector || '#ModelComponentsToolbar > ul > li';
-		},
-		addLayout: function(layout) {
-			layout.parent = this;
-			this.layouts.push(layout);
-		},
-		removeLayout: function(layout) {
-			var index = this.layouts.indexOf(layout);
-			if (index >= 0) {
-				this.layouts.splice(index, 1);
-			}
-		}
-	
-	});
 	return classes;
 });

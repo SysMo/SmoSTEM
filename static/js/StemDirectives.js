@@ -15,8 +15,18 @@ Stem.directive('stemBoard', function(stemClasses) {
 			stemBoard: '=',
 		},
 		templateUrl: "stem-board.html",
+		controller: function($scope) {
+			$scope.addLayout = function(layout) {
+				$scope.stemBoard.layouts.push(layout);
+			},
+			$scope.removeLayout = function(layout) {
+				var index = $scope.stemBoard.layouts.indexOf(layout);
+				if (index >= 0) {
+					scope.stemLayout.layouts.splice(index, 1);
+				}
+			}			
+		},
 		link: function (scope, element, attributes) {
-			scope.stemBoard = scope.stemBoard || new stemClasses.Board();
 			// Initialize droppable board
 			$(scope.stemBoard.containerSelector).droppable({
 				accept: scope.stemBoard.layoutsSelector,
@@ -29,11 +39,11 @@ Stem.directive('stemBoard', function(stemClasses) {
 					case 'grid_Wide':
 						//element.parent().append($compile('<div style="overflow: auto; margin-bottom: 10px;" stem-layout="null"></div>')(scope));
 						layout = new stemClasses.Layout('grid', 'wide');
-						scope.stemBoard.addLayout(layout);
+						scope.addLayout(layout);
 						break;
 					case 'grid_Narrow':
 						layout = new stemClasses.Layout('grid', 'narrow');
-						scope.stemBoard.addLayout(layout);
+						scope.addLayout(layout);
 						//element.parent().append($compile('<div style="overflow: auto; margin-bottom: 10px;" stem-layout="null"></div>')(scope));
 						break;
 					}
@@ -85,6 +95,17 @@ Stem.directive('stemLayout', function(stemClasses) {
 		},
 		templateUrl: "stem-layout.html",
 		replace: true,
+		controller: function($scope) {
+			$scope.addField = function(field) {
+				$scope.stemLayout.fields.push(field);
+			};
+			$scope.removeField = function(field) {
+				var index = $scope.stemLayout.fields.indexOf(field);
+				if (index >= 0) {
+					$scope.stemLayout.fields.splice(index, 1);
+				}
+			};
+		},
 		link: function(scope, element, attributes) {
 			if (scope.stemLayout.width == 'narrow') {
 				element.css('width', '500px');
@@ -92,7 +113,7 @@ Stem.directive('stemLayout', function(stemClasses) {
 				element.css('width', '1020px');
 			}
 			element.droppable({
-				accept: scope.stemLayout.parent.componentsSelector,
+				accept: scope.$parent.componentsSelector,
 				hoverClass: 'droppable-hover',
 				drop: function( event, ui ) {
 					var fieldClassId = ui.draggable.context.id; // id of li element; is the same as component type
@@ -101,11 +122,11 @@ Stem.directive('stemLayout', function(stemClasses) {
 					switch (fieldClassId) {
 					case 'fields_Scalar':
 						field = new stemClasses.ScalarField(); 
-						scope.stemLayout.addField(field);
+						scope.addField(field);
 						break;
 					case 'fields_Table':
 						field = new stemClasses.TableField();
-						scope.stemLayout.addField(field);
+						scope.addField(field);
 						break;
 					}
 					scope.$apply();
