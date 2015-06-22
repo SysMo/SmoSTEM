@@ -142,20 +142,7 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 			this.width = width || 'wide';
 			this.fields = fields || [];
 			this.id = stemUtil.guid();
-		},
-//		createScalarField: function(name, label, value) {
-//			var field = new classes.ScalarField(name, label);
-//			this.addField(field);
-//			return field;
-//		},
-//		createTableField: function(name, label, columns, value) {
-//			var field = new classes.TableField(name, lable, columns, value);
-//			this.addField(field);
-//			return field;
-//		},
-//		del: function() {
-//			this.parent.removeLayout(this);
-//		},
+		}
 	});
 	
 	return classes;

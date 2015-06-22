@@ -18,11 +18,13 @@ Stem.directive('stemBoard', function(stemClasses) {
 		controller: function($scope) {
 			$scope.addLayout = function(layout) {
 				$scope.stemBoard.layouts.push(layout);
+				$($scope.stemBoard.containerSelector).height($($scope.stemBoard.containerSelector).height() + 520);
 			},
 			$scope.removeLayout = function(layout) {
 				var index = $scope.stemBoard.layouts.indexOf(layout);
 				if (index >= 0) {
-					scope.stemLayout.layouts.splice(index, 1);
+					$scope.stemBoard.layouts.splice(index, 1);
+					$($scope.stemBoard.containerSelector).height($($scope.stemBoard.containerSelector).height() - 520);
 				}
 			}			
 		},
@@ -37,18 +39,15 @@ Stem.directive('stemBoard', function(stemClasses) {
 					var layout;
 					switch (layoutClassId) {
 					case 'grid_Wide':
-						//element.parent().append($compile('<div style="overflow: auto; margin-bottom: 10px;" stem-layout="null"></div>')(scope));
 						layout = new stemClasses.Layout('grid', 'wide');
 						scope.addLayout(layout);
 						break;
 					case 'grid_Narrow':
 						layout = new stemClasses.Layout('grid', 'narrow');
 						scope.addLayout(layout);
-						//element.parent().append($compile('<div style="overflow: auto; margin-bottom: 10px;" stem-layout="null"></div>')(scope));
 						break;
 					}
 					scope.$apply();
-					$(scope.stemBoard.containerSelector).height($(scope.stemBoard.containerSelector).height() + 500);
 				}
 			});
 			
@@ -132,6 +131,12 @@ Stem.directive('stemLayout', function(stemClasses) {
 					scope.$apply();
 				}
 			});
+			element.sortable({
+				items: 'div[stem-scalar], div[stem-table]',
+				cursor: "pointer",
+				containment: "#" + scope.stemLayout.id,
+				axis: "y"
+			});
 		}
 	}
 });
@@ -151,16 +156,6 @@ Stem.directive('stemScalar', function() {
 		restrict: 'A',
 		scope: {
 			stemScalar: '='
-		}, 
-		link: function(scope, element, attrs) {
-			element.sortable({
-				axis: "y",
-				connectWith: "#" + scope.stemScalar.parent.id + ' div[stem-scalar], ' + "#" + scope.stemScalar.parent.id + ' div[stem-table]'
-			});
-			scope.del = function() {
-				scope.stemScalar.del();
-				scope.$parent.areaVariables.splice(scope.$parent.areaVariables.indexOf(scope.stemScalar), 1);
-			}
 		},
 		templateUrl: "stem-scalar.html"
 	}
@@ -176,10 +171,6 @@ Stem.directive('stemTable', function(stemTable, $compile) {
 		link: function(scope, element, attributes) {
 	        scope.$watch(function () { return element[0].childNodes[0].childNodes[3]; }, function(newValue, oldValue) {
 				new stemTable.Table("#" + scope.stemTable.id + "-table", scope.stemTable.columns, scope.stemTable.value);
-				element.sortable({
-					axis: "y",
-					connectWith: "#" + scope.stemTable.parent.id + ' div[stem-scalar], ' + "#" + scope.stemTable.parent.id + ' div[stem-table]'
-				});
 			});
 		}
 	}
