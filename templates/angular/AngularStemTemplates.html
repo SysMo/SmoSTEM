@@ -29,7 +29,7 @@
 
 <! -- Stem Layout -->
 <script type="text/ng-template" id="stem-layout.html">
-  <div style="overflow: auto; height: 500px; background: #EEE; padding: 10px; margin: 10px; float: left;">
+  <div id="{{stemLayout.id}}" style="overflow: auto; height: 500px; background: #EEE; padding: 10px; margin: 10px; float: left;">
 	<button class="close" ng-click="stemLayout.del()">&times;</button>
 	<div ng-repeat="field in stemLayout.fields">
 	  <div ng-switch on="field.type">

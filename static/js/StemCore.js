@@ -142,6 +142,7 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 			this.type = type || 'grid';
 			this.width = width || 'wide';
 			this.fields = fields || [];
+			this.id = stemUtil.guid();
 		},
 		addField: function(field) {
 			field.parent = this;

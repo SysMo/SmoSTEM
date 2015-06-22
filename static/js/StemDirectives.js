@@ -132,6 +132,10 @@ Stem.directive('stemScalar', function() {
 			stemScalar: '='
 		}, 
 		link: function(scope, element, attrs) {
+			element.sortable({
+				axis: "y",
+				connectWith: "#" + scope.stemScalar.parent.id + ' div[stem-scalar], ' + "#" + scope.stemScalar.parent.id + ' div[stem-table]'
+			});
 			scope.del = function() {
 				scope.stemScalar.del();
 				scope.$parent.areaVariables.splice(scope.$parent.areaVariables.indexOf(scope.stemScalar), 1);
@@ -151,6 +155,10 @@ Stem.directive('stemTable', function(stemTable, $compile) {
 		link: function(scope, element, attributes) {
 	        scope.$watch(function () { return element[0].childNodes[0].childNodes[3]; }, function(newValue, oldValue) {
 				new stemTable.Table("#" + scope.stemTable.id + "-table", scope.stemTable.columns, scope.stemTable.value);
+				element.sortable({
+					axis: "y",
+					connectWith: "#" + scope.stemTable.parent.id + ' div[stem-scalar], ' + "#" + scope.stemTable.parent.id + ' div[stem-table]'
+				});
 			});
 		}
 	}
