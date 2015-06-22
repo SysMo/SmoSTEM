@@ -69,9 +69,9 @@
 				<h4 class="modal-title">Properties</h4>
 			</div>
 			<div class="modal-body">
-				<form novalidate>
+				<form>
 					<div>Name</div>
-					<input type="text" ng-model="stemField.name">
+					<input type="text" ng-model="stemField.name" pattern="[a-zA-Z_][a-zA-Z0-9_]+" required>
 					<div>Label</div>
 					<input type="text" ng-model="stemField.label">
 				</form>

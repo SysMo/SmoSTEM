@@ -32,7 +32,7 @@ Stem.directive('stemBoard', function(stemClasses) {
 			// Initialize droppable board
 			$(scope.stemBoard.containerSelector).droppable({
 				accept: scope.stemBoard.layoutsSelector,
-				hoverClass: 'droppable-hover',
+				activeClass: 'droppable-hover',
 				drop: function( event, ui ) {
 					var layoutClassId = ui.draggable.context.id; // id of li element; is the same as component type
 					$('#'+layoutClassId).draggable("option", "revert", false);
@@ -112,9 +112,9 @@ Stem.directive('stemLayout', function(stemClasses) {
 				element.css('width', '1020px');
 			}
 			element.droppable({
-				accept: scope.$parent.componentsSelector,
-				hoverClass: 'droppable-hover',
-				drop: function( event, ui ) {
+				accept: scope.$parent.stemBoard.componentsSelector,
+				activeClass: 'droppable-hover',
+				drop: function(event, ui) {
 					var fieldClassId = ui.draggable.context.id; // id of li element; is the same as component type
 					$('#'+fieldClassId).draggable("option", "revert", false);
 					var field;
@@ -132,10 +132,20 @@ Stem.directive('stemLayout', function(stemClasses) {
 				}
 			});
 			element.sortable({
-				items: 'div[stem-scalar], div[stem-table]',
-				cursor: "pointer",
+				//items: 'div[stem-scalar], div[stem-table]',
 				containment: "#" + scope.stemLayout.id,
-				axis: "y"
+				axis: "y",
+				start: function(event, ui) {
+					ui.item.startIndex = ui.item.index();
+				},
+				stop : function(event, ui) {
+					// field being moved among sortables
+					var field = scope.stemLayout.fields[ui.item.startIndex - 1];
+					// modifying the layout's fields array
+					scope.stemLayout.fields.splice(ui.item.startIndex - 1, 1);
+					scope.stemLayout.fields.splice(ui.item.index() - 1, 0 , field);
+					console.log(scope.stemLayout.fields);
+				}
 			});
 		}
 	}
