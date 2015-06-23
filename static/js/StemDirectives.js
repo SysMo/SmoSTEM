@@ -8,7 +8,7 @@ Stem.directive('stemModal', [function() {
 	}
 }]);
 
-Stem.directive('stemBoard', function(stemClasses) {
+Stem.directive('stemBoard', function(stemClasses, $timeout) {
 	return {
 		restrict: 'A',
 		scope: {
@@ -47,7 +47,9 @@ Stem.directive('stemBoard', function(stemClasses) {
 						scope.addLayout(layout);
 						break;
 					}
-					scope.$apply();
+					$timeout(function(){
+						scope.$apply();
+					});
 				}
 			});
 			
@@ -86,7 +88,7 @@ Stem.directive('stemBoard', function(stemClasses) {
 	}
 });
 
-Stem.directive('stemLayout', function(stemClasses) {
+Stem.directive('stemLayout', function(stemClasses, $timeout) {
 	return {
 		restrict : 'A',
 		scope: {
@@ -132,7 +134,9 @@ Stem.directive('stemLayout', function(stemClasses) {
 						scope.addField(field);
 						break;
 					}
-					scope.$apply();
+					$timeout(function(){
+						scope.$apply();
+					});
 				}
 			});
 			element.sortable({
@@ -148,6 +152,10 @@ Stem.directive('stemLayout', function(stemClasses) {
 					// modifying the layout's fields array
 					scope.stemLayout.fields.splice(ui.item.startIndex - 1, 1);
 					scope.stemLayout.fields.splice(ui.item.index() - 1, 0 , field);
+					$timeout(function(){
+						scope.$apply();
+						console.log(scope.stemLayout.fields);
+					});
 				}
 			});
 		}
