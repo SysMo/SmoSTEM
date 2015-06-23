@@ -129,7 +129,7 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 		init: function(name, label, value) {
 			this._super();
 			this.label = label || '';
-			this.name = name || ('T' + (classes.TextField.instanceCounter + 1).toString());
+			this.name = name || ('Text' + (classes.TextField.instanceCounter + 1).toString());
 			classes.TextField.instanceCounter++;
 			this.value = value || '';
 		}

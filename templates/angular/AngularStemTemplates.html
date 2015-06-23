@@ -41,6 +41,10 @@
 	      <div stem-table="field"></div>
 	      <div stem-field-editor="field"></div>
 	    </div>
+	    <div ng-switch-when="stem.TextField">
+	      <div stem-text-area="field"></div>
+	      <div stem-field-editor="field"></div>
+	    </div>
 	    <div ng-switch-default>
 	      Unimplemented type {{field.type}}
 	    </div>
@@ -107,6 +111,18 @@
   </div>
   <div>{{stemTable.label}}</div>
   <table id="{{stemTable.id}}-table"></table>
+</div>
+</script>
+
+<! -- Stem Text Area -->
+<script type="text/ng-template" id="stem-text-area.html">
+<div id="{{stemTextArea.id}}" style="width: 450px; background: white; margin: 6px; padding: 5px; border: solid 1px #AAA">
+  <div ng-click="stemTextArea.edit()">
+  	<span style="color: blue; cursor: pointer;">{{stemTextArea.name}}</span>
+  	<button class="close" ng-click="$parent.removeField(stemTextArea)">&times;</button>
+  </div>
+  <div>{{stemTextArea.label}}</div>
+  <textarea id="{{stemTextArea.id}}-textarea" style="width: 430px; max-width: 430px;" ng-model="stemTextArea.value"></textarea>
 </div>
 </script>
 {% endraw %}

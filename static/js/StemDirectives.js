@@ -127,6 +127,10 @@ Stem.directive('stemLayout', function(stemClasses) {
 						field = new stemClasses.TableField();
 						scope.addField(field);
 						break;
+					case 'fields_TextArea':
+						field = new stemClasses.TextField();
+						scope.addField(field);
+						break;
 					}
 					scope.$apply();
 				}
@@ -144,7 +148,6 @@ Stem.directive('stemLayout', function(stemClasses) {
 					// modifying the layout's fields array
 					scope.stemLayout.fields.splice(ui.item.startIndex - 1, 1);
 					scope.stemLayout.fields.splice(ui.item.index() - 1, 0 , field);
-					console.log(scope.stemLayout.fields);
 				}
 			});
 		}
@@ -182,6 +185,29 @@ Stem.directive('stemTable', function(stemTable, $compile) {
 	        scope.$watch(function () { return element[0].childNodes[0].childNodes[3]; }, function(newValue, oldValue) {
 				new stemTable.Table("#" + scope.stemTable.id + "-table", scope.stemTable.columns, scope.stemTable.value);
 			});
+		}
+	}
+});
+
+Stem.directive('stemTextArea', function() {
+	return {
+		restrict: 'A',
+		scope: {
+			stemTextArea: '='
+		},
+		templateUrl: "stem-text-area.html",
+		link: function(scope, element, attributes) {
+			// Watching for the node to be created
+			scope.$watch(function () { return element[0].childNodes[1].childNodes[5]; }, function(newValue, oldValue) {
+				// Overflow event handler
+				newValue.addEventListener('overflow', function(ev) {
+					 if (ev.type == "overflow") {
+						 if (ev.detail == 0 || ev.detail == 2) {
+							 $(newValue).innerHeight($(this).innerHeight() + 20);
+						 }
+					 }
+				}, false);
+			});			
 		}
 	}
 });
