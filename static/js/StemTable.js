@@ -47,20 +47,29 @@ Stem.factory('stemTable', function() {
 		    			},
 		                callback: $.proxy(function(key, options) {
 		                	switch(key){
-		    					case "addRow":
-		    						this.addRow(ev.target.dataset.row);
+		    					case "addRowBefore":
+		    						this.addRow(parseInt(ev.target.dataset.row));
+		    						break;
+		    					case "addRowAfter":
+		    						this.addRow(parseInt(ev.target.dataset.row), 'after');
 		    						break;
 		    					case "delRow":
-		    						this.delRow(ev.target.dataset.row);
+		    						this.delRow(parseInt(ev.target.dataset.row));
 		    						break;
-		    					case "addColumn":
+		    					case "addColumnBefore":
 		    						var promptVal = prompt("Please enter column name", "");
 		    						if (promptVal != null) {
-		    							this.addColumn(ev.target.dataset.col, promptVal);
+		    							this.addColumn(parseInt(ev.target.dataset.col), promptVal);
+		    						}
+		    						break;
+		    					case "addColumnAfter":
+		    						var promptVal = prompt("Please enter column name", "");
+		    						if (promptVal != null) {
+		    							this.addColumn(parseInt(ev.target.dataset.col), promptVal, 'after');
 		    						}
 		    						break;
 		    					case "delColumn":
-		    						this.delColumn(ev.target.dataset.col);
+		    						this.delColumn(parseInt(ev.target.dataset.col));
 		    						break;
 		    					case "renameColumn":
 		    						promptVal = prompt("Please enter new column name", "");
@@ -86,9 +95,11 @@ Stem.factory('stemTable', function() {
 		                }, table),
 		                items: 
 		                {
-		                    "addRow":    {name: "Add row", icon: "edit"},
+		                    "addRowBefore":    {name: "Add row before", icon: "edit"},
+		                    "addRowAfter":    {name: "Add row after", icon: "edit"},
 		                    "delRow":    {name: "Delete row", icon: "edit"},
-		                    "addColumn":    {name: "Add column", icon: "edit"},
+		                    "addColumnBefore":    {name: "Add column before", icon: "edit"},
+		                    "addColumnAfter":    {name: "Add column after", icon: "edit"},
 		                    "delColumn": {name: "Delete column", icon: "edit"},
 		                    "resize": {name: "Resize", icon: "edit"},
 		                    "renameColumn": {name: "Rename column", icon: "edit"},
@@ -122,7 +133,10 @@ Stem.factory('stemTable', function() {
 		
 	};
 	
-	stemTable.Table.prototype.addRow = function(index) {
+	stemTable.Table.prototype.addRow = function(index, where) {
+		if (where == 'after') {
+			index = index + 1;
+		}
 		var newRow = [];
 		for (var i=0; i<this.columns.length; i++) {
 			newRow.push(0);
@@ -152,7 +166,10 @@ Stem.factory('stemTable', function() {
 		this.renderTable();
 		this.updateView();
 	};
-	stemTable.Table.prototype.addColumn = function(index, name) {
+	stemTable.Table.prototype.addColumn = function(index, name, where) {
+		if (where == 'after') {
+			index = index + 1;
+		}
 		this.columns.splice(index, 0, {name: name});
 		for (var i=0; i<this.data.length; i++) {
 			this.data[i].splice(index, 0, 0);
