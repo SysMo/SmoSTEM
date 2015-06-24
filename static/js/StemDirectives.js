@@ -221,6 +221,7 @@ Stem.directive('stemTextArea', function() {
 			scope.$watch(function () { return element[0].childNodes[1].childNodes[5]; }, function(newValue, oldValue) {
 				// Overflow event handler
 				newValue.addEventListener('overflow', function(ev) {
+				     console.log(ev);
 					 if (ev.type == "overflow") {
 						 if (ev.detail == 0 || ev.detail == 2) {
 							 $(newValue).innerHeight($(this).innerHeight() + 20);
