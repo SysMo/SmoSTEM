@@ -12,9 +12,10 @@
 				<h4 class="modal-title">Properties</h4>
 			</div>
 			<div class="modal-body">
-				<form novalidate>
+				<form>
 					<div>name</div>
-					<input type="text" ng-model="stemModel.name">
+					<input type="text" ng-model="stemModel.name" pattern="[a-zA-Z_][a-zA-Z0-9_]+" required>
+					<div></div>
 					<div>description</div>
 					<input type="text" ng-model="stemModel.description">
 				</form>

@@ -11,7 +11,8 @@ modelID: '{{modelID}}',
 	  <h1>{{model.name}}</h1>
 	  <div>{{model.description}}</div>
 	  <div class="btn-group" role="group" aria-label="Model buttons">
-	    <button class="btn btn-primary" ng-click="save()">Save</button>
+	    <button class="btn btn-primary" ng-click="save()" id="{{model._id}}-saveButton">
+	    	Save</button>
 	    <button class="btn btn-primary" ng-click="compute()">Compute</button>
 	    <button class="btn btn-primary" data-toggle="modal" data-target="#{{model._id.$oid}}-modal">Properties</button>
 	  </div>

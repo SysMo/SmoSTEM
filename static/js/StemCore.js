@@ -43,6 +43,10 @@ Stem.controller('ModelEditorCtrl', function($scope,
 			console.log(responseData);
 		});
 	};
+	$scope.checkVal = function(modelId) {
+		console.log(modelId);
+		return true;
+	}
 	$("#main").height(500);
 	
 });

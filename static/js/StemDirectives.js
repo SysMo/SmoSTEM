@@ -4,6 +4,18 @@ Stem.directive('stemModal', [function() {
 		scope : {
 			stemModel : '=model'
 		},
+		link: function (scope, element, attributes) {
+			element.find('input').first().on('change', function(event) {
+				if (!this.checkValidity()) {
+					angular.element('#' + scope.stemModel._id + '-saveButton').prop('disabled', true);
+					$(this).next().css('color', 'red').html('Name is required and must be a valid Python identifier.');
+				} else {
+					angular.element('#' + scope.stemModel._id + '-saveButton').prop('disabled', false);
+					$(this).next().html('');
+				}
+			});
+			
+		},
 		templateUrl: "stem-modal.html",
 	}
 }]);
