@@ -12,22 +12,120 @@ Stem.factory('stemTable', function() {
 		this.tableNode.innerHTML = "";
 		var table = this;
 		columns = angular.copy(this.columns);
-		columns.unshift({name: '#'});
+		//columns.unshift({name: '#'});
 		var node = document.createElement("TR");
 		var row = this.tableNode.appendChild(node);
+		node = document.createElement("TD");
+		node.innerHTML = '#';
+		row.appendChild(node);
 		for (var j=0; j<columns.length; j++) {
 			node = document.createElement("TD");
+			node.setAttribute("data-col", j);
 			var cell = row.appendChild(node);
 			cell.innerHTML = columns[j].name;
-			cell.addEventListener("click", function() {
-				//console.log(table.columns[Array.prototype.indexOf.call(this.parentNode.childNodes, this) - 1]);
-			});
+			cell.addEventListener('contextmenu', function(ev) {
+	            ev.preventDefault();
+	            $.contextMenu({
+	    			selector: 'body',
+	    			reposition: false,
+	    			events: {  
+	    				hide: function() {
+	    					$.contextMenu('destroy');
+	    				}
+	    			},
+	                callback: $.proxy(function(key, options) {
+	                	switch(key){
+	    					case "addColumnBefore":
+	    						var promptVal = prompt("Please enter column name", "");
+	    						if (promptVal != null) {
+	    							this.addColumn(parseInt(ev.target.dataset.col), promptVal);
+	    						}
+	    						break;
+	    					case "addColumnAfter":
+	    						var promptVal = prompt("Please enter column name", "");
+	    						if (promptVal != null) {
+	    							this.addColumn(parseInt(ev.target.dataset.col), promptVal, 'after');
+	    						}
+	    						break;
+	    					case "delColumn":
+	    						this.delColumn(parseInt(ev.target.dataset.col));
+	    						break;
+	    					case "renameColumn":
+	    						promptVal = prompt("Please enter new column name", "");
+	    						if (promptVal != null) {
+	    							this.renameColumn(parseInt(ev.target.dataset.col), promptVal);
+	    						}
+	    						break;
+	    					case "setColFormat":
+	    						promptVal = prompt("Please enter the format for this column", "");
+	    						if (promptVal != null) {
+	    							this.setColFormat(parseInt(ev.target.dataset.col), promptVal);
+	    						}
+	    						break;
+	    					default:
+	    						break;
+	                	}
+	                }, table),
+	                items: 
+	                {
+	                    "addColumnBefore":    {name: "Add column before", icon: "edit"},
+	                    "addColumnAfter":    {name: "Add column after", icon: "edit"},
+	                    "delColumn": {name: "Delete column", icon: "edit"},
+	                    "renameColumn": {name: "Rename column", icon: "edit"},
+	                    "setColFormat": {name: "Column format", icon: "edit"},
+	                    
+	                }
+	            });
+	            return false;
+	        }, false);		
 		}
 		for (var i=0; i<this.data.length; i++) {
 			node = document.createElement("TR");
 		    row = this.tableNode.appendChild(node);
 		    node = document.createElement("TD");
+		    node.setAttribute("data-row", i);
 		    node.innerHTML = i;
+		    node.addEventListener('contextmenu', function(ev) {
+	            ev.preventDefault();
+	            $.contextMenu({
+	    			selector: 'body',
+	    			reposition: false,
+	    			events: {  
+	    				hide: function() {
+	    					$.contextMenu('destroy');
+	    				}
+	    			},
+	                callback: $.proxy(function(key, options) {
+	                	switch(key){
+	    					case "addRowBefore":
+	    						this.addRow(parseInt(ev.target.dataset.row));
+	    						break;
+	    					case "addRowAfter":
+	    						this.addRow(parseInt(ev.target.dataset.row), 'after');
+	    						break;
+	    					case "delRow":
+	    						this.delRow(parseInt(ev.target.dataset.row));
+	    						break;
+	    					case "resize":
+	    						promptVal = prompt("Please enter number of rows", "");
+	    						if (promptVal != null) {
+	    							this.resize(parseInt(promptVal));
+	    						}
+	    						break;
+	    					default:
+	    						break;
+	                	}
+	                }, table),
+	                items: 
+	                {
+	                    "addRowBefore":    {name: "Add row before", icon: "edit"},
+	                    "addRowAfter":    {name: "Add row after", icon: "edit"},
+	                    "delRow":    {name: "Delete row", icon: "edit"},
+	                    "resize": {name: "Resize", icon: "edit"}  
+	                }
+	            });
+	            return false;
+	        }, false);
 		    row.appendChild(node);
 		    for (j=0; j<this.columns.length; j++) {
 		    	node = document.createElement("TD");
@@ -35,80 +133,6 @@ Stem.factory('stemTable', function() {
 		        cell.innerHTML = "<input data-row='" + i + "' data-col='" + j + "'/>";
 		        cell.childNodes[0].value 
 		        	= this.columns[j].format ? numeral(this.data[i][j]).format(this.columns[j].format) : numeral(this.data[i][j]).value();
-		        cell.addEventListener('contextmenu', function(ev) {
-		            ev.preventDefault();
-		            $.contextMenu({
-		    			selector: 'body',
-		    			reposition: false,
-		    			events: {  
-		    				hide: function() {
-		    					$.contextMenu('destroy');
-		    				}
-		    			},
-		                callback: $.proxy(function(key, options) {
-		                	switch(key){
-		    					case "addRowBefore":
-		    						this.addRow(parseInt(ev.target.dataset.row));
-		    						break;
-		    					case "addRowAfter":
-		    						this.addRow(parseInt(ev.target.dataset.row), 'after');
-		    						break;
-		    					case "delRow":
-		    						this.delRow(parseInt(ev.target.dataset.row));
-		    						break;
-		    					case "addColumnBefore":
-		    						var promptVal = prompt("Please enter column name", "");
-		    						if (promptVal != null) {
-		    							this.addColumn(parseInt(ev.target.dataset.col), promptVal);
-		    						}
-		    						break;
-		    					case "addColumnAfter":
-		    						var promptVal = prompt("Please enter column name", "");
-		    						if (promptVal != null) {
-		    							this.addColumn(parseInt(ev.target.dataset.col), promptVal, 'after');
-		    						}
-		    						break;
-		    					case "delColumn":
-		    						this.delColumn(parseInt(ev.target.dataset.col));
-		    						break;
-		    					case "renameColumn":
-		    						promptVal = prompt("Please enter new column name", "");
-		    						if (promptVal != null) {
-		    							this.renameColumn(parseInt(ev.target.dataset.col), promptVal);
-		    						}
-		    						break;
-		    					case "resize":
-		    						promptVal = prompt("Please enter number of rows", "");
-		    						if (promptVal != null) {
-		    							this.resize(parseInt(promptVal));
-		    						}
-		    						break;
-		    					case "setColFormat":
-		    						promptVal = prompt("Please enter the format for this column", "");
-		    						if (promptVal != null) {
-		    							this.setColFormat(parseInt(ev.target.dataset.col), promptVal);
-		    						}
-		    						break;
-		    					default:
-		    						break;
-		                	}
-		                }, table),
-		                items: 
-		                {
-		                    "addRowBefore":    {name: "Add row before", icon: "edit"},
-		                    "addRowAfter":    {name: "Add row after", icon: "edit"},
-		                    "delRow":    {name: "Delete row", icon: "edit"},
-		                    "addColumnBefore":    {name: "Add column before", icon: "edit"},
-		                    "addColumnAfter":    {name: "Add column after", icon: "edit"},
-		                    "delColumn": {name: "Delete column", icon: "edit"},
-		                    "resize": {name: "Resize", icon: "edit"},
-		                    "renameColumn": {name: "Rename column", icon: "edit"},
-		                    "setColFormat": {name: "Column format", icon: "edit"},
-		                    
-		                }
-		            });
-		            return false;
-		        }, false);
 		    }
 		}
 		
