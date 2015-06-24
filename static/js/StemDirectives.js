@@ -207,7 +207,7 @@ Stem.directive('stemTable', function(stemTable, $compile) {
 			} else {
 				element.css('width', '98%');
 			}
-	        scope.$watch(function () { return element[0].childNodes[0].childNodes[3]; }, function(newValue, oldValue) {
+	        scope.$watch(function () { return element[0].childNodes[1].childNodes[5].childNodes[1]; }, function(newValue, oldValue) {
 				new stemTable.Table("#" + scope.stemTable.id + "-table", scope.stemTable.columns, scope.stemTable.value);
 			});
 		}

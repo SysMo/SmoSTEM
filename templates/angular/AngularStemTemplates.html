@@ -105,13 +105,15 @@
 
 <! -- Stem Table -->
 <script type="text/ng-template" id="stem-table.html">
-<div id="{{stemTable.id}}" style="overflow-x: auto; background: white; margin: 6px; padding: 5px; border: solid 1px #AAA">
+<div id="{{stemTable.id}}" style="background: white; margin: 6px; padding: 5px; border: solid 1px #AAA">
   <div ng-click="stemTable.edit()">
   	<span style="color: blue; cursor: pointer;">{{stemTable.name}}</span>
   	<button class="close" ng-click="$parent.removeField(stemTable)">&times;</button>
   </div>
   <div>{{stemTable.label}}</div>
-  <table id="{{stemTable.id}}-table"></table>
+  <div style="overflow-x: auto;">
+  	<table id="{{stemTable.id}}-table"></table>
+  </div>
 </div>
 </script>
 
