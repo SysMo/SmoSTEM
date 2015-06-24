@@ -202,6 +202,11 @@ Stem.directive('stemTable', function(stemTable, $compile) {
 		},
 		templateUrl: "stem-table.html",
 		link: function(scope, element, attributes) {
+			if (scope.$parent.stemLayout.width == 'narrow') {
+				element.css('width', '450px');
+			} else {
+				element.css('width', '98%');
+			}
 	        scope.$watch(function () { return element[0].childNodes[0].childNodes[3]; }, function(newValue, oldValue) {
 				new stemTable.Table("#" + scope.stemTable.id + "-table", scope.stemTable.columns, scope.stemTable.value);
 			});
@@ -217,6 +222,12 @@ Stem.directive('stemTextArea', function() {
 		},
 		templateUrl: "stem-text-area.html",
 		link: function(scope, element, attributes) {
+			if (scope.$parent.stemLayout.width == 'narrow') {
+				element.css('width', '450px');
+			} else if (scope.$parent.stemLayout.width == 'wide') {
+				element.css('width', '98%');
+			}
+			element.find('textarea').css('width', '98%').css('max-width', '98%');
 			// Watching for the node to be created
 			scope.$watch(function () { return element[0].childNodes[1].childNodes[5]; }, function(newValue, oldValue) {
 				// Overflow event handler

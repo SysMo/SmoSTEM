@@ -105,7 +105,7 @@
 
 <! -- Stem Table -->
 <script type="text/ng-template" id="stem-table.html">
-<div id="{{stemTable.id}}" style="width: 450px; background: white; margin: 6px; padding: 5px; border: solid 1px #AAA">
+<div id="{{stemTable.id}}" style="overflow-x: auto; background: white; margin: 6px; padding: 5px; border: solid 1px #AAA">
   <div ng-click="stemTable.edit()">
   	<span style="color: blue; cursor: pointer;">{{stemTable.name}}</span>
   	<button class="close" ng-click="$parent.removeField(stemTable)">&times;</button>
@@ -117,13 +117,13 @@
 
 <! -- Stem Text Area -->
 <script type="text/ng-template" id="stem-text-area.html">
-<div id="{{stemTextArea.id}}" style="width: 450px; background: white; margin: 6px; padding: 5px; border: solid 1px #AAA">
+<div id="{{stemTextArea.id}}" style="background: white; margin: 6px; padding: 5px; border: solid 1px #AAA">
   <div ng-click="stemTextArea.edit()">
   	<span style="color: blue; cursor: pointer;">{{stemTextArea.name}}</span>
   	<button class="close" ng-click="$parent.removeField(stemTextArea)">&times;</button>
   </div>
   <div>{{stemTextArea.label}}</div>
-  <textarea id="{{stemTextArea.id}}-textarea" style="width: 430px; max-width: 430px;" ng-model="stemTextArea.value"></textarea>
+  <textarea id="{{stemTextArea.id}}-textarea" ng-model="stemTextArea.value"></textarea>
 </div>
 </script>
 {% endraw %}
