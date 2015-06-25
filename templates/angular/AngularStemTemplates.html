@@ -14,7 +14,7 @@
 			<div class="modal-body">
 				<form>
 					<div>name</div>
-					<input type="text" ng-model="stemModel.name" pattern="[a-zA-Z_][a-zA-Z0-9_]+" required>
+					<input type="text" ng-model="stemModel.name" required>
 					<div>description</div>
 					<input type="text" ng-model="stemModel.description">
 				</form>
@@ -55,7 +55,7 @@
 
 <! -- Stem Formulas Layout -->
 <script type="text/ng-template" id="stem-formulas-layout.html">
-  <div id="{{stemLayout.id}}" style="overflow: auto; width: 500px; height: 500px; background: #EEE; padding: 10px; margin: 10px; float: left;">
+  <div id="{{stemLayout.id}}" style="overflow: auto; width: 520px; height: 500px; background: #EEE; padding: 10px; margin: 10px; float: left;">
     <button class="close" ng-click="$parent.removeLayout(stemLayout)">&times;</button>
     <div style="width: 98%; height: 90%; border: solid 1px #AAA;" id="{{stemLayout.id}}-aceEditor"></div>
   </div>
@@ -108,8 +108,8 @@
 <script type="text/ng-template" id="stem-scalar.html">
 <div id="{{stemScalar.id}}" style="width: 300px; margin: 6px; padding: 5px; border: solid 1px #AAA; background: white;">
   <div>
-    <div style="display: inline-block; width: 100px;" ng-click="edit()">
-    	<span style="color: blue; cursor: pointer;">{{stemScalar.name}}</span>
+    <div style="display: inline-block; width: 100px;">
+    	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemScalar.name}}</span>
     </div>
     <input style="display: inline-block; width: 100px;" type="text" ng-model="stemScalar.value">
     <button class="close" ng-click="$parent.removeField(stemScalar)">&times;</button>
@@ -121,8 +121,8 @@
 <! -- Stem Table -->
 <script type="text/ng-template" id="stem-table.html">
 <div id="{{stemTable.id}}" style="background: white; margin: 6px; padding: 5px; border: solid 1px #AAA">
-  <div ng-click="edit()">
-  	<span style="color: blue; cursor: pointer;">{{stemTable.name}}</span>
+  <div>
+  	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemTable.name}}</span>
   	<button class="close" ng-click="$parent.removeField(stemTable)">&times;</button>
   </div>
   <div>{{stemTable.label}}</div>
@@ -135,8 +135,8 @@
 <! -- Stem Text Area -->
 <script type="text/ng-template" id="stem-text-area.html">
 <div id="{{stemTextArea.id}}" style="background: white; margin: 6px; padding: 5px; border: solid 1px #AAA">
-  <div ng-click="edit()">
-  	<span style="color: blue; cursor: pointer;">{{stemTextArea.name}}</span>
+  <div>
+  	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemTextArea.name}}</span>
   	<button class="close" ng-click="$parent.removeField(stemTextArea)">&times;</button>
   </div>
   <div>{{stemTextArea.label}}</div>

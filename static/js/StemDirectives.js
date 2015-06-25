@@ -63,6 +63,7 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 				$(element)
 				.draggable({
 					appendTo: "body",
+					scroll: false,
 					cursor: "pointer",
 					opacity: 0.5,
 					helper: "clone",
@@ -79,6 +80,7 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 				$(element)
 				.draggable({
 					appendTo: "body",
+					scroll: false,
 					cursor: "pointer",
 					opacity: 0.5,
 					helper: "clone",
@@ -114,9 +116,9 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 		},
 		link: function(scope, element, attributes) {
 			if (scope.stemLayout.width == 'narrow') {
-				element.css('width', '500px');
+				element.css('width', '520px');
 			} else {
-				element.css('width', '1020px');
+				element.css('width', '1060px');
 			}
 			element.droppable({
 				accept: scope.$parent.stemBoard.componentsSelector,
@@ -183,7 +185,6 @@ Stem.directive('stemFormulasLayout', function(stemClasses, $timeout) {
 				scope.editor.setValue(scope.stemLayout.fields[0].value);
 				scope.editor.on('change', function (ev) {
 					scope.stemLayout.fields[0].value = scope.editor.getValue();
-					console.log(scope.stemLayout.fields[0].value);
 				});
 			});
 		}
