@@ -58,6 +58,10 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 						layout = new stemClasses.Layout('grid', 'narrow');
 						scope.addLayout(layout);
 						break;
+					case 'formulas':
+						layout = new stemClasses.Layout('formulas');
+						scope.addLayout(layout);
+						break;
 					}
 					$timeout(function(){
 						scope.$apply();
@@ -100,13 +104,13 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 	}
 });
 
-Stem.directive('stemLayout', function(stemClasses, $timeout) {
+Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 	return {
 		restrict : 'A',
 		scope: {
-			stemLayout: '=',
+			stemLayout: '=stemGridLayout',
 		},
-		templateUrl: "stem-layout.html",
+		templateUrl: "stem-grid-layout.html",
 		replace: true,
 		controller: function($scope) {
 			$scope.addField = function(field) {
@@ -174,6 +178,31 @@ Stem.directive('stemLayout', function(stemClasses, $timeout) {
 	}
 });
 
+
+Stem.directive('stemFormulasLayout', function(stemClasses, $timeout) {
+	return {
+		restrict : 'A',
+		scope: {
+			stemLayout: '=stemFormulasLayout',
+		},
+		templateUrl: "stem-formulas-layout.html",
+		replace: true,
+		controller: function($scope) {
+		},
+		link: function(scope, element, attributes) {
+			// Code editor
+			//scope.editor = ace.edit("editor");
+			//scope.editor.getSession().setMode("ace/mode/python");
+			scope.$watch(function() { return element[0].childNodes[3]; }, function(newValue, oldValue) {
+				//console.log($(newValue));
+				scope.editor = ace.edit(scope.stemLayout.id + '-aceEditor');
+				console.log(scope.editor);
+				scope.editor.getSession().setMode("ace/mode/python");
+			});
+		}
+	}
+});
+
 Stem.directive('stemFieldEditor', [function() {
 	return {
 		restrict : 'A',
@@ -230,9 +259,7 @@ Stem.directive('stemTextArea', function() {
 			element.find('textarea').css('width', '98%').css('max-width', '98%');
 			// Watching for the node to be created
 			scope.$watch(function () { return element[0].childNodes[1].childNodes[5]; }, function(newValue, oldValue) {
-				// Input change event handler
 				newValue.addEventListener('input', function(ev) {
-					console.log(this.scrollHeight, this.clientHeight);
 					if (this.scrollHeight > this.clientHeight) {
 						$(this).height(this.clientHeight + 20);
 					}

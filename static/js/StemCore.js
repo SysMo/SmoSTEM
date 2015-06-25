@@ -142,8 +142,8 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 	
 	classes.Layout = Class.extend({
 		init: function(type, width, fields) {
-			this.type = type || 'grid';
 			this.width = width || 'wide';
+			this.type = type || 'grid';
 			this.fields = fields || [];
 			this.id = stemUtil.guid();
 		}

@@ -28,8 +28,8 @@
 </div>
 </script>
 
-<! -- Stem Layout -->
-<script type="text/ng-template" id="stem-layout.html">
+<! -- Stem Grid Layout -->
+<script type="text/ng-template" id="stem-grid-layout.html">
   <div id="{{stemLayout.id}}" style="overflow: auto; height: 500px; background: #EEE; padding: 10px; margin: 10px; float: left;">
 	<button class="close" ng-click="$parent.removeLayout(stemLayout)">&times;</button>
 	<div ng-repeat="field in stemLayout.fields">
@@ -54,10 +54,25 @@
   </div>
 </script>
 
+<! -- Stem Formulas Layout -->
+<script type="text/ng-template" id="stem-formulas-layout.html">
+  <div id="{{stemLayout.id}}" style="overflow: auto; width: 500px; height: 500px; background: #EEE; padding: 10px; margin: 10px; float: left;">
+    <button class="close" ng-click="$parent.removeLayout(stemLayout)">&times;</button>
+    <div style="width: 98%; height: 90%; border: solid 1px #AAA;" id="{{stemLayout.id}}-aceEditor"></div>
+  </div>
+</script>
+
 <! -- Stem Board -->
 <script type="text/ng-template" id="stem-board.html">
 <div ng-repeat="layout in stemBoard.layouts">
-	<div stem-layout="layout"></div>
+	<div ng-switch on="layout.type">
+		<div ng-switch-when="grid">
+			<div stem-grid-layout="layout"></div>
+		</div>
+		<div ng-switch-when="formulas">
+			<div stem-formulas-layout="layout"></div>
+		</div>
+	</div>
 </div>
 </script>
 
