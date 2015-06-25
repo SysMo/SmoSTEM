@@ -230,15 +230,13 @@ Stem.directive('stemTextArea', function() {
 			element.find('textarea').css('width', '98%').css('max-width', '98%');
 			// Watching for the node to be created
 			scope.$watch(function () { return element[0].childNodes[1].childNodes[5]; }, function(newValue, oldValue) {
-				// Overflow event handler
-				newValue.addEventListener('overflow', function(ev) {
-				     console.log(ev);
-					 if (ev.type == "overflow") {
-						 if (ev.detail == 0 || ev.detail == 2) {
-							 $(newValue).innerHeight($(this).innerHeight() + 20);
-						 }
-					 }
-				}, false);
+				// Input change event handler
+				newValue.addEventListener('input', function(ev) {
+					console.log(this.scrollHeight, this.clientHeight);
+					if (this.scrollHeight > this.clientHeight) {
+						$(this).height(this.clientHeight + 20);
+					}
+				});
 			});			
 		}
 	}
