@@ -6,6 +6,9 @@ from werkzeug.exceptions import default_exceptions
 from werkzeug.exceptions import HTTPException
 from flask.views import MethodView
 
+# REST-ful flask extension
+from flask_restful import Resource, Api
+
 import datetime
 from bson.objectid import ObjectId
 from pymongo import MongoClient
@@ -14,8 +17,9 @@ from pystem.flask import Utilities as U
 app = Flask(__name__)
 app.config.from_object('Settings')
 app.debug = True
+api = Api(app)
 mongoClient = MongoClient()
-#stemDB = mongoClient[app.config['STEM_DATABASE']]
+
 
 # Pages
 @app.route("/")
@@ -26,11 +30,7 @@ def index():
 def modelEditor(modelID):
 	return render_template('ModelEditor.html', modelID = modelID)
 
-
-# API's
-class ModelAPI(MethodView):
-	decorators = [] # Methods cannot be decorated
-	
+class ModelAPI(Resource):
 	@property
 	def Models(self):
 		"""
@@ -38,8 +38,13 @@ class ModelAPI(MethodView):
 		"""
 		return mongoClient[app.config['STEM_DATABASE']].Models
 
+	def toJSTypes(self, model):
+		""" Helper to convert BSON types to JS types suitable for rendering """
+		model['created'] = model['created'].strftime('%Y-%m-%d %H:%M:%S')
+		model['_id'] = str(model['_id'])
+
 	def create(self, modelData):
-		""" Create a new model with default values """
+		""" Helper to create a new model and initialize it with default values """
 		model = {
 			'name': modelData.get('name', u'Untitled'),
 			'description': modelData.get('description', u'Lorem ipsum dolores ....'),
@@ -50,66 +55,52 @@ class ModelAPI(MethodView):
 			'equations': modelData.get('equations', '')
 		}
 		return model
-	
-	def toJSTypes(self, model):
-		""" Convert BSON types to JS types suitable for rendering """
-		model['created'] = model['created'].strftime('%Y-%m-%d %H:%M:%S')
-		model['_id'] = str(model['_id'])
-	
-	
-	def get(self, modelID):
-		
-		if modelID is None:
-			# return a list of models
+
+	def get(self, modelID = None):
+		"""
+		Returns a model or a list of models
+		"""
+		if (modelID is None):
 			modelCursor = self.Models.find() #projection = ['_id', 'name', 'description', 'created']
 			models = []
 			for model in modelCursor:
 				self.toJSTypes(model)
 				models.append(model)
-			return U.toJson(models)			
+			return models
 		else:
-			# expose a single model
 			model = self.Models.find_one({"_id": ObjectId(modelID)})
 			self.toJSTypes(model)
-			return U.toJson(model)
+			return model
 
-	def post(self, modelID):
+	def post(self):
+		"""
+		Create a new model
+		"""
 		postData = request.json
-		if (modelID is None):
-			# create a new model definition
-			model = self.create(postData)
-			modelID = self.Models.insert(model)
-			return self.get(modelID)
-		else:
-			equationText = postData.get('equations', {})
-			variables = postData.get('variables', {})
-			exec(str(equationText), {}, variables)
-			return jsonify({'values': variables})
-		
-		
+		model = self.create(postData)
+		modelID = self.Models.insert(model)
+		return {'_id': str(modelID)}
+	
 	def delete(self, modelID):
 		self.Models.remove({"_id": ObjectId(modelID)})
-		return jsonify({'status': 0})
+		return {'status': 0}
 
 	def put(self, modelID):
 		# update a model definition
 		putData = request.json
-		self.Models.update({'_id': ObjectId(modelID)}, 
-			{'$set': {'name': putData.get('name'), 
+		self.Models.update(
+			{'_id': ObjectId(modelID)}, {
+				'$set': {
+					'name': putData.get('name'), 
 					'description': putData.get('description'),
 					'board': putData.get('board'),
 					'equations': putData.get('equations')
-					}
+				}
 			}, upsert=False)
 		return self.get(modelID)
+	
+api.add_resource(ModelAPI, '/stem/api/Models', '/stem/api/Models/<string:modelID>')
 
-class ComputeAPI(MethodView):
-	def post(self, modelID):
-		print request.json
-		# perform computation
-		return jsonify({'status': 0, 'message': 'performed computatoin on ' + modelID})
-
-U.registerAPI(app, ModelAPI, 'ModelAPI', '/stem/api/Models', pk='modelID')
 
 if __name__ == "__main__":
 	app.run()

@@ -104,9 +104,9 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 	});
 	
 	classes.ScalarField = classes.Field.extend({
-		type: 'stem.ScalarField',
 		init: function(name, label, value) {
 			this._super();
+			this.type = 'stem.ScalarField'; 
 			this.label = label || '';
 			this.name = name || ('v' + (classes.ScalarField.instanceCounter + 1).toString());
 			classes.ScalarField.instanceCounter++;
@@ -116,9 +116,9 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 	createInstanceCounter(classes.ScalarField);
 	
 	classes.TableField = classes.Field.extend({
-		type: 'stem.TableField',
 		init: function(name, label, columns, value) {
 			this._super();
+			this.type = 'stem.TableField'; 
 			this.label = label || '';
 			this.name = name || ('T' + (classes.TableField.instanceCounter + 1).toString());
 			classes.TableField.instanceCounter++;
@@ -129,9 +129,9 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 	createInstanceCounter(classes.TableField);
 	
 	classes.TextField = classes.Field.extend({
-		type: 'stem.TextField',
 		init: function(name, label, value) {
 			this._super();
+			this.type = 'stem.TextField'; 
 			this.label = label || '';
 			this.name = name || ('Text' + (classes.TextField.instanceCounter + 1).toString());
 			classes.TextField.instanceCounter++;
