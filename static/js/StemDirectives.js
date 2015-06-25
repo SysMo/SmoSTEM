@@ -27,6 +27,7 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 			}			
 		},
 		link: function (scope, element, attributes) {
+			$(scope.stemBoard.containerSelector).css('min-height', '520');
 			// Initialize droppable board
 			$(scope.stemBoard.containerSelector).droppable({
 				accept: scope.stemBoard.layoutsSelector,
@@ -45,7 +46,9 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 						scope.addLayout(layout);
 						break;
 					case 'formulas':
+						field = new stemClasses.FormulasField();
 						layout = new stemClasses.Layout('formulas');
+						layout.fields.push(field);
 						scope.addLayout(layout);
 						break;
 					}
@@ -142,7 +145,6 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 				}
 			});
 			element.sortable({
-				//items: 'div[stem-scalar], div[stem-table]',
 				containment: "#" + scope.stemLayout.id,
 				axis: "y",
 				start: function(event, ui) {
@@ -173,13 +175,16 @@ Stem.directive('stemFormulasLayout', function(stemClasses, $timeout) {
 		},
 		templateUrl: "stem-formulas-layout.html",
 		replace: true,
-		controller: function($scope) {
-		},
 		link: function(scope, element, attributes) {
 			scope.$watch(function() { return element[0].childNodes[3]; }, function(newValue, oldValue) {
 				// Ace code editor
 				scope.editor = ace.edit(scope.stemLayout.id + '-aceEditor');
 				scope.editor.getSession().setMode("ace/mode/python");
+				scope.editor.setValue(scope.stemLayout.fields[0].value);
+				scope.editor.on('change', function (ev) {
+					scope.stemLayout.fields[0].value = scope.editor.getValue();
+					console.log(scope.stemLayout.fields[0].value);
+				});
 			});
 		}
 	}

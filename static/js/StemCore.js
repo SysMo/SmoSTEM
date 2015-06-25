@@ -132,6 +132,14 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 	});	
 	createInstanceCounter(classes.TextField);
 	
+	classes.FormulasField = classes.Field.extend({
+		init: function(value) {
+			this._super();
+			this.type = 'stem.FormulasField';
+			this.value = value || '';
+		}
+	});	
+	
 	classes.Layout = Class.extend({
 		init: function(type, width, fields) {
 			this.width = width || 'wide';
