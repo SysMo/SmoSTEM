@@ -4,18 +4,6 @@ Stem.directive('stemModal', [function() {
 		scope : {
 			stemModel : '=model'
 		},
-		link: function (scope, element, attributes) {
-			element.find('input').first().on('change', function(event) {
-				if (!this.checkValidity()) {
-					angular.element('#' + scope.stemModel._id + '-saveButton').prop('disabled', true);
-					$(this).next().css('color', 'red').html('Name is required and must be a valid Python identifier.');
-				} else {
-					angular.element('#' + scope.stemModel._id + '-saveButton').prop('disabled', false);
-					$(this).next().html('');
-				}
-			});
-			
-		},
 		templateUrl: "stem-modal.html",
 	}
 }]);
@@ -30,13 +18,11 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 		controller: function($scope) {
 			$scope.addLayout = function(layout) {
 				$scope.stemBoard.layouts.push(layout);
-				$($scope.stemBoard.containerSelector).height($($scope.stemBoard.containerSelector).height() + 520);
 			},
 			$scope.removeLayout = function(layout) {
 				var index = $scope.stemBoard.layouts.indexOf(layout);
 				if (index >= 0) {
 					$scope.stemBoard.layouts.splice(index, 1);
-					$($scope.stemBoard.containerSelector).height($($scope.stemBoard.containerSelector).height() - 520);
 				}
 			}			
 		},
@@ -190,13 +176,9 @@ Stem.directive('stemFormulasLayout', function(stemClasses, $timeout) {
 		controller: function($scope) {
 		},
 		link: function(scope, element, attributes) {
-			// Code editor
-			//scope.editor = ace.edit("editor");
-			//scope.editor.getSession().setMode("ace/mode/python");
 			scope.$watch(function() { return element[0].childNodes[3]; }, function(newValue, oldValue) {
-				//console.log($(newValue));
+				// Ace code editor
 				scope.editor = ace.edit(scope.stemLayout.id + '-aceEditor');
-				console.log(scope.editor);
 				scope.editor.getSession().setMode("ace/mode/python");
 			});
 		}
@@ -206,8 +188,19 @@ Stem.directive('stemFormulasLayout', function(stemClasses, $timeout) {
 Stem.directive('stemFieldEditor', [function() {
 	return {
 		restrict : 'A',
-		scope : {
+		scope: {
 			stemField : '=stemFieldEditor'
+		},
+		link: function(scope, element, attributes) {
+			element.find('input').first().on('input', function(event) {
+				if (!this.checkValidity()) {
+					$('#' + scope.stemField.id + '-OkButton').prop('disabled', true);
+					$(this).next().css('color', 'red').html('Name is required and must be a valid Python identifier.');
+				} else {
+					$('#' + scope.stemField.id + '-OkButton').prop('disabled', false);
+					$(this).next().html('');
+				}
+			});
 		},
 		templateUrl: "stem-field-editor.html",
 	}
@@ -219,6 +212,11 @@ Stem.directive('stemScalar', function() {
 		scope: {
 			stemScalar: '='
 		},
+		controller: function($scope) {
+			$scope.edit = function() {
+				$( '#' + $scope.stemScalar.id +'-modal').modal( "show" );
+			};
+		},
 		templateUrl: "stem-scalar.html"
 	}
 });
@@ -228,6 +226,11 @@ Stem.directive('stemTable', function(stemTable, $compile) {
 		restrict: 'A',
 		scope: {
 			stemTable: '='
+		},
+		controller: function($scope) {
+			$scope.edit = function() {
+				$( '#' + $scope.stemTable.id +'-modal').modal( "show" );
+			};
 		},
 		templateUrl: "stem-table.html",
 		link: function(scope, element, attributes) {
@@ -248,6 +251,11 @@ Stem.directive('stemTextArea', function() {
 		restrict: 'A',
 		scope: {
 			stemTextArea: '='
+		},
+		controller: function($scope) {
+			$scope.edit = function() {
+				$( '#' + $scope.stemTextArea.id +'-modal').modal( "show" );
+			};
 		},
 		templateUrl: "stem-text-area.html",
 		link: function(scope, element, attributes) {

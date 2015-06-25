@@ -47,8 +47,6 @@ Stem.controller('ModelEditorCtrl', function($scope,
 		console.log(modelId);
 		return true;
 	}
-	$("#main").height(500);
-	
 });
 
 // To be used for logging erros on ngResource calls
@@ -94,13 +92,7 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 		init: function () {
 			// Create unique id
 			this.id = stemUtil.guid();			
-		},
-		edit: function() {
-			$( '#' + this.id +'-modal').modal( "show" );
-		},
-		del: function() {
-			this.parent.removeField(this);
-		},
+		}
 	});
 	
 	classes.ScalarField = classes.Field.extend({
