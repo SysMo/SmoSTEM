@@ -13,6 +13,7 @@ import datetime
 from bson.objectid import ObjectId
 from pymongo import MongoClient
 from pystem.flask import Utilities as U
+from pystem.model.ModelActions import ModelActionExecutor
 
 app = Flask(__name__)
 app.config.from_object('Settings')
@@ -72,14 +73,23 @@ class ModelAPI(Resource):
 			self.toJSTypes(model)
 			return model
 
-	def post(self):
+	def post(self, modelID = None):
 		"""
-		Create a new model
+		Create a new model or run an action on model
 		"""
-		postData = request.json
-		model = self.create(postData)
-		modelID = self.Models.insert(model)
-		return {'_id': str(modelID)}
+		modelData = request.json
+		params = request.args
+		if (modelID is None):
+			model = self.create(modelData)
+			modelID = self.Models.insert(model)
+			return {'_id': str(modelID)}
+		else:
+			action = params['action']
+			ex = ModelActionExecutor(modelData)
+			ex.execute(action)
+			return modelData
+			
+			
 	
 	def delete(self, modelID):
 		self.Models.remove({"_id": ObjectId(modelID)})
@@ -97,7 +107,6 @@ class ModelAPI(Resource):
 					'equations': putData.get('equations')
 				}
 			}, upsert=False)
-		return self.get(modelID)
 	
 api.add_resource(ModelAPI, '/stem/api/Models', '/stem/api/Models/<string:modelID>')
 

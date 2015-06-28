@@ -39,9 +39,7 @@ Stem.controller('ModelEditorCtrl', function($scope,
 		$scope.model.$update();
 	};
 	$scope.compute = function() {
-		$scope.model.$compute({params: 3}, function(responseData) {
-			console.log(responseData);
-		});
+		$scope.model.$compute();
 	};
 	$scope.checkVal = function(modelId) {
 		console.log(modelId);
@@ -62,8 +60,15 @@ Stem.factory('ServerErrorHandler', function() {
 Stem.factory('ModelService', function($resource) {  
 	return $resource('/stem/api/Models/:_id', { _id: '@_id' }, 
 		{				
-			update: { method:'PUT' },
-			//compute: { method}
+			update: { 
+				method:'PUT' 
+			}, 
+			compute: { 
+				method: 'POST', 
+				params: {
+					action: "compute" 
+				}
+			}
 		}
 )});
 
