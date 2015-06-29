@@ -12,7 +12,6 @@ Stem.factory('stemTable', function() {
 		this.tableNode.innerHTML = "";
 		var table = this;
 		columns = angular.copy(this.columns);
-		//columns.unshift({name: '#'});
 		var node = document.createElement("TR");
 		var row = this.tableNode.appendChild(node);
 		node = document.createElement("TD");
@@ -26,7 +25,8 @@ Stem.factory('stemTable', function() {
 			cell.addEventListener('contextmenu', function(ev) {
 	            ev.preventDefault();
 	            $.contextMenu({
-	    			selector: 'body',
+	            	position: function(opt, x, y){opt.$menu.css('display', 'block').position({ my: "left top", at: "center center", of: $(ev.target)}).css('display', 'none'); },
+	    			selector: "body",
 	    			reposition: false,
 	    			events: {  
 	    				hide: function() {
@@ -77,7 +77,7 @@ Stem.factory('stemTable', function() {
 	                }
 	            });
 	            return false;
-	        }, false);		
+	        }, false)
 		}
 		for (var i=0; i<this.data.length; i++) {
 			node = document.createElement("TR");
@@ -88,6 +88,7 @@ Stem.factory('stemTable', function() {
 		    node.addEventListener('contextmenu', function(ev) {
 	            ev.preventDefault();
 	            $.contextMenu({
+	            	position: function(opt, x, y){opt.$menu.css('display', 'block').position({ my: "left top", at: "center center", of: $(ev.target)}).css('display', 'none'); },
 	    			selector: 'body',
 	    			reposition: false,
 	    			events: {  
@@ -146,6 +147,9 @@ Stem.factory('stemTable', function() {
 		    	elm.value = table.columns[elm.dataset.col].format ? numeral(table.data[elm.dataset.row][elm.dataset.col]).format(table.columns[elm.dataset.col].format) : numeral(table.data[elm.dataset.row][elm.dataset.col]).value();
 		    };
 		});
+		$('body:not(.context-menu-list)').click(function() {
+        	$('.context-menu-list').contextMenu("hide");
+        });
 	};
 	
 	stemTable.Table.prototype.updateView = function() {
