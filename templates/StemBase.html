@@ -16,16 +16,17 @@
 	<!-- Ace -->	
 	<script src="/static/ext/ace/ace.js"></script>
 	<script src="/static/ext/ace/ext-static_highlight.js"></script>
+	<!-- ContextMenu -->
+	<link rel="stylesheet" href="/static/ext/contextMenu/jquery.contextMenu.css">
+	<script src="/static/ext/contextMenu/jquery.ui.position.js"></script>
+	<script src="/static/ext/contextMenu/jquery.contextMenu.js"></script>
+	<!-- Numeral.js -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
 	<!-- Stem -->
 	<link rel="stylesheet" href="/static/css/Stem.css">
 	<script src="/static/js/StemCore.js"></script>
+	<script src="/static/js/StemResources.js"></script>
 	<script src="/static/js/StemDirectives.js"></script>
-	<!-- ContextMenu -->
-	<link rel="stylesheet" href="/static/css/jquery.contextMenu.css">
-	<script src="/static/js/contextMenu/jquery.ui.position.js"></script>
-	<script src="/static/js/contextMenu/jquery.contextMenu.js"></script>
-	<!-- Numeral.js -->
-	<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
 	<!-- Stem Table -->
 	<link rel="stylesheet" href="/static/css/StemTable.css">
 	<script src="/static/js/StemTable.js"></script>
@@ -52,7 +53,7 @@
     <div ng-repeat="model in models">
     	<h2>{{model.name}}</h2>
     	<div>{{model.description}}</div>
-    	<div>Created: {{model.creationDate}}</div>
+    	<div>Created: {{model.created}}</div>
     	<div class="btn-group" role="group" aria-label="Model buttons">
     		<button class="btn btn-primary" ng-click="editModel(model)">Edit</button>
     		<button class="btn btn-primary" ng-click="deleteModel(model)">Delete</button>

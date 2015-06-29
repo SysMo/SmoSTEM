@@ -1,8 +1,8 @@
 var Stem = angular.module('Stem',['ngResource']);
 
 // Page with model list
-Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, ModelService, ServerErrorHandler){
-	$scope.models = ModelService.query(function(data) {
+Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResources, ServerErrorHandler){
+	$scope.models = StemResources.Models.query(function(data) {
 	}, ServerErrorHandler);
 	// Open model editor
 	$scope.editModel = function(model) {
@@ -11,11 +11,11 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, ModelServi
 	// Delete model on the server and reload models
 	$scope.deleteModel = function(model) {
 		model.$delete();
-		$scope.models = ModelService.query(function(data) {
+		$scope.models = StemResources.Models.query(function(data) {
 		}, ServerErrorHandler);	}
 	// Create a new model and open model editor
 	$scope.createModel = function(model) {
-		var model = new ModelService();
+		var model = new StemResources.Models();
 		model.$save(function() {
 			window.location.href = '/ModelEditor/' + model._id;	
 		});
@@ -25,9 +25,9 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, ModelServi
 
 // Page with model editor
 Stem.controller('ModelEditorCtrl', function($scope, 
-		PageSettings, ModelService){
+		PageSettings, StemResources){
 	// Get the model object from the server
-	$scope.model =  ModelService.get({_id: PageSettings.modelID}, function() {
+	$scope.model =  StemResources.Models.get({_id: PageSettings.modelID}, function() {
 		// Add the selectors for the different board parts
 		angular.extend($scope.model.board, {
 			containerSelector : '#main',
@@ -54,23 +54,6 @@ Stem.factory('ServerErrorHandler', function() {
 		console.log(data);
 	}
 });
-
-
-//Provides the API for querying and manipulating models on the server
-Stem.factory('ModelService', function($resource) {  
-	return $resource('/stem/api/Models/:_id', { _id: '@_id' }, 
-		{				
-			update: { 
-				method:'PUT' 
-			}, 
-			compute: { 
-				method: 'POST', 
-				params: {
-					action: "compute" 
-				}
-			}
-		}
-)});
 
 //Utility functions
 Stem.factory('stemUtil', function stemUtil () {
