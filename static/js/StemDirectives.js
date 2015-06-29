@@ -120,6 +120,11 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 			} else {
 				element.css('width', '1060px');
 			}
+			if (scope.stemLayout.height) {
+				element.css('height', scope.stemLayout.height);
+			} else {
+				element.css('height', '500px');
+			}
 			element.droppable({
 				accept: scope.$parent.stemBoard.componentsSelector,
 				activeClass: 'droppable-hover',
@@ -148,6 +153,9 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 			});
 			element.resizable({
 				handles: "s",
+				resize: function(event, ui) {
+					scope.stemLayout.height = ui.size.height + 'px';
+				}
 			});
 			element.find('.sortables_div').sortable({
 				containment: "#" + scope.stemLayout.id + ' > .sortables_div',
@@ -182,6 +190,11 @@ Stem.directive('stemFormulasLayout', function(stemClasses, $timeout) {
 		templateUrl: "stem-formulas-layout.html",
 		replace: true,
 		link: function(scope, element, attributes) {
+			if (scope.stemLayout.height) {
+				element.css('height', scope.stemLayout.height);
+			} else {
+				element.css('height', '500px');
+			}
 			scope.$watch(function() { return element[0].childNodes[3]; }, function(newValue, oldValue) {
 				// Ace code editor
 				scope.editor = ace.edit(scope.stemLayout.id + '-aceEditor');
@@ -193,6 +206,7 @@ Stem.directive('stemFormulasLayout', function(stemClasses, $timeout) {
 				element.resizable({
 					handles: "s",
 					resize: function(event, ui) {
+						scope.stemLayout.height = ui.size.height + 'px';
 				        scope.editor.resize();
 				    }
 				});

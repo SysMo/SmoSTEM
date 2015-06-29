@@ -29,7 +29,7 @@
 
 <! -- Stem Grid Layout -->
 <script type="text/ng-template" id="stem-grid-layout.html">
-  <div id="{{stemLayout.id}}" style="height: 500px; background: #EEE; padding: 10px; margin: 10px; float: left;">
+  <div id="{{stemLayout.id}}" style="background: #EEE; padding: 10px; margin: 10px; float: left;">
 	<button class="close" ng-click="$parent.removeLayout(stemLayout)">&times;</button>
 	<div class="sortables_div" style="overflow: auto; height: 100%;">
 		<div ng-repeat="field in stemLayout.fields">
