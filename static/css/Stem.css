@@ -34,3 +34,7 @@
 #main {
 	width: 1090px; 
 }
+
+.ui-resizable-s {
+	bottom: 0px;
+}

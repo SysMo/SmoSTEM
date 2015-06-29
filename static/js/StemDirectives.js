@@ -146,18 +146,22 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 					});
 				}
 			});
-			element.sortable({
-				containment: "#" + scope.stemLayout.id,
+			element.resizable({
+				handles: "s",
+			});
+			element.find('.sortables_div').sortable({
+				containment: "#" + scope.stemLayout.id + ' > .sortables_div',
 				axis: "y",
 				start: function(event, ui) {
 					ui.item.startIndex = ui.item.index();
 				},
 				stop : function(event, ui) {
 					// field being moved among sortables
-					var field = scope.stemLayout.fields[ui.item.startIndex - 1];
+					var field = scope.stemLayout.fields[ui.item.startIndex];
 					// modifying the layout's fields array
-					scope.stemLayout.fields.splice(ui.item.startIndex - 1, 1);
-					scope.stemLayout.fields.splice(ui.item.index() - 1, 0 , field);
+					scope.stemLayout.fields.splice(ui.item.startIndex, 1);
+					scope.stemLayout.fields.splice(ui.item.index(), 0 , field);
+					
 					$timeout(function(){
 						scope.$apply();
 						console.log(scope.stemLayout.fields);
@@ -185,6 +189,12 @@ Stem.directive('stemFormulasLayout', function(stemClasses, $timeout) {
 				scope.editor.setValue(scope.stemLayout.fields[0].value);
 				scope.editor.on('change', function (ev) {
 					scope.stemLayout.fields[0].value = scope.editor.getValue();
+				});
+				element.resizable({
+					handles: "s",
+					resize: function(event, ui) {
+				        scope.editor.resize();
+				    }
 				});
 			});
 		}
