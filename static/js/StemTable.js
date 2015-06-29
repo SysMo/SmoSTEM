@@ -139,6 +139,7 @@ Stem.factory('stemTable', function() {
 		
 		this.INPUTS=[].slice.call($(this.idSelector + " input"));
 		this.INPUTS.forEach(function(elm) {
+			elm.onclick = function(e) {elm.select();};
 		    elm.onblur = function(e) {
 		    	table.data[elm.dataset.row][elm.dataset.col] = 
 		    		//isNaN(parseFloat(elm.value)) ? elm.value : parseFloat(elm.value);
