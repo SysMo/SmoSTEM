@@ -62,6 +62,9 @@ Stem.factory('stemTable', function() {
 	    							this.setColFormat(parseInt(ev.target.dataset.col), promptVal);
 	    						}
 	    						break;
+	    					case "clearColumn":
+	    						this.clearColumn(parseInt(ev.target.dataset.col));
+	    						break;
 	    					default:
 	    						break;
 	                	}
@@ -73,6 +76,7 @@ Stem.factory('stemTable', function() {
 	                    "delColumn": {name: "Delete column", icon: "edit"},
 	                    "renameColumn": {name: "Rename column", icon: "edit"},
 	                    "setColFormat": {name: "Column format", icon: "edit"},
+	                    "clearColumn": {name: "Clear column", icon: "edit"}
 	                    
 	                }
 	            });
@@ -220,6 +224,13 @@ Stem.factory('stemTable', function() {
 	};
 	stemTable.Table.prototype.setColFormat = function(index, format) {
 		this.columns[index].format = format;
+		this.renderTable();
+		this.updateView();
+	};
+	stemTable.Table.prototype.clearColumn = function(index) {
+		for (var i=0; i<this.data.length; i++) {
+			this.data[i][index] = 0;
+		}
 		this.renderTable();
 		this.updateView();
 	};
