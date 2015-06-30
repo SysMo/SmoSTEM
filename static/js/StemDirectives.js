@@ -222,22 +222,27 @@ Stem.directive('stemScalar', function() {
 		scope: {
 			stemScalar: '='
 		},
-		controller: function($scope, StemQuantities, $timeout) {
-			$scope.displayValue = $scope.stemScalar.value;
+		controller: function($scope, StemQuantities, stemUtil) {
+			// Ensure that the scalar has a quantity and unit
+			$scope.stemScalar.quantity = $scope.stemScalar.quantity || 'Dimensionless';
+			$scope.stemScalar.displayUnit = $scope.stemScalar.displayUnit || '-';
+			
 			$scope.quantities = StemQuantities.quantities;
-			$scope.quantityName = 'Dimensionless';
-			$scope.unitOptions = Object.keys($scope.quantities[$scope.quantityName].units);
-			$scope.displayUnit = $scope.unitOptions[0];
+			$scope.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
 			$scope.edit = function() {
 				$( '#' + $scope.stemScalar.id +'-modal').modal( "show" );
 			};
-			$scope.updateValue = function() {
-				// $scope.value = 
+			$scope.onInputValueChange = function() {
+				$scope.stemScalar.value = StemQuantities.toSIUnit(
+					$scope.stemScalar.quantity, $scope.stemScalar.displayUnit, parseFloat($scope.displayValue)
+				);
 			};
-			$scope.changeUnit = function() {
-				$scope.displayValue = 
-					StemQuantities.changeUnit($scope.quantityName, $scope.displayUnit, $scope.stemScalar.value, $scope.displayValue);
+			$scope.onUnitChange = function() {
+				$scope.displayValue = stemUtil.formatNumber(StemQuantities.fromSIUnit(
+					$scope.stemScalar.quantity, $scope.stemScalar.displayUnit, $scope.stemScalar.value
+				));
 			};
+			$scope.onUnitChange();
 		},
 		templateUrl: "stem-scalar.html"
 	}
@@ -248,8 +253,8 @@ Stem.directive('stemScalarEditor', [function() {
 		restrict : 'A',
 		controller: function($scope) {
 			$scope.setDisplayUnit = function() {
-				$scope.unitOptions = Object.keys($scope.quantities[$scope.quantityName].units);
-				$scope.displayUnit = $scope.unitOptions[0];
+				$scope.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
+				$scope.stemScalar.displayUnit = $scope.unitOptions[0][0];
 			};
 		},
 		link: function(scope, element, attributes) {

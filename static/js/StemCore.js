@@ -70,6 +70,21 @@ Stem.factory('stemUtil', function stemUtil () {
 		    }
 		    return _p8() + _p8(true) + _p8(true) + _p8();
 		},
+		formatNumber: function (n) {
+			if (n == 0) {
+				return "0";
+			}
+			if (Math.abs(n) < 1e-80){
+				return "0";
+			}
+			if (Math.abs(n) > 1e5 || Math.abs(n) < 1e-3) {
+				return n.toExponential(5);
+			}
+			var sig = 6;
+			var mult = Math.pow(10,
+					sig - Math.floor(Math.log(Math.abs(n)) / Math.LN10) - 1);
+			return String(Math.round(n * mult) / mult);
+		}
 	};
 })
 
@@ -81,21 +96,29 @@ Stem.factory('StemQuantities', function StemQuantities (StemResources, ServerErr
 			this.quantities = StemResources.Quantities.load(function(data) {
 			}, ServerErrorHandler);
 		},
-		changeUnit: function(quantityName, displayUnit, value, oldDisplayValue) {
-			var dispUnitDef;
-			var displayValue;
-			angular.forEach(this.quantities[quantityName].units, function(unit, unitName) {
-				if (displayUnit == unitName) {
-					dispUnitDef = unit;
-				}	
-			});
-			var offset = 0;
-			if ('offset' in dispUnitDef) {
-				offset = dispUnitDef.offset;
+		getUnitDefinition: function(quantity, unitName) {
+			var unitDef;
+			var unitList = this.quantities[quantity].units
+			for (var i = 0; i < unitList.length; i++) {
+				if (unitList[i][0] == unitName) {
+					unitDef = unitList[i][1];
+					break;
+				}					
 			}
-			displayValue = (oldDisplayValue - offset) / dispUnitDef.mult;
-			return displayValue;
-		}
+			return unitDef;
+		},
+		toSIUnit: function(quantity, unit, value) {
+			var SIValue;
+			var unitDefinition = this.getUnitDefinition(quantity, unit)
+			SIValue = value * unitDefinition.mult + (unitDefinition.offset || 0)
+			return SIValue
+		},
+		fromSIUnit: function(quantity, unit, SIValue) {
+			var value;
+			var unitDefinition = this.getUnitDefinition(quantity, unit)
+			value = (SIValue - (unitDefinition.offset || 0)) / unitDefinition.mult
+			return value;
+		},
 	};
 	return StemQuantities;
 })
@@ -124,6 +147,8 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 			this.name = name || ('v' + (classes.ScalarField.instanceCounter + 1).toString());
 			classes.ScalarField.instanceCounter++;
 			this.value = value || 0;
+			this.quantity = 'Dimensionless';
+			this.displayUnit = '-';
 		},
 	});
 	createInstanceCounter(classes.ScalarField);
