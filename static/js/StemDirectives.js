@@ -199,7 +199,9 @@ Stem.directive('stemFormulasLayout', function(stemClasses, $timeout) {
 				// Ace code editor
 				scope.editor = ace.edit(scope.stemLayout.id + '-aceEditor');
 				scope.editor.getSession().setMode("ace/mode/python");
+				scope.editor.setFontSize(14);
 				scope.editor.setValue(scope.stemLayout.fields[0].value);
+				scope.editor.clearSelection();
 				scope.editor.on('change', function (ev) {
 					scope.stemLayout.fields[0].value = scope.editor.getValue();
 				});
