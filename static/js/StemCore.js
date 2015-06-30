@@ -25,7 +25,7 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResour
 
 // Page with model editor
 Stem.controller('ModelEditorCtrl', function($scope, 
-		PageSettings, StemResources){
+		PageSettings, StemResources, ServerErrorHandler){
 	// Get the model object from the server
 	$scope.model =  StemResources.Models.get({_id: PageSettings.modelID}, function() {
 		// Add the selectors for the different board parts
@@ -34,7 +34,7 @@ Stem.controller('ModelEditorCtrl', function($scope,
 			layoutsSelector: '#LayoutsToolbar > ul > li',
 			componentsSelector: '#ModelComponentsToolbar > ul > li'
 		});
-	});
+	}, ServerErrorHandler);
 	$scope.save = function() {
 		$scope.model.$update();
 	};
@@ -51,7 +51,8 @@ Stem.controller('ModelEditorCtrl', function($scope,
 Stem.factory('ServerErrorHandler', function() {
 	// Currently a dummy implementation
 	return function(data) {
-		console.log(data);
+		$('#errorModal .modal-body').html('Error description. '.repeat(15));
+		$('#errorModal').modal("show");
 	}
 });
 
