@@ -15,6 +15,14 @@ Stem.factory('StemResources', function($resource) {
 				}
 			}),
 		Quantities:
-			$resource('/stem/api/Quantities/:_id', { _id: '@_id' })
+			$resource('/stem/api/Quantities/:_id', { _id: '@_id' },
+			{
+				load: {
+					method: 'GET',
+					params: {
+						full: true
+					}
+				}
+			})
 	}
 });

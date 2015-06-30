@@ -25,7 +25,7 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResour
 
 // Page with model editor
 Stem.controller('ModelEditorCtrl', function($scope, 
-		PageSettings, StemResources, ServerErrorHandler){
+		PageSettings, StemResources, ServerErrorHandler, StemQuantities){
 	// Get the model object from the server
 	$scope.model =  StemResources.Models.get({_id: PageSettings.modelID}, function() {
 		// Add the selectors for the different board parts
@@ -35,6 +35,10 @@ Stem.controller('ModelEditorCtrl', function($scope,
 			componentsSelector: '#ModelComponentsToolbar > ul > li'
 		});
 	}, ServerErrorHandler);
+	
+	StemQuantities.loadQuantities();
+	$scope.quantities = StemQuantities.quantities;
+	
 	$scope.save = function() {
 		$scope.model.$update();
 	};
@@ -56,7 +60,7 @@ Stem.factory('ServerErrorHandler', function() {
 	}
 });
 
-//Utility functions
+// Utility functions
 Stem.factory('stemUtil', function stemUtil () {
 	return {
 		guid: function () {
@@ -68,6 +72,34 @@ Stem.factory('stemUtil', function stemUtil () {
 		},
 	};
 })
+
+// Quantities
+Stem.factory('StemQuantities', function StemQuantities (StemResources, ServerErrorHandler, $timeout) {
+	var StemQuantities = {
+		quantities: {},
+		loadQuantities: function() {
+			this.quantities = StemResources.Quantities.load(function(data) {
+			}, ServerErrorHandler);
+		},
+		changeUnit: function(quantityName, displayUnit, value, oldDisplayValue) {
+			var dispUnitDef;
+			var displayValue;
+			angular.forEach(this.quantities[quantityName].units, function(unit, unitName) {
+				if (displayUnit == unitName) {
+					dispUnitDef = unit;
+				}	
+			});
+			var offset = 0;
+			if ('offset' in dispUnitDef) {
+				offset = dispUnitDef.offset;
+			}
+			displayValue = (oldDisplayValue - offset) / dispUnitDef.mult;
+			return displayValue;
+		}
+	};
+	return StemQuantities;
+})
+
 
 // User defined 'Classes'
 Stem.factory('stemClasses', function stemClasses(stemUtil) {

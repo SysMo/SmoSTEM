@@ -40,7 +40,7 @@ modelID: '{{modelID}}',
 	  </div>
 	</div>
 	<div id="main" style="position: absolute; left: 150; top: 70;">
-		<div ng-if="model.board">
+		<div ng-if="model.board && quantities.$resolved">
 	  		<div stem-board="model.board"></div>
 	  	</div>
 		<div ng-if="!model.board">

@@ -1,5 +1,5 @@
 {% raw %}
-<! -- Stem Modal -->
+<!-- Stem Modal -->
 <script type="text/ng-template" id="stem-modal.html">
 <div class="modal fade" id="{{stemModel._id.$oid}}-modal">
 	<div class="modal-dialog">
@@ -27,7 +27,7 @@
 </div>
 </script>
 
-<! -- Stem Grid Layout -->
+<!-- Stem Grid Layout -->
 <script type="text/ng-template" id="stem-grid-layout.html">
   <div id="{{stemLayout.id}}" style="background: #EEE; padding: 10px; margin: 10px; float: left;">
 	<button class="close" ng-click="$parent.removeLayout(stemLayout)">&times;</button>
@@ -36,15 +36,12 @@
 		  <div ng-switch on="field.type">
 		    <div ng-switch-when="stem.ScalarField">
 		      <div stem-scalar="field"></div>
-		      <div stem-field-editor="field"></div>
 		    </div>
 		    <div ng-switch-when="stem.TableField">
 		      <div stem-table="field"></div>
-		      <div stem-field-editor="field"></div>
 		    </div>
 		    <div ng-switch-when="stem.TextField">
 		      <div stem-text-area="field"></div>
-		      <div stem-field-editor="field"></div>
 		    </div>
 		    <div ng-switch-default>
 		      Unimplemented type {{field.type}}
@@ -55,7 +52,7 @@
   </div>
 </script>
 
-<! -- Stem Formulas Layout -->
+<!-- Stem Formulas Layout -->
 <script type="text/ng-template" id="stem-formulas-layout.html">
   <div id="{{stemLayout.id}}" style="overflow: auto; width: 520px; height: 500px; background: #EEE; padding: 10px; margin: 10px; float: left;">
     <button class="close" ng-click="$parent.removeLayout(stemLayout)">&times;</button>
@@ -63,7 +60,7 @@
   </div>
 </script>
 
-<! -- Stem Board -->
+<!-- Stem Board -->
 <script type="text/ng-template" id="stem-board.html">
 <div ng-repeat="layout in stemBoard.layouts">
 	<div ng-switch on="layout.type">
@@ -77,9 +74,25 @@
 </div>
 </script>
 
-<! -- Stem Field Editor -->
-<script type="text/ng-template" id="stem-field-editor.html">
-<div class="modal fade" id="{{stemField.id}}-modal">
+<!-- Stem Scalar -->
+<script type="text/ng-template" id="stem-scalar.html">
+<div id="{{stemScalar.id}}" style="width: 438px; margin: 6px; padding: 5px; border: solid 1px #AAA; background: white;">
+  <div>
+    <div style="display: inline-block; width: 100px;">
+    	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemScalar.name}}</span>
+    </div>
+    <input style="display: inline-block; height: 30px; width: 100px; margin-right: 5px;" type="text" ng-model= "displayValue" ng-change="updateValue()">
+    <select style="height: 30px;" ng-model="displayUnit" ng-options="item as item for item in unitOptions" ng-change="changeUnit()"></select>
+    <button class="close" ng-click="$parent.removeField(stemScalar)">&times;</button>
+  </div>
+  <div>{{stemScalar.label}}</div>
+</div>
+<div stem-scalar-editor="stemScalar"></div>
+</script>
+
+<!-- Stem Scalar Editor -->
+<script type="text/ng-template" id="stem-scalar-editor.html">
+<div class="modal fade" id="{{stemScalar.id}}-modal">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -92,35 +105,23 @@
 			<div class="modal-body">
 				<form>
 					<div>Name</div>
-					<input type="text" ng-model="stemField.name" pattern="[a-zA-Z_][a-zA-Z0-9_]*" required>
+					<input type="text" ng-model="stemScalar.name" pattern="[a-zA-Z_][a-zA-Z0-9_]*" required>
 					<div></div>
 					<div>Label</div>
-					<input type="text" ng-model="stemField.label">
+					<input type="text" ng-model="stemScalar.label">
+					<div>Quantity</div>
+					<select ng-model="quantityName" ng-options="key as key for (key, value) in quantities"></select>
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" id="{{stemField.id}}-OkButton" class="btn btn-default" data-dismiss="modal">OK</button>
+				<button type="button" id="{{stemField.id}}-OkButton" class="btn btn-default" data-dismiss="modal" ng-click="setDisplayUnit()">OK</button>
 			</div>
 		</div>
 	</div>
 </div>
 </script>
 
-<! -- Stem Scalar -->
-<script type="text/ng-template" id="stem-scalar.html">
-<div id="{{stemScalar.id}}" style="width: 300px; margin: 6px; padding: 5px; border: solid 1px #AAA; background: white;">
-  <div>
-    <div style="display: inline-block; width: 100px;">
-    	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemScalar.name}}</span>
-    </div>
-    <input style="display: inline-block; width: 100px;" type="text" ng-model="stemScalar.value">
-    <button class="close" ng-click="$parent.removeField(stemScalar)">&times;</button>
-  </div>
-  <div>{{stemScalar.label}}</div>
-</div>
-</script>
-
-<! -- Stem Table -->
+<!-- Stem Table -->
 <script type="text/ng-template" id="stem-table.html">
 <div id="{{stemTable.id}}" style="background: white; margin: 6px; padding: 5px; border: solid 1px #AAA">
   <div>
@@ -132,9 +133,39 @@
   	<table id="{{stemTable.id}}-table"></table>
   </div>
 </div>
+<div stem-table-editor="stemTable"></div>
 </script>
 
-<! -- Stem Text Area -->
+<!-- Stem Table Editor -->
+<script type="text/ng-template" id="stem-table-editor.html">
+<div class="modal fade" id="{{stemTable.id}}-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title">Properties</h4>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div>Name</div>
+					<input type="text" ng-model="stemTable.name" pattern="[a-zA-Z_][a-zA-Z0-9_]*" required>
+					<div></div>
+					<div>Label</div>
+					<input type="text" ng-model="stemTable.label">
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="{{stemTable.id}}-OkButton" class="btn btn-default" data-dismiss="modal">OK</button>
+			</div>
+		</div>
+	</div>
+</div>
+</script>
+
+<!-- Stem Text Area -->
 <script type="text/ng-template" id="stem-text-area.html">
 <div id="{{stemTextArea.id}}" style="background: white; margin: 6px; padding: 5px; border: solid 1px #AAA">
   <div>
@@ -144,5 +175,36 @@
   <div>{{stemTextArea.label}}</div>
   <textarea id="{{stemTextArea.id}}-textarea" ng-model="stemTextArea.value"></textarea>
 </div>
+<div stem-text-area-editor="stemTextArea"></div>
 </script>
+
+<!-- Stem Text Area Editor -->
+<script type="text/ng-template" id="stem-text-area-editor.html">
+<div class="modal fade" id="{{stemTextArea.id}}-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title">Properties</h4>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div>Name</div>
+					<input type="text" ng-model="stemTextArea.name" pattern="[a-zA-Z_][a-zA-Z0-9_]*" required>
+					<div></div>
+					<div>Label</div>
+					<input type="text" ng-model="stemTextArea.label">
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="{{stemTextArea.id}}-OkButton" class="btn btn-default" data-dismiss="modal">OK</button>
+			</div>
+		</div>
+	</div>
+</div>
+</script>
+
 {% endraw %}

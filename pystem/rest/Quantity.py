@@ -20,7 +20,11 @@ class QuantityAPI(Resource):
 		Returns a model or a list of models
 		"""
 		if (quantityID is None):
-			return Quantities.keys()
+			full = request.args.get('full', False)
+			if (full):
+				return Quantities
+			else:
+				return Quantities.keys()
 		else:
 			quantity = Quantities[quantityID]
 			return quantity

@@ -215,26 +215,6 @@ Stem.directive('stemFormulasLayout', function(stemClasses, $timeout) {
 	}
 });
 
-Stem.directive('stemFieldEditor', [function() {
-	return {
-		restrict : 'A',
-		scope: {
-			stemField : '=stemFieldEditor'
-		},
-		link: function(scope, element, attributes) {
-			element.find('input').first().on('input', function(event) {
-				if (!this.checkValidity()) {
-					$('#' + scope.stemField.id + '-OkButton').prop('disabled', true);
-					$(this).next().css('color', 'red').html('Name is required and must be a valid Python identifier.');
-				} else {
-					$('#' + scope.stemField.id + '-OkButton').prop('disabled', false);
-					$(this).next().html('');
-				}
-			});
-		},
-		templateUrl: "stem-field-editor.html",
-	}
-}]);
 
 Stem.directive('stemScalar', function() {
 	return {
@@ -242,14 +222,50 @@ Stem.directive('stemScalar', function() {
 		scope: {
 			stemScalar: '='
 		},
-		controller: function($scope) {
+		controller: function($scope, StemQuantities, $timeout) {
+			$scope.displayValue = $scope.stemScalar.value;
+			$scope.quantities = StemQuantities.quantities;
+			$scope.quantityName = 'Dimensionless';
+			$scope.unitOptions = Object.keys($scope.quantities[$scope.quantityName].units);
+			$scope.displayUnit = $scope.unitOptions[0];
 			$scope.edit = function() {
 				$( '#' + $scope.stemScalar.id +'-modal').modal( "show" );
+			};
+			$scope.updateValue = function() {
+				// $scope.value = 
+			};
+			$scope.changeUnit = function() {
+				$scope.displayValue = 
+					StemQuantities.changeUnit($scope.quantityName, $scope.displayUnit, $scope.stemScalar.value, $scope.displayValue);
 			};
 		},
 		templateUrl: "stem-scalar.html"
 	}
 });
+
+Stem.directive('stemScalarEditor', [function() {
+	return {
+		restrict : 'A',
+		controller: function($scope) {
+			$scope.setDisplayUnit = function() {
+				$scope.unitOptions = Object.keys($scope.quantities[$scope.quantityName].units);
+				$scope.displayUnit = $scope.unitOptions[0];
+			};
+		},
+		link: function(scope, element, attributes) {
+			element.find('input').first().on('input', function(event) {
+				if (!this.checkValidity()) {
+					$('#' + scope.stemScalar.id + '-OkButton').prop('disabled', true);
+					$(this).next().css('color', 'red').html('Name is required and must be a valid Python identifier.');
+				} else {
+					$('#' + scope.stemScalar.id + '-OkButton').prop('disabled', false);
+					$(this).next().html('');
+				}
+			});
+		},
+		templateUrl: "stem-scalar-editor.html",
+	}
+}]);
 
 Stem.directive('stemTable', function(stemTable, $compile) {
 	return {
@@ -275,6 +291,24 @@ Stem.directive('stemTable', function(stemTable, $compile) {
 		}
 	}
 });
+
+Stem.directive('stemTableEditor', [function() {
+	return {
+		restrict : 'A',
+		link: function(scope, element, attributes) {
+			element.find('input').first().on('input', function(event) {
+				if (!this.checkValidity()) {
+					$('#' + scope.stemTable.id + '-OkButton').prop('disabled', true);
+					$(this).next().css('color', 'red').html('Name is required and must be a valid Python identifier.');
+				} else {
+					$('#' + scope.stemTable.id + '-OkButton').prop('disabled', false);
+					$(this).next().html('');
+				}
+			});
+		},
+		templateUrl: "stem-table-editor.html",
+	}
+}]);
 
 Stem.directive('stemTextArea', function() {
 	return {
@@ -306,3 +340,20 @@ Stem.directive('stemTextArea', function() {
 		}
 	}
 });
+
+Stem.directive('stemTextAreaEditor', [function() {
+	return {
+		link: function(scope, element, attributes) {
+			element.find('input').first().on('input', function(event) {
+				if (!this.checkValidity()) {
+					$('#' + scope.stemTextArea.id + '-OkButton').prop('disabled', true);
+					$(this).next().css('color', 'red').html('Name is required and must be a valid Python identifier.');
+				} else {
+					$('#' + scope.stemTextArea.id + '-OkButton').prop('disabled', false);
+					$(this).next().html('');
+				}
+			});
+		},
+		templateUrl: "stem-text-area-editor.html",
+	}
+}]);
