@@ -36,16 +36,10 @@ Stem.factory('stemTable', function() {
 	                callback: $.proxy(function(key, options) {
 	                	switch(key){
 	    					case "addColumnBefore":
-	    						var promptVal = prompt("Please enter column name", "");
-	    						if (promptVal != null) {
-	    							this.addColumn(parseInt(ev.target.dataset.col), promptVal);
-	    						}
+	    						this.addColumn(parseInt(ev.target.dataset.col));
 	    						break;
 	    					case "addColumnAfter":
-	    						var promptVal = prompt("Please enter column name", "");
-	    						if (promptVal != null) {
-	    							this.addColumn(parseInt(ev.target.dataset.col), promptVal, 'after');
-	    						}
+	    						this.addColumn(parseInt(ev.target.dataset.col), 'after');
 	    						break;
 	    					case "delColumn":
 	    						this.delColumn(parseInt(ev.target.dataset.col));
@@ -149,7 +143,6 @@ Stem.factory('stemTable', function() {
 		    	table.data[elm.dataset.row][elm.dataset.col] = 
 		    		//isNaN(parseFloat(elm.value)) ? elm.value : parseFloat(elm.value);
 		    		numeral().unformat(elm.value);
-		        //table.updateView();
 		    	elm.value = table.columns[elm.dataset.col].format ? numeral(table.data[elm.dataset.row][elm.dataset.col]).format(table.columns[elm.dataset.col].format) : numeral(table.data[elm.dataset.row][elm.dataset.col]).value();
 		    };
 		});
@@ -199,16 +192,15 @@ Stem.factory('stemTable', function() {
 		this.renderTable();
 		this.updateView();
 	};
-	stemTable.Table.prototype.addColumn = function(index, name, where) {
+	stemTable.Table.prototype.addColumn = function(index, where) {
 		if (where == 'after') {
 			index = index + 1;
 		}
-		this.columns.splice(index, 0, {name: name});
+		this.columns.splice(index, 0, {name: "new", quantity: "Dimensionless", displayUnit: "-", unitOptions: ["-"]});
 		for (var i=0; i<this.data.length; i++) {
 			this.data[i].splice(index, 0, 0);
 		}
-		this.renderTable();
-		this.updateView();
+		this.editColumn(index);
 	};
 	stemTable.Table.prototype.delColumn = function(index) {
 		this.columns.splice(index, 1);

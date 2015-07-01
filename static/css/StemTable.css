@@ -1,6 +1,7 @@
 div[stem-table] table input {
     border: none;
     width: 80px;
+    display: block;
     font-size: 14px;
     padding: 2px;
 }
@@ -27,6 +28,7 @@ div[stem-table] table td {
 }
 
 div[stem-table] table tr:nth-child(2) td {
+    background-color: #eee;
     padding: 1px 3px;
     text-align: center;
 }
