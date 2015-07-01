@@ -281,21 +281,16 @@ Stem.directive('stemTable', function(stemTable, StemQuantities, stemUtil, $compi
 		},
 		controller: function($scope) {
 			$scope.quantities = StemQuantities.quantities;
-			$scope.edit = function() {
-				$( '#' + $scope.stemTable.id +'-modal').modal( "show" );
-			};
-			
-			$scope.setDisplayUnit = function() {
-				$scope.activeColumn.unitOptions = $scope.quantities[$scope.activeColumn.quantity].units;
-				$scope.activeColumn.displayUnit = $scope.quantities[$scope.activeColumn.quantity].SIUnit;
-			};
-			
 			// Ensure that the tabale columns have a quantity and unit
 			for (var i=0; i<$scope.stemTable.columns.length; i++) {
 				$scope.stemTable.columns[i].quantity = $scope.stemTable.columns[i].quantity || 'Dimensionless';
 				$scope.stemTable.columns[i].displayUnit = $scope.stemTable.columns[i].displayUnit || '-';
 				$scope.stemTable.columns[i].unitOptions = $scope.quantities[$scope.stemTable.columns[i].quantity].units;
 			}
+			
+			$scope.edit = function() {
+				$( '#' + $scope.stemTable.id +'-modal').modal( "show" );
+			};
 		},
 		templateUrl: "stem-table.html",
 		link: function(scope, element, attributes) {
@@ -361,8 +356,10 @@ Stem.directive('stemTableColumnEditor', function($timeout, StemQuantities, stemU
 	return {
 		restrict : 'A',
 		controller: function($scope) {
-			
-			
+			$scope.setDisplayUnit = function() {
+				$scope.activeColumn.unitOptions = $scope.quantities[$scope.activeColumn.quantity].units;
+				$scope.activeColumn.displayUnit = $scope.quantities[$scope.activeColumn.quantity].SIUnit;
+			};
 		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
