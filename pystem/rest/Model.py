@@ -6,8 +6,9 @@ Created on Jun 29, 2015
 '''
 
 import datetime
+import sys, traceback
 from flask import request
-from flask_restful import Resource
+from flask_restful import Resource, abort
 from bson.objectid import ObjectId
 from pystem.model.ModelActions import ModelActionExecutor
 
@@ -69,9 +70,18 @@ class ModelAPI(Resource):
 			return {'_id': str(modelID)}
 		else:
 			action = params['action']
-			ex = ModelActionExecutor(modelData)
-			ex.execute(action)
-			return modelData
+			try:
+				ex = ModelActionExecutor(modelData)
+				ex.execute(action)
+				return modelData
+			except Exception, e:
+				tb = traceback.format_exc()
+				print type(e)
+				abort(500,
+					msg = "Unhandled error",
+					exception = sys.exc_info()[0].__name__ + ": " + str(e),
+					traceback = tb
+				)
 			
 			
 	

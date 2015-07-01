@@ -15,28 +15,28 @@ from pystem.rest.Model import ModelAPI
 from pystem.rest.Quantity import QuantityAPI
 
 
-class StemAPI(Api):
-	def handle_error(self, e):
-		#exc_type, exc_value, tb = sys.exc_info()
-		if isinstance(e, Exception):
-			data = json.dumps({
-				"msg": "Server raised exception",
-				#"excMsg": str(exc_type) + ":" + str(e),
-				#"traceback" : tb
-			});
-			response = Response(
-				response = data,
-		    	status = 500,
-		     	mimetype = "application/json"
-		 	)
-			return response
-		else:	
-			return Api.handle_error(self, e)
+# class StemAPI(Api):
+# 	def handle_error(self, e):
+# 		#exc_type, exc_value, tb = sys.exc_info()
+# 		if isinstance(e, Exception):
+# 			data = json.dumps({
+# 				"msg": "Server raised exception",
+# 				#"excMsg": str(exc_type) + ":" + str(e),
+# 				#"traceback" : tb
+# 			});
+# 			response = Response(
+# 				response = data,
+# 		    	status = 500,
+# 		     	mimetype = "application/json"
+# 		 	)
+# 			return response
+# 		else:	
+# 			return Api.handle_error(self, e)
 
 app = Flask(__name__)
 app.config.from_object('Settings')
 app.debug = True
-api = StemAPI(app)
+api = Api(app)
 mongoClient = MongoClient()
 
 # Pages

@@ -4,8 +4,8 @@ Stem.factory('StemResources', function($resource) {
 		console.log(response);
 		$('#errorModal .modal-body').html(
 			'<p>' + response.data.msg + '</p>' +
-			'<p>' + response.data.excMsg + '</p>' +
-			'<pre>' + response.traceback + '</pre>'		
+			'<p>' + response.data.exception + '</p>' +
+			'<pre>' + response.data.traceback + '</pre>'		
 		);
 		$('#errorModal').modal("show");
 	}

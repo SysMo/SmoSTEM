@@ -10,7 +10,7 @@ from FunctionRegistry import FunctionRegistry
 
 class SemanticError(Exception):
 	def __init__(self, msg, node):
-		fullMsg = msg + "\n At line {}, column offset {}".format(node.lineno, node.col_offset)
+		fullMsg = msg + ";\n line {}, column offset {}".format(node.lineno, node.col_offset)
 		super(SemanticError, self).__init__(fullMsg)
 
 
@@ -51,6 +51,19 @@ class Field(object):
 		return res
 		
 class ExpressionEvaluator(object):
+	cmpOps = {
+		ast.Eq: lambda a, b: a == b,
+		ast.NotEq: lambda a, b: a != b,
+		ast.Lt: lambda a, b: a < b,
+		ast.LtE: lambda a, b: a <= b,
+		ast.Gt: lambda a, b: a > b,
+		ast.GtE: lambda a, b: a >= b,
+		ast.Is: lambda a, b: a is b,
+		ast.IsNot: lambda a, b: a is not b,
+		ast.In: lambda a, b: a in b,
+		ast.NotIn: lambda a, b: a not in b
+	}
+
 	def __init__(self, exprNode, ctx, funcRegistry):
 		
 		self.exprNode = exprNode
@@ -58,7 +71,6 @@ class ExpressionEvaluator(object):
 		self.funcRegistry = funcRegistry
 		
 	def eval(self):
-		print ast.dump(self.exprNode.body)
 		result = self.evalExpr(self.exprNode.body)
 		return result
 	
@@ -97,11 +109,16 @@ class ExpressionEvaluator(object):
 			else:
 				raise TypeError("Illegal unary operation")
 		elif(isinstance(expr, ast.IfExp)):
-			test = expr.test
-			if True:
+			if self.evalExpr(expr.test):
 				return self.evalExpr(expr.body)
 			else:
 				return self.evalExpr(expr.orelse)
+		elif(isinstance(expr, ast.Compare)):
+			# Compare(expr left, cmpop* ops, expr* comparators)
+			# cmpop = Eq | NotEq | Lt | LtE | Gt | GtE | Is | IsNot | In | NotIn
+			if len(expr.ops) > 1:
+				raise SemanticError("Cannot use chained compare operators", expr)
+			return self.cmpOps[expr.ops[0].__class__](expr.left, expr.comparators[0])
 		elif(isinstance(expr, ast.List)):
 			return [self.evalExpr(el) for el in expr.elts]
 		elif(isinstance(expr, ast.Call)):
