@@ -136,6 +136,7 @@
   </div>
 </div>
 <div stem-table-editor="stemTable"></div>
+<div stem-table-column-editor></div>
 </script>
 
 <!-- Stem Table Editor -->
@@ -166,6 +167,42 @@
 	</div>
 </div>
 </script>
+
+<!-- Stem Table Column Editor -->
+<script type="text/ng-template" id="stem-table-column-editor.html">
+<div class="modal fade" id="{{stemTable.id}}-table-columnModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title">Properties</h4>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div>Colum name</div>
+					<input type="text" ng-model="activeColumn.name" pattern="[a-zA-Z_][a-zA-Z0-9_]*" required>
+					<div></div>
+					<div>Column description</div>
+					<input type="text" ng-model="activeColumn.description">
+					<div>Column format</div>
+					<input type="text" ng-model="activeColumn.format">
+					<div>Quantity</div>
+					<select ng-model="activeColumn.quantity" ng-options="key as key for (key, value) in quantities" ng-change="setDisplayUnit()"></select>
+					<div>Unit</div>
+					<select ng-model="activeColumn.displayUnit" ng-options="item[0] as item[0] for item in activeColumn.unitOptions"></select>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="{{stemTable.id}}-columnModal-OkButton" class="btn btn-default" data-dismiss="modal">OK</button>
+			</div>
+		</div>
+	</div>
+</div>
+</script>
+
 
 <!-- Stem Text Area -->
 <script type="text/ng-template" id="stem-text-area.html">

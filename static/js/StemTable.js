@@ -6,7 +6,6 @@ Stem.factory('stemTable', function() {
 		this.columns = columns;
 		this.data = value;
 		this.renderTable();
-		
 	}
 	stemTable.Table.prototype.renderTable = function() {
 		this.tableNode.innerHTML = "";
@@ -50,17 +49,8 @@ Stem.factory('stemTable', function() {
 	    					case "delColumn":
 	    						this.delColumn(parseInt(ev.target.dataset.col));
 	    						break;
-	    					case "renameColumn":
-	    						promptVal = prompt("Please enter new column name", "");
-	    						if (promptVal != null) {
-	    							this.renameColumn(parseInt(ev.target.dataset.col), promptVal);
-	    						}
-	    						break;
-	    					case "setColFormat":
-	    						promptVal = prompt("Please enter the format for this column", "");
-	    						if (promptVal != null) {
-	    							this.setColFormat(parseInt(ev.target.dataset.col), promptVal);
-	    						}
+	    					case "editColumn":
+	    						this.editColumn(parseInt(ev.target.dataset.col));
 	    						break;
 	    					case "clearColumn":
 	    						this.clearColumn(parseInt(ev.target.dataset.col));
@@ -74,10 +64,8 @@ Stem.factory('stemTable', function() {
 	                    "addColumnBefore":    {name: "Add column before", icon: "edit"},
 	                    "addColumnAfter":    {name: "Add column after", icon: "edit"},
 	                    "delColumn": {name: "Delete column", icon: "edit"},
-	                    "renameColumn": {name: "Rename column", icon: "edit"},
-	                    "setColFormat": {name: "Column format", icon: "edit"},
-	                    "clearColumn": {name: "Clear column", icon: "edit"}
-	                    
+	                    "editColumn": {name: "Edit column", icon: "edit"},
+	                    "clearColumn": {name: "Clear column", icon: "edit"},
 	                }
 	            });
 	            return false;
@@ -160,7 +148,6 @@ Stem.factory('stemTable', function() {
 	stemTable.Table.prototype.updateView = function() {
 		var table = this;
 		this.INPUTS.forEach(function(elm) { 
-			//elm.value = table.data[elm.dataset.row][elm.dataset.col];
 			elm.value = table.columns[elm.dataset.col].format ? numeral(table.data[elm.dataset.row][elm.dataset.col]).format(table.columns[elm.dataset.col].format) : numeral(table.data[elm.dataset.row][elm.dataset.col]).value();
 	    });
 		
@@ -218,14 +205,9 @@ Stem.factory('stemTable', function() {
 		this.renderTable();
 		this.updateView();
 	};
-	stemTable.Table.prototype.renameColumn = function(index, name) {
-		this.columns[index].name = name;
-		this.tableNode.childNodes[0].childNodes[index + 1].innerHTML = name;
-	};
-	stemTable.Table.prototype.setColFormat = function(index, format) {
-		this.columns[index].format = format;
-		this.renderTable();
-		this.updateView();
+	stemTable.Table.prototype.editColumn = function(index) {
+		this.activeColumnIndex = index;
+		$(this.idSelector + "-columnModal").modal("show");
 	};
 	stemTable.Table.prototype.clearColumn = function(index) {
 		for (var i=0; i<this.data.length; i++) {

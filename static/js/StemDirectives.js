@@ -225,15 +225,14 @@ Stem.directive('stemScalar', function() {
 			stemScalar: '='
 		},
 		controller: function($scope, StemQuantities, stemUtil) {
-			// Ensure that the scalar has a quantity and unit
-			$scope.stemScalar.quantity = $scope.stemScalar.quantity || 'Dimensionless';
-			$scope.stemScalar.displayUnit = $scope.stemScalar.displayUnit || '-';
-			
-			$scope.quantities = StemQuantities.quantities;
-			$scope.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
 			$scope.edit = function() {
 				$( '#' + $scope.stemScalar.id +'-modal').modal( "show" );
 			};
+			$scope.quantities = StemQuantities.quantities;
+			$scope.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
+			// Ensure that the scalar has a quantity and unit
+			$scope.stemScalar.quantity = $scope.stemScalar.quantity || 'Dimensionless';
+			$scope.stemScalar.displayUnit = $scope.stemScalar.displayUnit || '-';
 			$scope.onInputValueChange = function() {
 				$scope.stemScalar.value = StemQuantities.toSIUnit(
 					$scope.stemScalar.quantity, $scope.stemScalar.displayUnit, parseFloat($scope.displayValue)
@@ -256,7 +255,7 @@ Stem.directive('stemScalarEditor', [function() {
 		controller: function($scope) {
 			$scope.setDisplayUnit = function() {
 				$scope.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
-				$scope.stemScalar.displayUnit = $scope.unitOptions[0][0];
+				$scope.stemScalar.displayUnit = $scope.quantities[$scope.stemScalar.quantity].SIUnit;
 			};
 		},
 		link: function(scope, element, attributes) {
@@ -274,16 +273,29 @@ Stem.directive('stemScalarEditor', [function() {
 	}
 }]);
 
-Stem.directive('stemTable', function(stemTable, $compile) {
+Stem.directive('stemTable', function(stemTable, StemQuantities, stemUtil, $compile) {
 	return {
 		restrict: 'A',
 		scope: {
 			stemTable: '='
 		},
 		controller: function($scope) {
+			$scope.quantities = StemQuantities.quantities;
 			$scope.edit = function() {
 				$( '#' + $scope.stemTable.id +'-modal').modal( "show" );
 			};
+			
+			$scope.setDisplayUnit = function() {
+				$scope.activeColumn.unitOptions = $scope.quantities[$scope.activeColumn.quantity].units;
+				$scope.activeColumn.displayUnit = $scope.quantities[$scope.activeColumn.quantity].SIUnit;
+			};
+			
+			// Ensure that the tabale columns have a quantity and unit
+			for (var i=0; i<$scope.stemTable.columns.length; i++) {
+				$scope.stemTable.columns[i].quantity = $scope.stemTable.columns[i].quantity || 'Dimensionless';
+				$scope.stemTable.columns[i].displayUnit = $scope.stemTable.columns[i].displayUnit || '-';
+				$scope.stemTable.columns[i].unitOptions = $scope.quantities[$scope.stemTable.columns[i].quantity].units;
+			}
 		},
 		templateUrl: "stem-table.html",
 		link: function(scope, element, attributes) {
@@ -293,7 +305,35 @@ Stem.directive('stemTable', function(stemTable, $compile) {
 				element.css('width', '98%');
 			}
 	        scope.$watch(function () { return element[0].childNodes[1].childNodes[5].childNodes[1]; }, function(newValue, oldValue) {
-				new stemTable.Table("#" + scope.stemTable.id + "-table", scope.stemTable.columns, scope.stemTable.value);
+				scope.tableDOMobject = new stemTable.Table("#" + scope.stemTable.id + "-table", scope.stemTable.columns, scope.stemTable.value);
+				scope.onUnitChange = function() {
+					scope.tableDOMobject.columns[scope.activeColumnIndex] = scope.activeColumn;
+					angular.forEach(scope.tableDOMobject.data, function(row, rowIndex) {
+						row[scope.activeColumnIndex] = 
+							stemUtil.formatNumber(StemQuantities.fromSIUnit
+										(
+											scope.activeColumn.quantity, scope.activeColumn.displayUnit, 
+											scope.stemTable.value[rowIndex][scope.activeColumnIndex]
+										)
+							);
+					});
+				};
+				scope.updateValue = function() {
+					scope.activeColumnIndex = scope.tableDOMobject.activeColumnIndex;
+					scope.activeColumn = scope.stemTable.columns[scope.activeColumnIndex];
+					angular.forEach(scope.stemTable.value, function(row, rowIndex) {
+						row[scope.activeColumnIndex] = 
+							StemQuantities.toSIUnit(
+								scope.activeColumn.quantity, scope.activeColumn.displayUnit, 
+								parseFloat(scope.tableDOMobject.data[rowIndex][scope.activeColumnIndex])
+							);
+					});
+				};
+				for (var i=0; i<scope.stemTable.columns.length; i++) {
+					scope.activeColumnIndex = i;
+					scope.activeColumn = scope.stemTable.columns[i];
+					scope.onUnitChange();
+				}
 			});
 		}
 	}
@@ -316,6 +356,42 @@ Stem.directive('stemTableEditor', [function() {
 		templateUrl: "stem-table-editor.html",
 	}
 }]);
+
+Stem.directive('stemTableColumnEditor', function($timeout, StemQuantities, stemUtil) {
+	return {
+		restrict : 'A',
+		controller: function($scope) {
+			
+			
+		},
+		link: function(scope, element, attributes) {
+			element.find('input').first().on('input', function(event) {
+				if (!this.checkValidity()) {
+					$('#' + scope.stemTable.id + '-columnModal-OkButton').prop('disabled', true);
+					$(this).next().css('color', 'red').html('Name is required and must be a valid Python identifier.');
+				} else {
+					$('#' + scope.stemTable.id + '-columnModal-OkButton').prop('disabled', false);
+					$(this).next().html('');
+				}
+			});
+			
+			element.find('.modal').on('show.bs.modal', function (e) {
+				scope.updateValue();
+				$timeout(function() {
+					scope.$apply();
+				});
+			});
+			
+			element.find('button').eq(1).on('click', function (e) {
+				scope.onUnitChange();
+				scope.tableDOMobject.renderTable();
+				scope.tableDOMobject.updateView();
+			});
+			
+		},
+		templateUrl: "stem-table-column-editor.html",
+	}
+});
 
 Stem.directive('stemTextArea', function() {
 	return {
