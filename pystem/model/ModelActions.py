@@ -6,36 +6,13 @@ Created on Jun 27, 2015
 from __future__ import division
 import ast
 import numpy as np
-import math
+from FunctionRegistry import FunctionRegistry
 
 class SemanticError(Exception):
 	def __init__(self, msg, node):
 		fullMsg = msg + "\n At line {}, column offset {}".format(node.lineno, node.col_offset)
 		super(SemanticError, self).__init__(fullMsg)
 
-class FunctionRegistry(object):
-	def __init__(self):
-		self.funcs = {}
-		self.addMathModuleFunctions()
-	
-	def addMathModuleFunctions(self):
-		mathFuncs = {
-			'abs': np.fabs,
-			'exp': np.exp,
-			'log': np.log,
-			'pow': np.power,
-			'sqrt': np.sqrt,
-			'sin': np.sin,
-			'cos': np.cos,
-			'tan': np.tan,
-			'sinh': np.sinh,
-			'cosh': np.cosh,
-			'tanh': np.tanh,
-			
-			'sum': np.sum,
-			'prod': np.prod,
-		}
-		self.funcs.update(mathFuncs)
 
 class Field(object):
 	def __init__(self, jsonField):
@@ -47,13 +24,20 @@ class Field(object):
 			
 				
 	def parseValue(self, jValue):
+		#try:
 		if (self.type == 'stem.ScalarField'):
 			value = float(jValue)
 		elif (self.type == 'stem.TableField'):
 			value = np.recarray(shape = len(jValue), dtype = self.dtype)
 			for i in range(len(jValue)):
 				value[i] = tuple(jValue[i])
+		elif (self.type == 'stem.TextField'):
+			value = value
+		else:
+			raise TypeError('Unknown field type {} for field {}'.format(self.type, self.name))
 		return value
+		#except Exception, e:
+		#	raise Exception()
 	
 	def serializeValue(self, value):
 		if (self.type == 'stem.ScalarField'):
@@ -74,13 +58,14 @@ class ExpressionEvaluator(object):
 		self.funcRegistry = funcRegistry
 		
 	def eval(self):
+		print ast.dump(self.exprNode.body)
 		result = self.evalExpr(self.exprNode.body)
 		return result
 	
 	def evalExpr(self, expr):
 		if(isinstance(expr, ast.Num)):
 			return expr.n
-		elif (isinstance(expr, (ast.Name, ast.Attribute, ast.Slice))):
+		elif (isinstance(expr, (ast.Name, ast.Attribute, ast.Subscript))):
 			return self.evalVariable(expr)
 		elif (isinstance(expr, ast.BinOp)):
 			left = expr.left
@@ -111,6 +96,12 @@ class ExpressionEvaluator(object):
 				return -operand
 			else:
 				raise TypeError("Illegal unary operation")
+		elif(isinstance(expr, ast.IfExp)):
+			test = expr.test
+			if True:
+				return self.evalExpr(expr.body)
+			else:
+				return self.evalExpr(expr.orelse)
 		elif(isinstance(expr, ast.List)):
 			return [self.evalExpr(el) for el in expr.elts]
 		elif(isinstance(expr, ast.Call)):
@@ -126,7 +117,7 @@ class ExpressionEvaluator(object):
 			if (attrName[0] == '_'):
 				raise ValueError('Attribute names cannot start with _ (underscore)')
 			return getattr(self.evalVariable(varNode.value), attrName)
-		elif isinstance(varNode, ast.Slice):
+		elif isinstance(varNode, ast.Subscript):
 			slice = varNode.slice
 			if (isinstance(slice, ast.Index) and isinstance(slice.value, ast.Num)):
 				index = slice.value.n

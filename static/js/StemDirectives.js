@@ -235,9 +235,12 @@ Stem.directive('stemScalar', function() {
 				$( '#' + $scope.stemScalar.id +'-modal').modal( "show" );
 			};
 			$scope.onInputValueChange = function() {
-				$scope.stemScalar.value = StemQuantities.toSIUnit(
-					$scope.stemScalar.quantity, $scope.stemScalar.displayUnit, parseFloat($scope.displayValue)
-				);
+				var numValue = parseFloat($scope.displayValue);
+				if (!isNaN(numValue)) {
+					$scope.stemScalar.value = StemQuantities.toSIUnit(
+						$scope.stemScalar.quantity, $scope.stemScalar.displayUnit, numValue
+					);
+				}
 			};
 			$scope.onUnitChange = function() {
 				$scope.displayValue = stemUtil.formatNumber(StemQuantities.fromSIUnit(

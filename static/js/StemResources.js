@@ -1,9 +1,25 @@
 //Provides the API for querying and manipulating models on the server
-Stem.factory('StemResources', function($resource) {  
+Stem.factory('StemResources', function($resource) {
+	function ErrorHandler(response) {
+		console.log(response);
+		$('#errorModal .modal-body').html(
+			'<p>' + response.data.msg + '</p>' +
+			'<p>' + response.data.excMsg + '</p>' +
+			'<pre>' + response.traceback + '</pre>'		
+		);
+		$('#errorModal').modal("show");
+	}
 	return { 
 		Models:
 			$resource('/stem/api/Models/:_id', { _id: '@_id' }, 
-			{				
+			{	
+				get: {
+					method: 'GET'
+				},
+				post: {
+					method: 'POST',
+					interceptor : {responseError : ErrorHandler}
+				},
 				update: { 
 					method:'PUT' 
 				}, 
@@ -11,7 +27,8 @@ Stem.factory('StemResources', function($resource) {
 					method: 'POST', 
 					params: {
 						action: "compute" 
-					}
+					},
+					interceptor : {responseError : ErrorHandler}
 				}
 			}),
 		Quantities:

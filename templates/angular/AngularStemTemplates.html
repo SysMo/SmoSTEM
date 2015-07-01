@@ -82,7 +82,7 @@
     	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemScalar.name}}</span>
     </div>
     <input style="display: inline-block; height: 30px; width: 100px; margin-right: 5px;" type="text" 
-    	ng-model= "displayValue" ng-change="onInputValueChange()">
+    	ng-model= "displayValue" ng-change="onInputValueChange()" ng-blur="onUnitChange()">
     <select style="height: 30px;" ng-model="stemScalar.displayUnit" ng-options="item[0] as item[0] for item in unitOptions" 
 		ng-change="onUnitChange()"></select>
     <button class="close" ng-click="$parent.removeField(stemScalar)">&times;</button>

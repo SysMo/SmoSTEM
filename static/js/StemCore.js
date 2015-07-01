@@ -1,9 +1,8 @@
 var Stem = angular.module('Stem',['ngResource']);
 
 // Page with model list
-Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResources, ServerErrorHandler){
-	$scope.models = StemResources.Models.query(function(data) {
-	}, ServerErrorHandler);
+Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResources){
+	$scope.models = StemResources.Models.query();
 	// Open model editor
 	$scope.editModel = function(model) {
 		window.location.href = '/ModelEditor/' + model._id;
@@ -11,8 +10,8 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResour
 	// Delete model on the server and reload models
 	$scope.deleteModel = function(model) {
 		model.$delete();
-		$scope.models = StemResources.Models.query(function(data) {
-		}, ServerErrorHandler);	}
+		$scope.models = StemResources.Models.query();
+	}
 	// Create a new model and open model editor
 	$scope.createModel = function(model) {
 		var model = new StemResources.Models();
@@ -25,7 +24,7 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResour
 
 // Page with model editor
 Stem.controller('ModelEditorCtrl', function($scope, 
-		PageSettings, StemResources, ServerErrorHandler, StemQuantities){
+		PageSettings, StemResources, StemQuantities){
 	// Get the model object from the server
 	$scope.model =  StemResources.Models.get({_id: PageSettings.modelID}, function() {
 		// Add the selectors for the different board parts
@@ -34,7 +33,7 @@ Stem.controller('ModelEditorCtrl', function($scope,
 			layoutsSelector: '#LayoutsToolbar > ul > li',
 			componentsSelector: '#ModelComponentsToolbar > ul > li'
 		});
-	}, ServerErrorHandler);
+	});
 	
 	StemQuantities.loadQuantities();
 	$scope.quantities = StemQuantities.quantities;
@@ -51,14 +50,7 @@ Stem.controller('ModelEditorCtrl', function($scope,
 	}
 });
 
-// To be used for logging erros on ngResource calls
-Stem.factory('ServerErrorHandler', function() {
-	// Currently a dummy implementation
-	return function(data) {
-		$('#errorModal .modal-body').html('Error description. '.repeat(15));
-		$('#errorModal').modal("show");
-	}
-});
+
 
 // Utility functions
 Stem.factory('stemUtil', function stemUtil () {
@@ -89,12 +81,12 @@ Stem.factory('stemUtil', function stemUtil () {
 })
 
 // Quantities
-Stem.factory('StemQuantities', function StemQuantities (StemResources, ServerErrorHandler, $timeout) {
+Stem.factory('StemQuantities', function StemQuantities (StemResources, $timeout) {
 	var StemQuantities = {
 		quantities: {},
 		loadQuantities: function() {
 			this.quantities = StemResources.Quantities.load(function(data) {
-			}, ServerErrorHandler);
+			});
 		},
 		getUnitDefinition: function(quantity, unitName) {
 			var unitDef;
