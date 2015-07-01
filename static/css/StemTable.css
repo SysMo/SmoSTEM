@@ -26,7 +26,12 @@ div[stem-table] table td {
     padding: 0;
 }
 
-div[stem-table] table tr:first-child td, div[stem-table] table td:first-child {
+div[stem-table] table tr:nth-child(2) td {
+    padding: 1px 3px;
+    text-align: center;
+}
+
+div[stem-table] table tr:first-child td, div[stem-table] table td:first-child, div[stem-table] table tr:nth-child(2) td:first-child {
     background-color: #ccc;
     padding: 1px 3px;
     font-weight: bold;

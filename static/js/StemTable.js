@@ -11,6 +11,7 @@ Stem.factory('stemTable', function() {
 		this.tableNode.innerHTML = "";
 		var table = this;
 		columns = angular.copy(this.columns);
+		// Column row
 		var node = document.createElement("TR");
 		var row = this.tableNode.appendChild(node);
 		node = document.createElement("TD");
@@ -71,6 +72,18 @@ Stem.factory('stemTable', function() {
 	            return false;
 	        }, false)
 		}
+		// Unit row
+		var node = document.createElement("TR");
+		var row = this.tableNode.appendChild(node);
+		node = document.createElement("TD");
+		node.innerHTML = '[]';
+		row.appendChild(node);
+		for (var j=0; j<columns.length; j++) {
+			node = document.createElement("TD");
+			var cell = row.appendChild(node);
+			cell.innerHTML = '[' + columns[j].displayUnit + ']';
+		}
+		
 		for (var i=0; i<this.data.length; i++) {
 			node = document.createElement("TR");
 		    row = this.tableNode.appendChild(node);
