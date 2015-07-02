@@ -14,22 +14,28 @@ from bson.objectid import ObjectId
 from mongokit import Document
 
 class Quantity(Document):
+	__collection__ = "Quantities"
 	structure = {
+		'_id': ObjectId,
 		'name': unicode,
 		'label': unicode,
 		'SIUnit': unicode,
+		'units': [(
+			unicode, {
+				'mult': float,
+				'offset': float
+			}
+		)]
+	}
+	required_fields = ['name', 'SIUnit']
+	default_values = {
+		'label': u''
 	}
 	use_dot_notation = True
-	
-def fillQuantityCollection():
-	from mongokit import Connection
-	Q = Connection()['stem'].quantities
-	q = Q.Quantity()
-	
-	
+
 class QuantityAPI(Resource):
-	def __init__(self, db):
-		self.db = db
+	def __init__(self, conn):
+		self.conn = conn
 		
 	def get(self, quantityID = None):
 		"""
@@ -38,11 +44,17 @@ class QuantityAPI(Resource):
 		if (quantityID is None):
 			full = request.args.get('full', False)
 			if (full):
-				return Quantities
+				cursor = self.conn.Quantity.find(sort = {'name': 1})
 			else:
-				return Quantities.keys()
+				cursor = self.conn.Quantities.find({}, {'name': True}, sort = [('name', 1)])
+			result = []
+			for q in cursor:
+				print type(q)
+				q['_id'] = str(q['_id'])
+				result.append(q)
+			return result
 		else:
-			quantity = Quantities[quantityID]
+			quantity = self.conn.Quantities.one({'name': quantityID})
 			return quantity
 	
 Quantities = {
@@ -177,3 +189,30 @@ Quantities = {
 			('kgCOD/m**3/h', {'mult' : 1*24.}), ('gCOD/L/h', {'mult' : 1*24.}), ('gCOD/cm**3/h', {'mult' : 1e3*24.}),
 	]},
 }
+
+	
+def fillQuantityCollection():
+	from mongokit import Connection
+	connection = Connection()
+	connection.register([Quantity])
+	Q = connection['stem'].Quantities
+	for name, qOrig in Quantities.iteritems():
+		q = Q.Quantity()
+		q.name = unicode(name)
+		q.label = unicode(qOrig['title'])
+		q.SIUnit = unicode(qOrig['SIUnit'])
+		q.units = qOrig['units']
+		for i in range(len(q.units)):
+			unit = q.units[i]
+			q.units[i] = (
+				unicode(unit[0]), {
+					'mult': float(unit[1]['mult']),
+					'offset': float(unit[1].get('offset', 0.0))
+				}
+			)
+		q.validate()
+		q.save()
+	print list(connection['stem'].Quantities.find())
+	
+if __name__ == '__main__':
+	fillQuantityCollection()

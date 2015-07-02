@@ -50,7 +50,10 @@ Stem.controller('ModelEditorCtrl', function($scope,
 	}
 });
 
-
+// Page with quantities list
+Stem.controller('QuantitiesCtrl', function($scope, StemResources) {
+	$scope.quantities = StemResources.Quantities.query()
+});
 
 // Utility functions
 Stem.factory('stemUtil', function stemUtil () {

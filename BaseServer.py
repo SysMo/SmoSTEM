@@ -11,35 +11,15 @@ from werkzeug.exceptions import HTTPException
 from flask_restful import Api
 
 from mongokit import Connection
-#from pymongo import MongoClient
 from pystem.rest.Model import ModelAPI
-from pystem.rest.Quantity import QuantityAPI
-
-
-# class StemAPI(Api):
-# 	def handle_error(self, e):
-# 		#exc_type, exc_value, tb = sys.exc_info()
-# 		if isinstance(e, Exception):
-# 			data = json.dumps({
-# 				"msg": "Server raised exception",
-# 				#"excMsg": str(exc_type) + ":" + str(e),
-# 				#"traceback" : tb
-# 			});
-# 			response = Response(
-# 				response = data,
-# 		    	status = 500,
-# 		     	mimetype = "application/json"
-# 		 	)
-# 			return response
-# 		else:	
-# 			return Api.handle_error(self, e)
+from pystem.rest.Quantity import Quantity, QuantityAPI
 
 app = Flask(__name__)
 app.config.from_object('Settings')
 app.debug = True
 api = Api(app)
 #mongoClient = MongoClient()
-mongoClient = Connection()
+mongoConnection = Connection()
 
 # Pages
 @app.route("/")
@@ -50,12 +30,16 @@ def index():
 def modelEditor(modelID):
 	return render_template('ModelEditor.html', modelID = modelID)
 
+@app.route("/Quantities")
+def listQuantities():
+	return render_template('Quantities.html')
 
 	
 api.add_resource(ModelAPI, '/stem/api/Models', '/stem/api/Models/<string:modelID>', 
-		resource_class_kwargs = {'db':mongoClient[app.config['STEM_DATABASE']]})
+		resource_class_kwargs = {'db':mongoConnection[app.config['STEM_DATABASE']]})
 api.add_resource(QuantityAPI, '/stem/api/Quantities', '/stem/api/Quantities/<string:quantityID>', 
-		resource_class_kwargs = {'db':mongoClient[app.config['STEM_DATABASE']]})
+		resource_class_kwargs = {'conn':mongoConnection[app.config['STEM_DATABASE']]})
+mongoConnection.register([Quantity])
 
 
 if __name__ == "__main__":
