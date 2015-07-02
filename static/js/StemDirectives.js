@@ -45,6 +45,14 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 						layout = new stemClasses.Layout('grid', 'narrow');
 						scope.addLayout(layout);
 						break;
+					case 'free_Wide':
+						layout = new stemClasses.Layout('free', 'wide');
+						scope.addLayout(layout);
+						break;
+					case 'free_Narrow':
+						layout = new stemClasses.Layout('free', 'narrow');
+						scope.addLayout(layout);
+						break;
 					}
 					$timeout(function(){
 						scope.$apply();
@@ -82,7 +90,8 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 					{
 						$(this).draggable("option", "revert", true);
 						$(ui.helper).css("list-style-type", "none");
-					},
+						
+					}
 				});
 			});
 		}
@@ -178,11 +187,93 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 	}
 });
 
+Stem.directive('stemFreeLayout', function(stemClasses, $timeout) {
+	return {
+		restrict : 'A',
+		scope: {
+			stemLayout: '=stemFreeLayout',
+		},
+		templateUrl: "stem-free-layout.html",
+		replace: true,
+		controller: function($scope) {
+			$scope.addField = function(field) {
+				$scope.stemLayout.fields.push(field);
+			};
+			$scope.removeField = function(field) {
+				var index = $scope.stemLayout.fields.indexOf(field);
+				if (index >= 0) {
+					$scope.stemLayout.fields.splice(index, 1);
+				}
+			};
+			$scope.findField = function(id){
+				for (var i=0; i<$scope.stemLayout.fields.length; i++) {
+					if (id == $scope.stemLayout.fields[i].id) {
+						return $scope.stemLayout.fields[i];
+					}
+				}
+				return null;
+			};
+		},
+		link: function(scope, element, attributes) {
+			if (scope.stemLayout.width == 'narrow') {
+				element.css('width', '520px');
+			} else {
+				element.css('width', '1060px');
+			}
+			if (scope.stemLayout.height) {
+				element.css('height', scope.stemLayout.height);
+			} else {
+				element.css('height', '500px');
+			}
+			element.droppable({
+				accept: scope.$parent.stemBoard.componentsSelector + '#fields_Scalar, ' +
+						scope.$parent.stemBoard.componentsSelector + '#fields_TextArea, ' +
+						'#' + scope.stemLayout.id + ' [stem-scalar], #' +
+						scope.stemLayout.id + ' [stem-text-area]',
+				activeClass: 'droppable-hover',
+				drop: function(event, ui) {
+					var fieldClassId = ui.draggable.context.id; // id of li element; is the same as component type
+					$('#'+fieldClassId).draggable("option", "revert", false);
+					var field;
+					switch (fieldClassId) {
+					case 'fields_Scalar':
+						field = new stemClasses.ScalarField(); 
+						scope.addField(field);
+						break;
+					case 'fields_TextArea':
+						field = new stemClasses.TextField();
+						scope.addField(field);
+						break;
+					}
+					if (field === undefined) {
+						var id = ui.draggable.children().first().attr('id');
+						field = scope.findField(id);
+					}
+					field.left = ui.offset.left - $(this).offset().left;
+					field.top = ui.offset.top - $(this).offset().top;
+					
+					$timeout(function(){
+						scope.$apply();
+					});
+				}
+			});
+			element.resizable({
+				handles: "s",
+				resize: function(event, ui) {
+					scope.stemLayout.height = ui.size.height + 'px';
+				}
+			});
+		}
+	}
+});
+
 Stem.directive('stemScalar', function() {
 	return {
 		restrict: 'A',
 		scope: {
-			stemScalar: '='
+			stemScalar: '=',
+			layout: '=',
+			layoutId: '='
 		},
 		controller: function($scope, StemQuantities, stemUtil) {
 			$scope.edit = function() {
@@ -207,6 +298,21 @@ Stem.directive('stemScalar', function() {
 				));
 			};
 			$scope.onUnitChange();
+		}, 
+		link: function(scope, element, attrs) {
+			if (scope.layout == 'free') {
+				scope.$watch(function () { return element[0].childNodes[1]}, function(newValue, oldValue) {
+					element.draggable({
+						containment: "#" + scope.layoutId + "-draggables_div",
+						scroll: false,
+						handle: ".drag-handle",
+						start: function(event, ui) {
+						},
+						stop : function(event, ui) {
+						}
+					});
+				});
+			}
 		},
 		templateUrl: "stem-scalar.html"
 	}
@@ -357,7 +463,9 @@ Stem.directive('stemTextArea', function() {
 	return {
 		restrict: 'A',
 		scope: {
-			stemTextArea: '='
+			stemTextArea: '=',
+			layout: '=',
+			layoutId: '='
 		},
 		controller: function($scope) {
 			$scope.edit = function() {
@@ -379,7 +487,20 @@ Stem.directive('stemTextArea', function() {
 						$(this).height(this.clientHeight + 20);
 					}
 				});
-			});			
+			});
+			if (scope.layout == 'free') {
+				scope.$watch(function () { return element[0].childNodes[1]}, function(newValue, oldValue) {
+					element.draggable({
+						containment: "#" + scope.layoutId + "-draggables_div",
+						scroll: false,
+						handle: ".drag-handle",
+						start: function(event, ui) {
+						},
+						stop : function(event, ui) {
+						}
+					});
+				});
+			}
 		}
 	}
 });
@@ -416,6 +537,7 @@ Stem.directive('stemFormulas', function() {
 		link: function(scope, element, attributes) {
 			// Watching for the node to be created
 			scope.$watch(function() { return element[0].childNodes[1].childNodes[5]; }, function(newValue, oldValue) {
+				$(element[0].childNodes[1]).height(scope.stemFormulas.height);
 				// Ace code editor
 				scope.editor = ace.edit(scope.stemFormulas.id + '-aceEditor');
 				scope.editor.getSession().setMode("ace/mode/python");
@@ -432,7 +554,6 @@ Stem.directive('stemFormulas', function() {
 				        scope.editor.resize();
 				    }
 				});
-				$(element[0].childNodes[1]).height(scope.stemFormulas.height);
 			});
 		}
 	}
