@@ -6,13 +6,46 @@ Created on Jul 1, 2015
 '''
 import numpy as np
 
+'''
+Module
+{
+	name: numpy
+	importPath: numpy
+	importName: null
+	description: "Math functions"
+	functions: [] 
+}
+'''
+
+'''
+Function
+{
+	name: sin
+	arguments : {
+		name: 'x',
+		description: 'angle in radians',
+		hasDefault: true,
+		default: 0 
+	}
+	description: computes sine
+	example: ""
+}
+'''
+
 class FunctionRegistry(object):
 	def __init__(self):
 		self.funcs = {}
+		self.addCoreFunctions()
 		self.addMathModuleFunctions()
 	
+	def addCoreFunctions(self):
+		coreFunctions = {
+			'If': lambda cond, val1, val2: val1 if cond else val2
+		}
+		self.funcs.update(coreFunctions)
+		
 	def addMathModuleFunctions(self):
-		mathFuncs = {
+		mathFunctions = {
 			'abs': np.fabs,
 			# Logarithms, exponents, powers
 			'exp': np.exp,			
@@ -41,5 +74,5 @@ class FunctionRegistry(object):
 			'prod': np.prod,
 			'interp': np.interp
 		}
-		self.funcs.update(mathFuncs)
+		self.funcs.update(mathFunctions)
 
