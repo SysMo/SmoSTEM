@@ -171,12 +171,16 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 	createInstanceCounter(classes.TextField);
 	
 	classes.FormulasField = classes.Field.extend({
-		init: function(value) {
+		init: function(name, label, value) {
 			this._super();
 			this.type = 'stem.FormulasField';
+			this.label = label || '';
+			this.name = name || ('Formulas' + (classes.FormulasField.instanceCounter + 1).toString());
+			classes.FormulasField.instanceCounter++;
 			this.value = value || '';
 		}
 	});	
+	createInstanceCounter(classes.FormulasField);
 	
 	classes.Layout = Class.extend({
 		init: function(type, width, fields) {

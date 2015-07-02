@@ -45,12 +45,6 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 						layout = new stemClasses.Layout('grid', 'narrow');
 						scope.addLayout(layout);
 						break;
-					case 'formulas':
-						field = new stemClasses.FormulasField();
-						layout = new stemClasses.Layout('formulas');
-						layout.fields.push(field);
-						scope.addLayout(layout);
-						break;
 					}
 					$timeout(function(){
 						scope.$apply();
@@ -145,6 +139,10 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 						field = new stemClasses.TextField();
 						scope.addField(field);
 						break;
+					case 'fields_Formulas':
+						field = new stemClasses.FormulasField();
+						scope.addField(field);
+						break;
 					}
 					$timeout(function(){
 						scope.$apply();
@@ -160,6 +158,7 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 			element.find('.sortables_div').sortable({
 				containment: "#" + scope.stemLayout.id + ' > .sortables_div',
 				axis: "y",
+				handle: ".drag-handle",
 				start: function(event, ui) {
 					ui.item.startIndex = ui.item.index();
 				},
@@ -172,51 +171,12 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 					
 					$timeout(function(){
 						scope.$apply();
-						console.log(scope.stemLayout.fields);
 					});
 				}
 			});
 		}
 	}
 });
-
-
-Stem.directive('stemFormulasLayout', function(stemClasses, $timeout) {
-	return {
-		restrict : 'A',
-		scope: {
-			stemLayout: '=stemFormulasLayout',
-		},
-		templateUrl: "stem-formulas-layout.html",
-		replace: true,
-		link: function(scope, element, attributes) {
-			if (scope.stemLayout.height) {
-				element.css('height', scope.stemLayout.height);
-			} else {
-				element.css('height', '500px');
-			}
-			scope.$watch(function() { return element[0].childNodes[3]; }, function(newValue, oldValue) {
-				// Ace code editor
-				scope.editor = ace.edit(scope.stemLayout.id + '-aceEditor');
-				scope.editor.getSession().setMode("ace/mode/python");
-				scope.editor.setFontSize(14);
-				scope.editor.setValue(scope.stemLayout.fields[0].value);
-				scope.editor.clearSelection();
-				scope.editor.on('change', function (ev) {
-					scope.stemLayout.fields[0].value = scope.editor.getValue();
-				});
-				element.resizable({
-					handles: "s",
-					resize: function(event, ui) {
-						scope.stemLayout.height = ui.size.height + 'px';
-				        scope.editor.resize();
-				    }
-				});
-			});
-		}
-	}
-});
-
 
 Stem.directive('stemScalar', function() {
 	return {
@@ -438,5 +398,59 @@ Stem.directive('stemTextAreaEditor', [function() {
 			});
 		},
 		templateUrl: "stem-text-area-editor.html",
+	}
+}]);
+
+Stem.directive('stemFormulas', function() {
+	return {
+		restrict: 'A',
+		scope: {
+			stemFormulas: '='
+		},
+		controller: function($scope) {
+			$scope.edit = function() {
+				$( '#' + $scope.stemFormulas.id +'-modal').modal( "show" );
+			};
+		},
+		templateUrl: "stem-formulas.html",
+		link: function(scope, element, attributes) {
+			// Watching for the node to be created
+			scope.$watch(function() { return element[0].childNodes[1].childNodes[5]; }, function(newValue, oldValue) {
+				// Ace code editor
+				scope.editor = ace.edit(scope.stemFormulas.id + '-aceEditor');
+				scope.editor.getSession().setMode("ace/mode/python");
+				scope.editor.setFontSize(14);
+				scope.editor.setValue(scope.stemFormulas.value);
+				scope.editor.clearSelection();
+				scope.editor.on('change', function (ev) {
+					scope.stemFormulas.value = scope.editor.getValue();
+				});
+				$(element[0].childNodes[1]).resizable({
+					handles: "s",
+					resize: function(event, ui) {
+						scope.stemFormulas.height = ui.size.height + 'px';
+				        scope.editor.resize();
+				    }
+				});
+				$(element[0].childNodes[1]).height(scope.stemFormulas.height);
+			});
+		}
+	}
+});
+
+Stem.directive('stemFormulasEditor', [function() {
+	return {
+		link: function(scope, element, attributes) {
+			element.find('input').first().on('input', function(event) {
+				if (!this.checkValidity()) {
+					$('#' + scope.stemFormulas.id + '-OkButton').prop('disabled', true);
+					$(this).next().css('color', 'red').html('Name is required and must be a valid Python identifier.');
+				} else {
+					$('#' + scope.stemFormulas.id + '-OkButton').prop('disabled', false);
+					$(this).next().html('');
+				}
+			});
+		},
+		templateUrl: "stem-formulas-editor.html",
 	}
 }]);
