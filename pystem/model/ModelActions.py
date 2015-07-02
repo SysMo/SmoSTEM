@@ -3,10 +3,9 @@ Created on Jun 27, 2015
 
 @author: Atanas Pavlov
 '''
-from __future__ import division
-
 import numpy as np
 from Formulas import FormulaBlockProcessor
+import Exceptions as E
 
 class Field(object):
 	def __init__(self, jsonField):
@@ -28,7 +27,7 @@ class Field(object):
 		elif (self.type == 'stem.TextField'):
 			value = jValue
 		else:
-			raise TypeError('Unknown field type {} for field {}'.format(self.type, self.name))
+			raise E.FieldError('Unknown field type {} for field {}'.format(self.type, self.name))
 		return value
 		#except Exception, e:
 		#	raise Exception()
@@ -41,7 +40,7 @@ class Field(object):
 		elif (self.type == 'stem.TextField'):
 			jValue = value
 		else:
-			raise TypeError('Unknown field type {} for field {}'.format(self.type, self.name))
+			raise E.FieldError('Unknown field type {} for field {}'.format(self.type, self.name))
 		return jValue
 	
 	def __str__(self):
@@ -59,33 +58,30 @@ class ModelActionExecutor(object):
 			self.compute()
 		
 	def compute(self):
+		self.fields = {}
+		self.fieldValues = {}
+		self.formulaProcessor = FormulaBlockProcessor(self.fields, self.fieldValues)
 		self.preCompute()
-		for fp in self.formulaProcessors:
-			fp.process()
+		self.formulaProcessor.process()
 		self.postCompute()
 		
 	def preCompute(self):
-		self.fields = {}
-		self.fieldValues = {}
-		self.formulaProcessors = []
 		for block in self.modelData['board']['layouts']:
-			if (block['type'] == 'grid'):
-				for field in block['fields']:
-					fieldName = field['name']
+			for field in block['fields']:
+				fieldName = field['name']
+				if (field['type'] == 'stem.FormulasField'):
+					self.formulaProcessor.addBlock(fieldName, field['value'])
+				else:
 					if (fieldName in self.fields):
-						raise KeyError('Duplicate field "{}"'.format(fieldName))
+						raise E.FieldError('Duplicate field "{}"'.format(fieldName))
 					pField = Field(field)
 					self.fields[fieldName] = pField					 
 					self.fieldValues[fieldName] = pField.parseValue(field['value'])
-			elif (block['type'] == 'formulas'):
-				for field in block['fields']:					
-					fbp = FormulaBlockProcessor(field['value'], self.fields, self.fieldValues)
-					self.formulaProcessors.append(fbp)
 					
 	def postCompute(self):				
 		for block in self.modelData['board']['layouts']:
-			if (block['type'] == 'grid'):
-				for field in block['fields']:
+			for field in block['fields']:
+				if (field['type'] != 'stem.FormulasField'):
 					fieldName = field['name']
 					field['value'] = self.fields[fieldName].serializeValue(self.fieldValues[fieldName])
 					

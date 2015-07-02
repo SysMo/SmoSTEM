@@ -10,3 +10,6 @@ class SemanticError(Exception):
 	def __init__(self, msg, node):
 		fullMsg = msg + ";\n line {}, column offset {}".format(node.lineno, node.col_offset)
 		super(SemanticError, self).__init__(fullMsg)
+
+class FieldError(Exception):
+	pass

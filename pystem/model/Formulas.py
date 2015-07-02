@@ -5,19 +5,18 @@ Created on Jul 2, 2015
 @copyright: SysMo Ltd, Bulgaria
 @licence: See License.txt in the main folder
 '''
+from __future__ import division
 import ast
 from FunctionRegistry import FunctionRegistry
 from Exceptions import SemanticError
 
 class ExpressionEvaluator(object):
-	def __init__(self, exprNode, ctx, funcRegistry):	
-		self.exprNode = exprNode
+	def __init__(self, ctx, funcRegistry):	
 		self.ctx = ctx
 		self.funcRegistry = funcRegistry
 		
-	def eval(self):
-		result = self.evalExpr(self.exprNode.body)
-		print result
+	def eval(self, expr):
+		result = self.evalExpr(expr)
 		return result
 	
 	def evalExpr(self, expr):
@@ -137,7 +136,6 @@ class ExpressionEvaluator(object):
 			return self.evalVariable(varNode.value)[index]
 		
 	def evalFuncCall(self, funcCallNode):
-		print ast.dump(funcCallNode)
 		funcPNode = funcCallNode.func
 		if (isinstance(funcPNode, ast.Name)):
 			funcName = funcCallNode.func.id
@@ -153,23 +151,31 @@ class ExpressionEvaluator(object):
 		return funcResult
 	
 class FormulaBlockProcessor(object):
-	def __init__(self, formulas, fields, values):
-		blockAST = ast.parse(formulas)
-		assert isinstance(blockAST, ast.Module)
-		self.statements = blockAST.body
+	def __init__(self, fields, values):
 		self.fields = fields
 		self.ctx = values
+		self.blocks = []
 		self.funcRegistry = FunctionRegistry()
 		
+	def addBlock(self, name, content):
+		"""
+		Root node of ast.parse result:
+		Module(stmt* body)
+		"""
+		blockAST = ast.parse(content, filename = name)
+		self.blocks.append(blockAST)
+		
 	def process(self):
-		for statement in self.statements:
-			assert isinstance(statement, ast.Assign)
-			expr = ast.Expression(body = statement.value)
-			#print ast.dump(statement)
-			ee = ExpressionEvaluator(expr, self.ctx, self.funcRegistry)
-			result = ee.eval()
-			for targetNode in statement.targets:
-				self.assignValue(value = result, targetNode = targetNode)
+		ee = ExpressionEvaluator(self.ctx, self.funcRegistry)
+		for block in self.blocks:
+			for statement in block.body:
+				if isinstance(statement, ast.Assign):
+					# Assign(expr* targets, expr value)
+					value = ee.eval(statement.value)
+					for targetNode in statement.targets:
+						self.assignValue(value = value, targetNode = targetNode)
+				else:
+					raise SemanticError("The statement is not an assignment", statement)
 	
 	def assignValue(self, value, targetNode, topLevel = True):
 		if (isinstance(targetNode, ast.Name)):
