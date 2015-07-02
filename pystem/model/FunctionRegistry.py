@@ -40,7 +40,9 @@ class FunctionRegistry(object):
 	
 	def addCoreFunctions(self):
 		coreFunctions = {
-			'If': lambda cond, val1, val2: val1 if cond else val2
+			'If': lambda cond, val1, val2: val1 if cond else val2,
+			'range': lambda n: np.arange(n),
+			'range1': lambda n: 1 + np.arange(n)
 		}
 		self.funcs.update(coreFunctions)
 		
@@ -72,7 +74,11 @@ class FunctionRegistry(object):
 			# Sum, product
 			'sum': np.sum,
 			'prod': np.prod,
-			'interp': np.interp
+			'interp': np.interp,
+			# Statistics
+			'mean': np.mean,
+			'std': np.std,
+			'var': np.var,
 		}
 		self.funcs.update(mathFunctions)
 
