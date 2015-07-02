@@ -11,6 +11,22 @@ from flask import request
 from flask_restful import Resource
 from bson.objectid import ObjectId
 
+from mongokit import Document
+
+class Quantity(Document):
+	structure = {
+		'name': unicode,
+		'label': unicode,
+		'SIUnit': unicode,
+	}
+	use_dot_notation = True
+	
+def fillQuantityCollection():
+	from mongokit import Connection
+	Q = Connection()['stem'].quantities
+	q = Q.Quantity()
+	
+	
 class QuantityAPI(Resource):
 	def __init__(self, db):
 		self.db = db

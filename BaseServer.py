@@ -10,7 +10,8 @@ from werkzeug.exceptions import HTTPException
 # REST-ful flask extension
 from flask_restful import Api
 
-from pymongo import MongoClient
+from mongokit import Connection
+#from pymongo import MongoClient
 from pystem.rest.Model import ModelAPI
 from pystem.rest.Quantity import QuantityAPI
 
@@ -37,7 +38,8 @@ app = Flask(__name__)
 app.config.from_object('Settings')
 app.debug = True
 api = Api(app)
-mongoClient = MongoClient()
+#mongoClient = MongoClient()
+mongoClient = Connection()
 
 # Pages
 @app.route("/")
