@@ -38,3 +38,6 @@
 .ui-resizable-s {
 	bottom: 0px;
 }
+.drag-handle {
+	display: inline-block;
+}
