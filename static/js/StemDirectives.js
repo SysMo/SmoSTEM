@@ -45,6 +45,10 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 						layout = new stemClasses.Layout('grid', 'narrow');
 						scope.addLayout(layout);
 						break;
+					case 'free':
+						layout = new stemClasses.Layout('free');
+						scope.addLayout(layout);
+						break;
 					}
 					$timeout(function(){
 						scope.$apply();
@@ -82,7 +86,8 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 					{
 						$(this).draggable("option", "revert", true);
 						$(ui.helper).css("list-style-type", "none");
-					},
+						
+					}
 				});
 			});
 		}
@@ -98,6 +103,9 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 		templateUrl: "stem-grid-layout.html",
 		replace: true,
 		controller: function($scope) {
+			$scope.edit = function() {
+				$( '#' + $scope.stemLayout.id +'-modal').modal( "show" );
+			};
 			$scope.addField = function(field) {
 				$scope.stemLayout.fields.push(field);
 			};
@@ -178,18 +186,120 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 	}
 });
 
+Stem.directive('stemFreeLayout', function(stemClasses, $timeout) {
+	return {
+		restrict : 'A',
+		scope: {
+			stemLayout: '=stemFreeLayout',
+		},
+		templateUrl: "stem-free-layout.html",
+		replace: true,
+		controller: function($scope) {
+			$scope.edit = function() {
+				$( '#' + $scope.stemLayout.id +'-modal').modal( "show" );
+			};
+			$scope.addField = function(field) {
+				$scope.stemLayout.fields.push(field);
+			};
+			$scope.removeField = function(field) {
+				var index = $scope.stemLayout.fields.indexOf(field);
+				if (index >= 0) {
+					$scope.stemLayout.fields.splice(index, 1);
+				}
+			};
+			$scope.findField = function(id){
+				for (var i=0; i<$scope.stemLayout.fields.length; i++) {
+					if (id == $scope.stemLayout.fields[i].id) {
+						return $scope.stemLayout.fields[i];
+					}
+				}
+				return null;
+			};
+		},
+		link: function(scope, element, attributes) {
+			if (scope.stemLayout.height) {
+				element.css('height', scope.stemLayout.height);
+			} else {
+				element.css('height', '500px');
+			}
+			element.droppable({
+				accept: scope.$parent.stemBoard.componentsSelector + '#fields_Scalar, ' +
+						scope.$parent.stemBoard.componentsSelector + '#fields_TextArea, ' +
+						'#' + scope.stemLayout.id + ' [stem-scalar], #' +
+						scope.stemLayout.id + ' [stem-text-area]',
+				activeClass: 'droppable-hover',
+				drop: function(event, ui) {
+					var fieldClassId = ui.draggable.context.id; // id of li element; is the same as component type
+					$('#'+fieldClassId).draggable("option", "revert", false);
+					var field;
+					switch (fieldClassId) {
+					case 'fields_Scalar':
+						field = new stemClasses.ScalarField(); 
+						scope.addField(field);
+						break;
+					case 'fields_TextArea':
+						field = new stemClasses.TextField();
+						scope.addField(field);
+						break;
+					}
+					if (field === undefined) {
+						var id = ui.draggable.children().first().attr('id');
+						field = scope.findField(id);
+					}
+					field.left = ui.offset.left - $(this).offset().left;
+					field.top = ui.offset.top - $(this).offset().top;
+					$timeout(function(){
+						scope.$apply();
+					});
+				}
+			});
+			element.resizable({
+				handles: "s",
+				resize: function(event, ui) {
+					scope.stemLayout.height = ui.size.height + 'px';
+				}
+			});
+		}
+	}
+});
+
+Stem.directive('stemLayoutEditor', [function() {
+	return {
+		restrict : 'A',
+		scope: {
+			stemLayout: "=stemLayoutEditor"
+		},
+		controller: function($scope) {
+			$scope.setImage = function() {
+				if ($scope.stemLayout.image !== undefined) {
+					$("#" + $scope.stemLayout.id).css("background", "url('" + $scope.stemLayout.image + "')");
+				}
+			}
+		},
+		link: function(scope, element, attrs) {
+			scope.$watch(function() {return element[0];}, function(newValue, oldValue){
+				scope.setImage();
+			});
+		},
+		templateUrl: "stem-layout-editor.html",
+	}
+}]);
+
+
 Stem.directive('stemScalar', function() {
 	return {
 		restrict: 'A',
 		scope: {
-			stemScalar: '='
+			stemScalar: '=',
+			layout: '=',
+			layoutId: '='
 		},
 		controller: function($scope, StemQuantities, stemUtil) {
 			$scope.edit = function() {
 				$( '#' + $scope.stemScalar.id +'-modal').modal( "show" );
 			};
-			$scope.quantities = StemQuantities.quantities;
-			$scope.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
+			$scope.stemScalar.quantities = StemQuantities.quantities;
+			$scope.stemScalar.unitOptions = $scope.stemScalar.quantities[$scope.stemScalar.quantity].units;
 			// Ensure that the scalar has a quantity and unit
 			$scope.stemScalar.quantity = $scope.stemScalar.quantity || 'Dimensionless';
 			$scope.stemScalar.displayUnit = $scope.stemScalar.displayUnit || '-';
@@ -207,6 +317,24 @@ Stem.directive('stemScalar', function() {
 				));
 			};
 			$scope.onUnitChange();
+		}, 
+		link: function(scope, element, attrs) {
+			if (scope.layout == 'free') {
+				element.css({'position': 'absolute', 'left': scope.stemScalar.left, 'top': scope.stemScalar.top});
+				if (scope.stemScalar.angle === undefined) {
+					scope.stemScalar.angle = 0;
+				}
+				scope.$watch(function () { return element[0].childNodes[1]}, function(newValue, oldValue) {
+					element.draggable({
+						handle: ".drag-handle",
+					});
+					element.children().first().css('transform', 'rotate(' + String(scope.stemScalar.angle) + 'deg)');
+					scope.rotate = function() {
+						scope.stemScalar.angle += 45;
+						element.children().first().css('transform', 'rotate(' + String(scope.stemScalar.angle) + 'deg)');
+					}
+				});
+			}
 		},
 		templateUrl: "stem-scalar.html"
 	}
@@ -215,10 +343,13 @@ Stem.directive('stemScalar', function() {
 Stem.directive('stemScalarEditor', [function() {
 	return {
 		restrict : 'A',
+		scope: {
+			stemScalar: "=stemScalarEditor"
+		},
 		controller: function($scope) {
 			$scope.setDisplayUnit = function() {
-				$scope.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
-				$scope.stemScalar.displayUnit = $scope.quantities[$scope.stemScalar.quantity].SIUnit;
+				$scope.stemScalar.unitOptions = $scope.stemScalar.quantities[$scope.stemScalar.quantity].units;
+				$scope.stemScalar.displayUnit = $scope.stemScalar.quantities[$scope.stemScalar.quantity].SIUnit;
 			};
 		},
 		link: function(scope, element, attributes) {
@@ -300,6 +431,9 @@ Stem.directive('stemTable', function(stemTable, StemQuantities, stemUtil, $compi
 Stem.directive('stemTableEditor', [function() {
 	return {
 		restrict : 'A',
+		scope: {
+			stemTable: '=stemTableEditor'
+		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
@@ -357,7 +491,9 @@ Stem.directive('stemTextArea', function() {
 	return {
 		restrict: 'A',
 		scope: {
-			stemTextArea: '='
+			stemTextArea: '=',
+			layout: '=',
+			layoutId: '='
 		},
 		controller: function($scope) {
 			$scope.edit = function() {
@@ -368,8 +504,10 @@ Stem.directive('stemTextArea', function() {
 		link: function(scope, element, attributes) {
 			if (scope.$parent.stemLayout.width == 'narrow') {
 				element.css('width', '450px');
-			} else if (scope.$parent.stemLayout.width == 'wide') {
+			} else if (scope.$parent.stemLayout.width == 'wide' && scope.$parent.stemLayout.type == 'grid') {
 				element.css('width', '98%');
+			} else if (scope.$parent.stemLayout.type == 'free') {
+				element.css('width', '200px');
 			}
 			element.find('textarea').css('width', '98%').css('max-width', '98%');
 			// Watching for the node to be created
@@ -379,13 +517,32 @@ Stem.directive('stemTextArea', function() {
 						$(this).height(this.clientHeight + 20);
 					}
 				});
-			});			
+			});
+			if (scope.layout == 'free') {
+				element.css({'position': 'absolute', 'left': scope.stemTextArea.left, 'top': scope.stemTextArea.top});
+				if (scope.stemTextArea.angle === undefined) {
+					scope.stemTextArea.angle = 0;
+				}
+				scope.$watch(function () { return element[0].childNodes[1]}, function(newValue, oldValue) {
+					element.draggable({
+						handle: ".drag-handle",
+					});
+					element.children().first().css('transform', 'rotate(' + String(scope.stemTextArea.angle) + 'deg)');
+					scope.rotate = function() {
+						scope.stemTextArea.angle += 45;
+						element.children().first().css('transform', 'rotate(' + String(scope.stemTextArea.angle) + 'deg)');
+					}
+				});
+			}
 		}
 	}
 });
 
 Stem.directive('stemTextAreaEditor', [function() {
 	return {
+		scope: {
+			stemTextArea: "=stemTextAreaEditor"
+		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
@@ -416,6 +573,7 @@ Stem.directive('stemFormulas', function() {
 		link: function(scope, element, attributes) {
 			// Watching for the node to be created
 			scope.$watch(function() { return element[0].childNodes[1].childNodes[5]; }, function(newValue, oldValue) {
+				$(element[0].childNodes[1]).height(scope.stemFormulas.height);
 				// Ace code editor
 				scope.editor = ace.edit(scope.stemFormulas.id + '-aceEditor');
 				scope.editor.getSession().setMode("ace/mode/python");
@@ -432,7 +590,6 @@ Stem.directive('stemFormulas', function() {
 				        scope.editor.resize();
 				    }
 				});
-				$(element[0].childNodes[1]).height(scope.stemFormulas.height);
 			});
 		}
 	}
@@ -440,6 +597,9 @@ Stem.directive('stemFormulas', function() {
 
 Stem.directive('stemFormulasEditor', [function() {
 	return {
+		scope: {
+			stemFormulas: "=stemFormulasEditor"
+		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
