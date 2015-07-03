@@ -251,7 +251,6 @@ Stem.directive('stemFreeLayout', function(stemClasses, $timeout) {
 					}
 					field.left = ui.offset.left - $(this).offset().left;
 					field.top = ui.offset.top - $(this).offset().top;
-					
 					$timeout(function(){
 						scope.$apply();
 					});
@@ -279,8 +278,8 @@ Stem.directive('stemScalar', function() {
 			$scope.edit = function() {
 				$( '#' + $scope.stemScalar.id +'-modal').modal( "show" );
 			};
-			$scope.quantities = StemQuantities.quantities;
-			$scope.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
+			$scope.stemScalar.quantities = StemQuantities.quantities;
+			$scope.stemScalar.unitOptions = $scope.stemScalar.quantities[$scope.stemScalar.quantity].units;
 			// Ensure that the scalar has a quantity and unit
 			$scope.stemScalar.quantity = $scope.stemScalar.quantity || 'Dimensionless';
 			$scope.stemScalar.displayUnit = $scope.stemScalar.displayUnit || '-';
@@ -301,10 +300,17 @@ Stem.directive('stemScalar', function() {
 		}, 
 		link: function(scope, element, attrs) {
 			if (scope.layout == 'free') {
+				if (scope.stemScalar.angle === undefined) {
+					scope.stemScalar.angle = 0;
+				}
+				scope.rotate = function() {
+					scope.stemScalar.angle += 45;
+					element.css('transform', 'rotate(' + String(scope.stemScalar.angle) + 'deg)');
+				}
 				scope.$watch(function () { return element[0].childNodes[1]}, function(newValue, oldValue) {
 					element.draggable({
-						containment: "#" + scope.layoutId + "-draggables_div",
-						scroll: false,
+						//containment: "#" + scope.layoutId + "-draggables_div",
+						//scroll: false,
 						handle: ".drag-handle",
 						start: function(event, ui) {
 						},
@@ -321,10 +327,13 @@ Stem.directive('stemScalar', function() {
 Stem.directive('stemScalarEditor', [function() {
 	return {
 		restrict : 'A',
+		scope: {
+			stemScalar: "=stemScalarEditor"
+		},
 		controller: function($scope) {
 			$scope.setDisplayUnit = function() {
-				$scope.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
-				$scope.stemScalar.displayUnit = $scope.quantities[$scope.stemScalar.quantity].SIUnit;
+				$scope.stemScalar.unitOptions = $scope.stemScalar.quantities[$scope.stemScalar.quantity].units;
+				$scope.stemScalar.displayUnit = $scope.stemScalar.quantities[$scope.stemScalar.quantity].SIUnit;
 			};
 		},
 		link: function(scope, element, attributes) {
@@ -489,10 +498,17 @@ Stem.directive('stemTextArea', function() {
 				});
 			});
 			if (scope.layout == 'free') {
+				if (scope.stemTextArea.angle === undefined) {
+					scope.stemTextArea.angle = 0;
+				}
+				scope.rotate = function() {
+					scope.stemTextArea.angle += 45;
+					element.css('transform', 'rotate(' + String(scope.stemTextArea.angle) + 'deg)');
+				}
 				scope.$watch(function () { return element[0].childNodes[1]}, function(newValue, oldValue) {
 					element.draggable({
-						containment: "#" + scope.layoutId + "-draggables_div",
-						scroll: false,
+						//containment: "#" + scope.layoutId + "-draggables_div",
+						//scroll: false,
 						handle: ".drag-handle",
 						start: function(event, ui) {
 						},
@@ -507,6 +523,9 @@ Stem.directive('stemTextArea', function() {
 
 Stem.directive('stemTextAreaEditor', [function() {
 	return {
+		scope: {
+			stemTextArea: "=stemTextAreaEditor"
+		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {

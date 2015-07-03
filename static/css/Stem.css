@@ -38,6 +38,6 @@
 .ui-resizable-s {
 	bottom: 0px;
 }
-.drag-handle {
+.drag-handle, .rotate-handle {
 	display: inline-block;
 }
