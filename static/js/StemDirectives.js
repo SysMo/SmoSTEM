@@ -272,10 +272,14 @@ Stem.directive('stemLayoutEditor', [function() {
 		controller: function($scope) {
 			$scope.setImage = function() {
 				if ($scope.stemLayout.image !== undefined) {
-					
 					$("#" + $scope.stemLayout.id).css("background", "url('" + $scope.stemLayout.image + "')");
 				}
 			}
+		},
+		link: function(scope, element, attrs) {
+			scope.$watch(function() {return element[0];}, function(newValue, oldValue){
+				scope.setImage();
+			});
 		},
 		templateUrl: "stem-layout-editor.html",
 	}
@@ -316,23 +320,19 @@ Stem.directive('stemScalar', function() {
 		}, 
 		link: function(scope, element, attrs) {
 			if (scope.layout == 'free') {
+				element.css({'position': 'absolute', 'left': scope.stemScalar.left, 'top': scope.stemScalar.top});
 				if (scope.stemScalar.angle === undefined) {
 					scope.stemScalar.angle = 0;
 				}
-				scope.rotate = function() {
-					scope.stemScalar.angle += 45;
-					element.css('transform', 'rotate(' + String(scope.stemScalar.angle) + 'deg)');
-				}
 				scope.$watch(function () { return element[0].childNodes[1]}, function(newValue, oldValue) {
 					element.draggable({
-						//containment: "#" + scope.layoutId + "-draggables_div",
-						//scroll: false,
 						handle: ".drag-handle",
-						start: function(event, ui) {
-						},
-						stop : function(event, ui) {
-						}
 					});
+					element.children().first().css('transform', 'rotate(' + String(scope.stemScalar.angle) + 'deg)');
+					scope.rotate = function() {
+						scope.stemScalar.angle += 45;
+						element.children().first().css('transform', 'rotate(' + String(scope.stemScalar.angle) + 'deg)');
+					}
 				});
 			}
 		},
@@ -431,6 +431,9 @@ Stem.directive('stemTable', function(stemTable, StemQuantities, stemUtil, $compi
 Stem.directive('stemTableEditor', [function() {
 	return {
 		restrict : 'A',
+		scope: {
+			stemTable: '=stemTableEditor'
+		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
@@ -501,8 +504,10 @@ Stem.directive('stemTextArea', function() {
 		link: function(scope, element, attributes) {
 			if (scope.$parent.stemLayout.width == 'narrow') {
 				element.css('width', '450px');
-			} else if (scope.$parent.stemLayout.width == 'wide') {
+			} else if (scope.$parent.stemLayout.width == 'wide' && scope.$parent.stemLayout.type == 'grid') {
 				element.css('width', '98%');
+			} else if (scope.$parent.stemLayout.type == 'free') {
+				element.css('width', '200px');
 			}
 			element.find('textarea').css('width', '98%').css('max-width', '98%');
 			// Watching for the node to be created
@@ -514,23 +519,19 @@ Stem.directive('stemTextArea', function() {
 				});
 			});
 			if (scope.layout == 'free') {
+				element.css({'position': 'absolute', 'left': scope.stemTextArea.left, 'top': scope.stemTextArea.top});
 				if (scope.stemTextArea.angle === undefined) {
 					scope.stemTextArea.angle = 0;
 				}
-				scope.rotate = function() {
-					scope.stemTextArea.angle += 45;
-					element.css('transform', 'rotate(' + String(scope.stemTextArea.angle) + 'deg)');
-				}
 				scope.$watch(function () { return element[0].childNodes[1]}, function(newValue, oldValue) {
 					element.draggable({
-						//containment: "#" + scope.layoutId + "-draggables_div",
-						//scroll: false,
 						handle: ".drag-handle",
-						start: function(event, ui) {
-						},
-						stop : function(event, ui) {
-						}
 					});
+					element.children().first().css('transform', 'rotate(' + String(scope.stemTextArea.angle) + 'deg)');
+					scope.rotate = function() {
+						scope.stemTextArea.angle += 45;
+						element.children().first().css('transform', 'rotate(' + String(scope.stemTextArea.angle) + 'deg)');
+					}
 				});
 			}
 		}
@@ -596,6 +597,9 @@ Stem.directive('stemFormulas', function() {
 
 Stem.directive('stemFormulasEditor', [function() {
 	return {
+		scope: {
+			stemFormulas: "=stemFormulasEditor"
+		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
