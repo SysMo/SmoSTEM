@@ -2,24 +2,8 @@ var Stem = angular.module('Stem',['ngResource']);
 
 // Page with model list
 Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResources){
-	$scope.models = StemResources.Models.query();
-	// Open model editor
-	$scope.editModel = function(model) {
-		window.location.href = '/ModelEditor/' + model._id;
-	}
-	// Delete model on the server and reload models
-	$scope.deleteModel = function(model) {
-		model.$delete();
-		$scope.models = StemResources.Models.query();
-	}
-	// Create a new model and open model editor
-	$scope.createModel = function(model) {
-		var model = new StemResources.Models();
-		model.$save(function() {
-			window.location.href = '/ModelEditor/' + model._id;	
-		});
-		
-	}
+	$scope.Models = new StemResources.StandardResource('Models', 'ModelEditor');
+	$scope.Models.query();
 });
 
 // Page with model editor
@@ -48,11 +32,6 @@ Stem.controller('ModelEditorCtrl', function($scope,
 		console.log(modelId);
 		return true;
 	}
-});
-
-// Page with quantities list
-Stem.controller('QuantitiesCtrl', function($scope, StemResources) {
-	$scope.quantities = StemResources.Quantities.query()
 });
 
 // Utility functions

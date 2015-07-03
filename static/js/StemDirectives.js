@@ -419,7 +419,7 @@ Stem.directive('stemFormulas', function() {
 				// Ace code editor
 				scope.editor = ace.edit(scope.stemFormulas.id + '-aceEditor');
 				scope.editor.getSession().setMode("ace/mode/python");
-				scope.editor.setFontSize(14);
+				scope.editor.setFontSize(16);
 				scope.editor.setValue(scope.stemFormulas.value);
 				scope.editor.clearSelection();
 				scope.editor.on('change', function (ev) {

@@ -1,13 +1,13 @@
 {% extends "StemBase.html" %}
 {% block BodyContent %}
 {% raw %}
-<div ng-controller="QuantitiesCtrl">
+<div style="margin: 10px;" ng-controller="QuantitiesCtrl">
 	<h1>Quantities</h1>
-	<button type="button" class="btn btn-primary" ng-click="createQuantity()">New</button>
-	<div ng-repeat="quantity in quantities">
-		<a>&times;</a><a ng-href="/QuantityEditor/{{quantity._id}}">{{quantity.name}}</a> 
+	<button type="button" class="btn btn-primary" ng-click="Quantities.create()">New</button>
+    <p>
+	<div ng-repeat="quantity in Quantities.collection">
+		<a ng-click="Quantities.del(quantity)">&times;</a>&nbsp;&nbsp;<a ng-click="Quantities.edit(quantity)">{{quantity.name}}</a> 
 	</div>
-	{{quantities|json}}
 </div>
 {% endraw %}
 {% endblock %}

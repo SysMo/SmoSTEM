@@ -26,6 +26,10 @@ mongoConnection = Connection()
 def index():
 	return render_template('StemBase.html')
 
+@app.route("/Models")
+def listModels():
+	return render_template('Models.html')
+
 @app.route("/ModelEditor/<modelID>")
 def modelEditor(modelID):
 	return render_template('ModelEditor.html', modelID = modelID)
@@ -34,9 +38,12 @@ def modelEditor(modelID):
 def listQuantities():
 	return render_template('Quantities.html')
 
+@app.route("/QuantityEditor/<quantityID>")
+def quantityEditor(quantityID):
+	return render_template('QuantityEditor.html', quantityID = quantityID)
 	
 api.add_resource(ModelAPI, '/stem/api/Models', '/stem/api/Models/<string:modelID>', 
-		resource_class_kwargs = {'db':mongoConnection[app.config['STEM_DATABASE']]})
+		resource_class_kwargs = {'conn':mongoConnection[app.config['STEM_DATABASE']]})
 api.add_resource(QuantityAPI, '/stem/api/Quantities', '/stem/api/Quantities/<string:quantityID>', 
 		resource_class_kwargs = {'conn':mongoConnection[app.config['STEM_DATABASE']]})
 mongoConnection.register([Quantity])
