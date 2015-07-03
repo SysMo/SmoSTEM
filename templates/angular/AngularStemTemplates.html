@@ -33,9 +33,11 @@
 	<div ng-switch on="layout.type">
 		<div ng-switch-when="grid">
 			<div stem-grid-layout="layout"></div>
+			<div stem-layout-editor="layout"></div>
 		</div>
 		<div ng-switch-when="free">
 			<div stem-free-layout="layout"></div>
+			<div stem-layout-editor="layout"></div>
 		</div>
 	</div>
 </div>
@@ -44,6 +46,7 @@
 <!-- Stem Grid Layout -->
 <script type="text/ng-template" id="stem-grid-layout.html">
   <div id="{{stemLayout.id}}" style="background: #EEE; padding: 10px; margin: 10px; float: left;">
+  	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemLayout.title}}</span>
 	<button class="close" ng-click="$parent.removeLayout(stemLayout)">&times;</button>
 	<div class="sortables_div" style="overflow: auto; height: 100%;">
 		<div ng-repeat="field in stemLayout.fields">
@@ -74,6 +77,7 @@
 <!-- Stem Free Layout -->
 <script type="text/ng-template" id="stem-free-layout.html">
   <div id="{{stemLayout.id}}" style="width: 1060px; overflow: auto; background: #EEE; padding: 10px; margin: 10px; float: left;">
+	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemLayout.title}}</span>
 	<button class="close" style="" ng-click="$parent.removeLayout(stemLayout)">&times;</button>
 	<div id="{{stemLayout.id}}-draggables_div" style="height: 100%;">
 		<div ng-repeat="field in stemLayout.fields">
@@ -93,6 +97,35 @@
 		</div>
 	</div>
   </div>
+</script>
+
+<!-- Stem Layout Editor -->
+<script type="text/ng-template" id="stem-layout-editor.html">
+<div class="modal fade" id="{{stemLayout.id}}-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title">Properties</h4>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div>Title</div>
+					<input type="text" ng-model="stemLayout.title">
+					<div></div>
+					<div>Image</div>
+					<input type="text" ng-model="stemLayout.image">
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="{{stemLayout.id}}-OkButton" class="btn btn-default" data-dismiss="modal" ng-click="setImage()">OK</button>
+			</div>
+		</div>
+	</div>
+</div>
 </script>
 
 <!-- Stem Scalar -->

@@ -103,6 +103,9 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 		templateUrl: "stem-grid-layout.html",
 		replace: true,
 		controller: function($scope) {
+			$scope.edit = function() {
+				$( '#' + $scope.stemLayout.id +'-modal').modal( "show" );
+			};
 			$scope.addField = function(field) {
 				$scope.stemLayout.fields.push(field);
 			};
@@ -192,6 +195,9 @@ Stem.directive('stemFreeLayout', function(stemClasses, $timeout) {
 		templateUrl: "stem-free-layout.html",
 		replace: true,
 		controller: function($scope) {
+			$scope.edit = function() {
+				$( '#' + $scope.stemLayout.id +'-modal').modal( "show" );
+			};
 			$scope.addField = function(field) {
 				$scope.stemLayout.fields.push(field);
 			};
@@ -256,6 +262,25 @@ Stem.directive('stemFreeLayout', function(stemClasses, $timeout) {
 		}
 	}
 });
+
+Stem.directive('stemLayoutEditor', [function() {
+	return {
+		restrict : 'A',
+		scope: {
+			stemLayout: "=stemLayoutEditor"
+		},
+		controller: function($scope) {
+			$scope.setImage = function() {
+				if ($scope.stemLayout.image !== undefined) {
+					
+					$("#" + $scope.stemLayout.id).css("background", "url('" + $scope.stemLayout.image + "')");
+				}
+			}
+		},
+		templateUrl: "stem-layout-editor.html",
+	}
+}]);
+
 
 Stem.directive('stemScalar', function() {
 	return {
