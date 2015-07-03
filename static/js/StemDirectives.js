@@ -45,12 +45,8 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 						layout = new stemClasses.Layout('grid', 'narrow');
 						scope.addLayout(layout);
 						break;
-					case 'free_Wide':
-						layout = new stemClasses.Layout('free', 'wide');
-						scope.addLayout(layout);
-						break;
-					case 'free_Narrow':
-						layout = new stemClasses.Layout('free', 'narrow');
+					case 'free':
+						layout = new stemClasses.Layout('free');
 						scope.addLayout(layout);
 						break;
 					}
@@ -215,11 +211,6 @@ Stem.directive('stemFreeLayout', function(stemClasses, $timeout) {
 			};
 		},
 		link: function(scope, element, attributes) {
-			if (scope.stemLayout.width == 'narrow') {
-				element.css('width', '520px');
-			} else {
-				element.css('width', '1060px');
-			}
 			if (scope.stemLayout.height) {
 				element.css('height', scope.stemLayout.height);
 			} else {

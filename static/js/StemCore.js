@@ -183,11 +183,12 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 	createInstanceCounter(classes.FormulasField);
 	
 	classes.Layout = Class.extend({
-		init: function(type, width, fields) {
+		init: function(type, width, fields, title) {
 			this.width = width || 'wide';
 			this.type = type || 'grid';
 			this.fields = fields || [];
 			this.id = stemUtil.guid();
+			this.title =  title || "New layout";
 		}
 	});
 	
