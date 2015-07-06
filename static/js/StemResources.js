@@ -65,7 +65,8 @@ Stem.factory('StemResources', function($resource) {
 					method: 'GET',
 					params: {
 						full: true
-					}
+					},
+					isArray: true
 				},
 				post: {
 					method: 'POST',

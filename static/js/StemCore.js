@@ -1,41 +1,7 @@
 var Stem = angular.module('Stem',['ngResource']);
 
-// Page with model list
-Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResources){
-	$scope.Models = new StemResources.StandardResource('Models', 'ModelEditor');
-	$scope.Models.query();
-});
-
-// Page with model editor
-Stem.controller('ModelEditorCtrl', function($scope, 
-		PageSettings, StemResources, StemQuantities){
-	// Get the model object from the server
-	$scope.model =  StemResources.Models.get({_id: PageSettings.modelID}, function() {
-		// Add the selectors for the different board parts
-		angular.extend($scope.model.board, {
-			containerSelector : '#main',
-			layoutsSelector: '#LayoutsToolbar > ul > li',
-			componentsSelector: '#ModelComponentsToolbar > ul > li'
-		});
-	});
-	
-	StemQuantities.loadQuantities();
-	$scope.quantities = StemQuantities.quantities;
-	
-	$scope.save = function() {
-		$scope.model.$update();
-	};
-	$scope.compute = function() {
-		$scope.model.$compute();
-	};
-	$scope.checkVal = function(modelId) {
-		console.log(modelId);
-		return true;
-	}
-});
-
 // Utility functions
-Stem.factory('stemUtil', function stemUtil () {
+Stem.factory('StemUtil', function StemUtil () {
 	return {
 		guid: function () {
 		    function _p8(s) {
@@ -66,8 +32,12 @@ Stem.factory('stemUtil', function stemUtil () {
 Stem.factory('StemQuantities', function StemQuantities (StemResources, $timeout) {
 	var StemQuantities = {
 		quantities: {},
-		loadQuantities: function() {
-			this.quantities = StemResources.Quantities.load(function(data) {
+		loadQuantities: function(cb) {
+			var quantityList = StemResources.Quantities.load(function (data) {
+				quantityList.forEach(function(value, index) {
+					StemQuantities.quantities[value.name] = value;
+				});
+				cb(StemQuantities.quantities);
 			});
 		},
 		getUnitDefinition: function(quantity, unitName) {
@@ -99,7 +69,7 @@ Stem.factory('StemQuantities', function StemQuantities (StemResources, $timeout)
 
 
 // User defined 'Classes'
-Stem.factory('stemClasses', function stemClasses(stemUtil) {
+Stem.factory('stemClasses', function stemClasses(StemUtil) {
 	var classes = {};
 	function createInstanceCounter(klass) {
 		klass.instanceCounter = 0;
@@ -109,7 +79,7 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 		type: 'stem.Field',
 		init: function () {
 			// Create unique id
-			this.id = stemUtil.guid();			
+			this.id = StemUtil.guid();			
 		}
 	});
 	
@@ -169,7 +139,7 @@ Stem.factory('stemClasses', function stemClasses(stemUtil) {
 			this.width = width || 'wide';
 			this.type = type || 'grid';
 			this.fields = fields || [];
-			this.id = stemUtil.guid();
+			this.id = StemUtil.guid();
 			this.title =  title || "New layout";
 			this.image =  image;
 		}

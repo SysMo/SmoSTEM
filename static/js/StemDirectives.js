@@ -294,7 +294,7 @@ Stem.directive('stemScalar', function() {
 			layout: '=',
 			layoutId: '='
 		},
-		controller: function($scope, StemQuantities, stemUtil) {
+		controller: function($scope, StemQuantities, StemUtil) {
 			$scope.edit = function() {
 				$( '#' + $scope.stemScalar.id +'-modal').modal( "show" );
 			};
@@ -312,7 +312,7 @@ Stem.directive('stemScalar', function() {
 				}
 			};
 			$scope.onUnitChange = function() {
-				$scope.displayValue = stemUtil.formatNumber(StemQuantities.fromSIUnit(
+				$scope.displayValue = StemUtil.formatNumber(StemQuantities.fromSIUnit(
 					$scope.stemScalar.quantity, $scope.stemScalar.displayUnit, $scope.stemScalar.value
 				));
 			};
@@ -367,7 +367,7 @@ Stem.directive('stemScalarEditor', [function() {
 	}
 }]);
 
-Stem.directive('stemTable', function(stemTable, StemQuantities, stemUtil, $compile) {
+Stem.directive('stemTable', function(stemTable, StemQuantities, StemUtil, $compile) {
 	return {
 		restrict: 'A',
 		scope: {
@@ -399,7 +399,7 @@ Stem.directive('stemTable', function(stemTable, StemQuantities, stemUtil, $compi
 					scope.tableDOMobject.columns[scope.activeColumnIndex] = scope.activeColumn;
 					angular.forEach(scope.tableDOMobject.data, function(row, rowIndex) {
 						row[scope.activeColumnIndex] = 
-							stemUtil.formatNumber(StemQuantities.fromSIUnit
+							StemUtil.formatNumber(StemQuantities.fromSIUnit
 										(
 											scope.activeColumn.quantity, scope.activeColumn.displayUnit, 
 											scope.stemTable.value[rowIndex][scope.activeColumnIndex]
@@ -449,7 +449,7 @@ Stem.directive('stemTableEditor', [function() {
 	}
 }]);
 
-Stem.directive('stemTableColumnEditor', function($timeout, StemQuantities, stemUtil) {
+Stem.directive('stemTableColumnEditor', function($timeout, StemQuantities, StemUtil) {
 	return {
 		restrict : 'A',
 		controller: function($scope) {

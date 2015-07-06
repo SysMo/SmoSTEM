@@ -5,14 +5,14 @@ Stem.controller('QuantitiesCtrl', function($scope, StemResources) {
 });
 
 //Editor for an individual quantity
-Stem.controller('QuantityEditorCtrl', function($scope, PageSettings, StemResources, stemUtil) {
+Stem.controller('QuantityEditorCtrl', function($scope, PageSettings, StemResources, StemUtil) {
 	// Used for string representation of numerical values
 	$scope.multiplierStrings = [];
 	// Fetch the quantity information
 	$scope.quantity =  StemResources.Quantities.get({id: PageSettings.quantityID}, 
 			function() {
 		for (var i = 0; i < $scope.quantity.units.length; i++) {
-			$scope.multiplierStrings.push(stemUtil.formatNumber($scope.quantity.units[i][1].mult));
+			$scope.multiplierStrings.push(StemUtil.formatNumber($scope.quantity.units[i][1].mult));
 		}
 	});
 	// Add a new unit
@@ -38,4 +38,44 @@ Stem.controller('QuantityEditorCtrl', function($scope, PageSettings, StemResourc
 	$scope.listQuantities = function() {
 		window.location.href = "/Quantities";
 	};
+});
+
+//Page with model list
+Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResources){
+	$scope.Models = new StemResources.StandardResource('Models', 'ModelEditor');
+	$scope.Models.query();
+});
+
+// Page with model editor
+Stem.controller('ModelEditorCtrl', function($scope, 
+		PageSettings, StemResources, StemQuantities){
+	// Get the model object from the server
+	$scope.model =  StemResources.Models.get({_id: PageSettings.modelID}, function() {
+		// Add the selectors for the different board parts
+		angular.extend($scope.model.board, {
+			containerSelector : '#main',
+			layoutsSelector: '#LayoutsToolbar > ul > li',
+			componentsSelector: '#ModelComponentsToolbar > ul > li'
+		});
+	});
+	// Load quantities from server
+	$scope.quantitiesLoaded = false
+	StemQuantities.loadQuantities(function(quantities){
+		$scope.quantities = quantities;
+		$scope.quantitiesLoaded = true;
+		console.log($scope.quantities);
+	});
+	// Save model
+	$scope.save = function() {
+		$scope.model.$update();
+	};
+	// Compute model
+	$scope.compute = function() {
+		$scope.model.$compute();
+	};
+	//??
+	$scope.checkVal = function(modelId) {
+		console.log(modelId);
+		return true;
+	}
 });
