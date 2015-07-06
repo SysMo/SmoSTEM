@@ -1,13 +1,13 @@
-Stem.factory('stemTable', function() {
-	var stemTable = {};
-	stemTable.Table = function(idSelector, columns, value) {
+Stem.factory('StemTable', function() {
+	var StemTable = {};
+	StemTable.Table = function(idSelector, columns, value) {
 		this.idSelector = idSelector;
 		this.tableNode = $(idSelector)[0];
 		this.columns = columns;
 		this.data = value;
 		this.renderTable();
 	}
-	stemTable.Table.prototype.renderTable = function() {
+	StemTable.Table.prototype.renderTable = function() {
 		this.tableNode.innerHTML = "";
 		var table = this;
 		columns = angular.copy(this.columns);
@@ -151,7 +151,7 @@ Stem.factory('stemTable', function() {
         });
 	};
 	
-	stemTable.Table.prototype.updateView = function() {
+	StemTable.Table.prototype.updateView = function() {
 		var table = this;
 		this.INPUTS.forEach(function(elm) { 
 			elm.value = table.columns[elm.dataset.col].format ? numeral(table.data[elm.dataset.row][elm.dataset.col]).format(table.columns[elm.dataset.col].format) : numeral(table.data[elm.dataset.row][elm.dataset.col]).value();
@@ -159,7 +159,7 @@ Stem.factory('stemTable', function() {
 		
 	};
 	
-	stemTable.Table.prototype.addRow = function(index, where) {
+	StemTable.Table.prototype.addRow = function(index, where) {
 		if (where == 'after') {
 			index = index + 1;
 		}
@@ -171,12 +171,12 @@ Stem.factory('stemTable', function() {
 		this.renderTable();
 		this.updateView();
 	};
-	stemTable.Table.prototype.delRow = function(index) {
+	StemTable.Table.prototype.delRow = function(index) {
 		this.data.splice(index, 1);
 		this.renderTable();
 		this.updateView();
 	};
-	stemTable.Table.prototype.resize = function(numRows) {
+	StemTable.Table.prototype.resize = function(numRows) {
 		if (numRows <= this.data.length) {
 			this.data.splice(numRows, this.data.length - numRows);
 		} else {
@@ -192,7 +192,7 @@ Stem.factory('stemTable', function() {
 		this.renderTable();
 		this.updateView();
 	};
-	stemTable.Table.prototype.addColumn = function(index, where) {
+	StemTable.Table.prototype.addColumn = function(index, where) {
 		if (where == 'after') {
 			index = index + 1;
 		}
@@ -202,7 +202,7 @@ Stem.factory('stemTable', function() {
 		}
 		this.editColumn(index);
 	};
-	stemTable.Table.prototype.delColumn = function(index) {
+	StemTable.Table.prototype.delColumn = function(index) {
 		this.columns.splice(index, 1);
 		for (var i=0; i<this.data.length; i++) {
 			this.data[i].splice(index, 1);
@@ -210,16 +210,16 @@ Stem.factory('stemTable', function() {
 		this.renderTable();
 		this.updateView();
 	};
-	stemTable.Table.prototype.editColumn = function(index) {
+	StemTable.Table.prototype.editColumn = function(index) {
 		this.activeColumnIndex = index;
 		$(this.idSelector + "-columnModal").modal("show");
 	};
-	stemTable.Table.prototype.clearColumn = function(index) {
+	StemTable.Table.prototype.clearColumn = function(index) {
 		for (var i=0; i<this.data.length; i++) {
 			this.data[i][index] = 0;
 		}
 		this.renderTable();
 		this.updateView();
 	};
-	return stemTable;
+	return StemTable;
 });

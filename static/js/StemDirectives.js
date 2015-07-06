@@ -367,7 +367,7 @@ Stem.directive('stemScalarEditor', [function() {
 	}
 }]);
 
-Stem.directive('stemTable', function(stemTable, StemQuantities, StemUtil, $compile) {
+Stem.directive('stemTable', function(StemTable, StemQuantities, StemUtil, $compile) {
 	return {
 		restrict: 'A',
 		scope: {
@@ -394,7 +394,7 @@ Stem.directive('stemTable', function(stemTable, StemQuantities, StemUtil, $compi
 				element.css('width', '98%');
 			}
 	        scope.$watch(function () { return element[0].childNodes[1].childNodes[5].childNodes[1]; }, function(newValue, oldValue) {
-				scope.tableDOMobject = new stemTable.Table("#" + scope.stemTable.id + "-table", scope.stemTable.columns, scope.stemTable.value);
+				scope.tableDOMobject = new StemTable.Table("#" + scope.stemTable.id + "-table", scope.stemTable.columns, scope.stemTable.value);
 				scope.onUnitChange = function() {
 					scope.tableDOMobject.columns[scope.activeColumnIndex] = scope.activeColumn;
 					angular.forEach(scope.tableDOMobject.data, function(row, rowIndex) {
