@@ -18,7 +18,7 @@ Stem.factory('StemResources', function($resource) {
 			} 
 			// Open entity editor
 			this.edit = function(entity) {
-				window.location.href = editorPath + "/" + entity._id.$oid;
+				window.location.href = editorPath + "/" + entity._id;
 			}
 			// Delete entity on the server and reload collection
 			this.del = function(entity) {
@@ -29,13 +29,13 @@ Stem.factory('StemResources', function($resource) {
 			this.create = function() {
 				var entity = new StemResources[resourceName]();
 				entity.$save(function() {
-					window.location.href = editorPath + "/" + entity._id.$oid;
+					window.location.href = editorPath + "/" + entity._id;
 				});
 				
 			}
 		},
 		Models:
-			$resource('/stem/api/Models/:_id', { _id: '@_id.$oid' }, 
+			$resource('/stem/api/Models/:_id', { _id: '@_id' }, 
 			{	
 				get: {
 					method: 'GET'
@@ -56,7 +56,7 @@ Stem.factory('StemResources', function($resource) {
 				}
 			}),
 		Quantities:
-			$resource('/stem/api/Quantities/:id', { id: '@_id.$oid' },
+			$resource('/stem/api/Quantities/:id', { id: '@_id' },
 			{
 				get: {
 					interceptor : {responseError : ErrorHandler}
@@ -78,7 +78,7 @@ Stem.factory('StemResources', function($resource) {
 				}, 
 			}),
 		LibraryModules:
-			$resource('/stem/api/LibraryModules/:id', { id: '@_id.$oid' }, {
+			$resource('/stem/api/LibraryModules/:id', { id: '@_id' }, {
 				
 			})
 	};

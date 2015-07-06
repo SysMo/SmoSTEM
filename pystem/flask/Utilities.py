@@ -5,6 +5,7 @@ Created on Jun 19, 2015
 '''
 import json
 import datetime
+from bson import ObjectId
 from bson.json_util import SON, string_types, default 
 from flask import Response
 
@@ -14,6 +15,8 @@ def _default(obj):
 	"""
 	if isinstance(obj, datetime.datetime):
 		return obj.strftime("%Y-%m-%d %H:%M:%S")
+	elif isinstance(obj, ObjectId):
+		return str(obj)
 	else:
 		return default(obj)
 	
