@@ -35,7 +35,7 @@ Stem.factory('StemResources', function($resource) {
 			}
 		},
 		Models:
-			$resource('/stem/api/Models/:_id', { _id: '@_id' }, 
+			$resource('/stem/api/Models/:_id', { _id: '@_id.$oid' }, 
 			{	
 				get: {
 					method: 'GET'
@@ -76,6 +76,10 @@ Stem.factory('StemResources', function($resource) {
 					method:'PUT', 
 					interceptor : {responseError : ErrorHandler}
 				}, 
+			}),
+		LibraryModules:
+			$resource('/stem/api/LibraryModules/:id', { id: '@_id.$oid' }, {
+				
 			})
 	};
 	return StemResources;

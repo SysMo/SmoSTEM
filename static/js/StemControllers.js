@@ -79,3 +79,9 @@ Stem.controller('ModelEditorCtrl', function($scope,
 		return true;
 	}
 });
+
+//Page with library modules
+Stem.controller('LibraryModuleCollectionCtrl', function($scope, PageSettings, StemResources){
+	$scope.LibraryModules = new StemResources.StandardResource('LibraryModules', 'LibraryModuleEditor');
+	$scope.LibraryModules.query();
+});

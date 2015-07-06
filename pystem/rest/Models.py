@@ -74,9 +74,9 @@ class ModelAPI(Resource):
 		modelData = request.json
 		params = request.args
 		if (modelID is None):
-			model = self.create(modelData)
+			model = self.conn.Model()
 			modelID = self.conn.Models.insert(model)
-			return {'_id': str(modelID)}
+			return jsonResponse({'_id': modelID})
 		else:
 			action = params['action']
 			try:
@@ -101,12 +101,14 @@ class ModelAPI(Resource):
 	def put(self, modelID):
 		# update a model definition
 		putData = request.json
+		print putData.get('board').get('layouts')
 		self.conn.Models.update(
 			{'_id': ObjectId(modelID)}, {
 				'$set': {
 					'name': putData.get('name'), 
 					'description': putData.get('description'),
-					'board': putData.get('board'),
-					'equations': putData.get('equations')
+					'board': {
+						'layouts' : putData.get('board').get('layouts'),
+					}
 				}
 			}, upsert=False)
