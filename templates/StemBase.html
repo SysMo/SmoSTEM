@@ -13,6 +13,8 @@
 	<!-- Angular -->
 	<script src="/static/ext/angular/angular.js"></script>
 	<script src="/static/ext/angular/angular-resource.js"></script>
+    <!-- Angular Bootstrap -->
+    <script src="/static/ext/angular-bootstrap/ui-bootstrap.js"></script>
 	<!-- Ace -->	
 	<script src="/static/ext/ace/ace.js"></script>
 	<script src="/static/ext/ace/ext-static_highlight.js"></script>
@@ -22,10 +24,16 @@
 	<script src="/static/ext/contextMenu/jquery.contextMenu.js"></script>
 	<!-- Numeral.js -->
 	<script src="/static/ext/numeral/numeral.min.js"></script>
+    <!-- Marked: a markdown compiler -->
+    <script src="/static/ext/marked/marked.min.js"></script>
 	<!-- Stem -->
 	<link rel="stylesheet" href="/static/css/Stem.css">
 	<script src="/static/js/StemCore.js"></script>
-	<script src="/static/js/StemResources.js"></script>
+    
+    <!-- Menu Service -->
+    <script type="text/javascript" src="/static/js/services/menus.client.service.js"></script>
+	
+    <script src="/static/js/StemResources.js"></script>
 	<script src="/static/js/StemDirectives.js"></script>
     <script src="/static/js/StemControllers.js"></script>
 	<!-- Stem Table -->
@@ -45,30 +53,67 @@
 </head>
 <body ng-app="Stem">
   {% include 'angular/AngularStemTemplates.html' %}
+  {% raw %}
+  <header class="navbar navbar-fixed-top navbar-inverse">
+    <div class="container" data-ng-controller="HeaderController">
+      <div class="navbar-header">
+        <button class="navbar-toggle" type="button" data-ng-click="toggleCollapsibleMenu()">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a href="/" class="navbar-brand">STEM</a>
+      </div>
+      <nav class="collapse navbar-collapse" collapse="!isCollapsed" role="navigation">
+      <ul class="nav navbar-nav">
+        <li data-ng-repeat="item in menu.items | orderBy: 'position'" 
+          ng-switch="item.menuItemType" 
+          class="{{item.menuItemClass}}" 
+          dropdown="item.menuItemType === 'dropdown'">
+          <a ng-switch-when="dropdown" class="dropdown-toggle">
+            <span data-ng-bind="item.title"></span>
+            <b class="caret"></b>
+          </a>
+          <ul ng-switch-when="dropdown" class="dropdown-menu">
+            <li data-ng-repeat="subitem in item.items | orderBy: 'position'">
+              <a ng-href="{{subitem.link}}" data-ng-bind="subitem.title"></a>
+            </li>
+          </ul>
+          <a ng-switch-when="action" ng-click="item.link()" data-ng-bind="item.title"></a>          
+          <a ng-switch-default ng-href="{{item.link}}" data-ng-bind="item.title"></a>
+        </li>
+      </ul>
+      </nav>
+    </div>
+  </header>
+  {% endraw %}
+  <section class="content">
   {% block BodyContent %}
-  <div style="margin: 10px;">
-    <h1>Simple tool for engineering modeling (STEM)</h1>
-    <h2><a href="/Models">Models</a></h2>
-    <h2><a href="/Quantities">Quantities</a></h2>
-    <h2><a href="/LibraryModules">Library modules</a></h2>
-  </div>
+    <div style="margin: 10px;">
+      <h1>Simple tool for engineering modeling (STEM)</h1>
+      <h2><a href="/Models">Models</a></h2>
+      <h2><a href="/Quantities">Quantities</a></h2>
+      <h2><a href="/LibraryModules">Library modules</a></h2>
+    </div>
   {% endblock %}
-  <div class="modal fade" id="errorModal">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header" style="color: #A94442;">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h4 class="modal-title">Server error</h4>
-        </div>
-        <div class="modal-body" style="color: #A94442;">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+    <div class="modal fade" id="errorModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header" style="color: #A94442;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Server error</h4>
+          </div>
+          <div class="modal-body" style="color: #A94442;">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </body>
 </html>

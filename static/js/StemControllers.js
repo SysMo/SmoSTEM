@@ -48,7 +48,7 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResour
 
 // Page with model editor
 Stem.controller('ModelEditorCtrl', function($scope, 
-		PageSettings, StemResources, StemQuantities){
+		PageSettings, StemResources, StemQuantities, Menus){
 	// Get the model object from the server
 	$scope.model =  StemResources.Models.get({_id: PageSettings.modelID}, function() {
 		// Add the selectors for the different board parts
@@ -69,15 +69,17 @@ Stem.controller('ModelEditorCtrl', function($scope,
 	$scope.save = function() {
 		$scope.model.$update();
 	};
+	Menus.addMenuItem('topbar', 'Save', $scope.save, 'action')
 	// Compute model
 	$scope.compute = function() {
 		$scope.model.$compute();
 	};
+	Menus.addMenuItem('topbar', 'Compute', $scope.compute, 'action')
 	//??
-	$scope.checkVal = function(modelId) {
-		console.log(modelId);
-		return true;
+	$scope.editProps = function() {
+		$("#" + $scope.model._id + "-modal").modal();
 	}
+	Menus.addMenuItem('topbar', 'Properties', $scope.editProps, 'action')
 });
 
 //Page with library modules
@@ -87,15 +89,49 @@ Stem.controller('LibraryModuleCollectionCtrl', function($scope, PageSettings, St
 });
 
 //Editor for an individual quantity
-Stem.controller('LibraryModuleEditorCtrl', function($scope, PageSettings, StemResources, StemUtil) {
+Stem.controller('LibraryModuleEditorCtrl', function($scope, PageSettings, StemResources, StemUtil, Menus) {
 	$scope.module = StemResources.LibraryModules.get({_id: PageSettings.moduleID});
+	// Create a new function
 	$scope.addFunction = function(index) {
-		console.log('Add');
+		$scope
+		$scope.module = StemResources.LibraryModules.get({_id: PageSettings.moduleID});
 	};
+	// Delete function
 	$scope.deleteFunction = function(index) {
 		console.log('Delete');		
 	};
+	// Edit function
 	$scope.editFunction = function(index) {
 		console.log('Edit');
 	};
+	// Save module
+	$scope.save = function() {
+		$scope.module.$update()
+	}
+	Menus.addMenuItem('topbar', 'Save', $scope.save, 'action')
 });
+
+Stem.controller('HeaderController', ['$scope', 'Menus',
+		 function($scope, Menus) {
+	// Set top bar menu items
+	Menus.addMenuItem('topbar', 'Models', '/Models');
+	Menus.addMenuItem('topbar', 'Quantities', '/Quantities');
+	Menus.addMenuItem('topbar', 'Library Modules', '/LibraryModules');
+//	Menus.addMenuItem('topbar', 'Categories', 'categories', 'dropdown', '/categories(/create)?');	
+//	Menus.addSubMenuItem('topbar', 'categories', 'List Categories', 'categories');
+//	Menus.addSubMenuItem('topbar', 'categories', 'New Category', 'categories/create');
+	console.log(Menus);
+	$scope.isCollapsed = false;
+	$scope.menu = Menus.getMenu('topbar');
+
+	$scope.toggleCollapsibleMenu = function() {
+		$scope.isCollapsed = !$scope.isCollapsed;
+		console.log("Toggled");
+	};
+
+	// Collapsing the menu after navigation
+	$scope.$on('$stateChangeSuccess', function() {
+   			$scope.isCollapsed = false;
+   		});
+   	}
+]);

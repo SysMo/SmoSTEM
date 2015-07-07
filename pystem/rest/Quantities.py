@@ -8,13 +8,12 @@ Created on Jun 29, 2015
 from flask import request
 from flask_restful import Resource, abort
 from bson.objectid import ObjectId
-from pystem.flask.Utilities import jsonResponse
-
 from mongokit import Document
-#json.loads(s, object_hook=json_util.object_hook)
+from pystem.flask.Utilities import jsonResponse
 
 class Quantity(Document):
 	__collection__ = "Quantities"
+	use_dot_notation = True
 	structure = {
 		'name': unicode,
 		'label': unicode,
@@ -32,7 +31,6 @@ class Quantity(Document):
 		'label': u'',
 		'SIUnit': u'<nounit>'
 	}
-	use_dot_notation = True
 
 class QuantityAPI(Resource):
 	def __init__(self, conn):
@@ -80,4 +78,4 @@ class QuantityAPI(Resource):
 					'units': putData.get('units')
 				}
 			}, upsert = False
-		);
+		)

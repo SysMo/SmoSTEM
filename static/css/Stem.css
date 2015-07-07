@@ -41,3 +41,7 @@
 .drag-handle, .rotate-handle {
 	display: inline-block;
 }
+
+.content {
+	margin-top: 50px;
+}

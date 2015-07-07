@@ -8,6 +8,7 @@ moduleID: '{{moduleID}}',
 {% raw %}
 <div style="margin:10;" ng-controller="LibraryModuleEditorCtrl">
   <h1>Library module editor</h1>
+  <h2>Module properties</h2>
   <form role="form">
     <div class="form-group">
       <label for="name">Name:</label>
@@ -26,6 +27,12 @@ moduleID: '{{moduleID}}',
       <input type="text" id="import-name" ng-model="module.importName">
     </div>
   </form>
+<!--   <div class="btn-group" role="group" aria-label="Action buttons"> -->
+<!--   <button class="btn btn-primary" ng-click="save()">Save</button> -->
+<!--   <button class="btn btn-primary" ng-click="listQuantities()">Quantities</button> -->
+<!--   </div>  -->
+  <h2>Module functions</h2>
+  <span style="display: inline-block" class="ui-icon ui-icon-circle-plus" ng-click="addFunction(0)"></span>
   <div ng-repeat="function in module.functions track by $index">
   	<h3>
   		<div style="display: inline-block" class="ui-state-default">
@@ -33,14 +40,14 @@ moduleID: '{{moduleID}}',
   			<span style="display: inline-block" class="ui-icon ui-icon-circle-close" ng-click="deleteFunction($index)"></span>
   		</div>
   		<div style="display: inline-block" ng-bind="function.name" ng-click="editFunction($index)"></div>
+        <div>
+          <label>Name</label>
+          <input>
+        </div>
   	</h3>
   	<div>{{function.description}}</div>
   </div>
-  <br><br><br>
-  <div class="btn-group" role="group" aria-label="Action buttons">
-	<button class="btn btn-primary" ng-click="save()">Save</button>
-	<button class="btn btn-primary" ng-click="listQuantities()">Quantities</button>
-  </div> 
 </div>
+
 {% endraw %}
 {% endblock %}

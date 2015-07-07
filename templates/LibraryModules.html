@@ -2,11 +2,12 @@
 {% block BodyContent %}
 {% raw %}
 <div style="margin: 10px;" ng-controller="LibraryModuleCollectionCtrl">
-	<h1>Quantities</h1>
-	<button type="button" class="btn btn-primary" ng-click="LibraryModules.create()">New</button>
+  <h1>Quantities</h1>
+  <button type="button" class="btn btn-primary" ng-click="LibraryModules.create()">New</button>
     <p>
-	<div ng-repeat="module in LibraryModules.collection">
-		<a ng-click="LibraryModules.del(module)">&times;</a>&nbsp;&nbsp;<a ng-click="LibraryModules.edit(module)">{{module.name}}</a> 
+    <div ng-repeat="module in LibraryModules.collection">
+      <h3><span ng-click="LibraryModules.del(module)">&times;</span>&nbsp;&nbsp;<span ng-click="LibraryModules.edit(module)">{{module.name}}</span></h3>
+      <div ng-bind="module.description"></div>
 	</div>
 </div>
 {% endraw %}
