@@ -56,7 +56,7 @@ Stem.factory('StemResources', function($resource) {
 				}
 			}),
 		Quantities:
-			$resource('/stem/api/Quantities/:id', { id: '@_id' },
+			$resource('/stem/api/Quantities/:_id', { id: '@_id' },
 			{
 				get: {
 					interceptor : {responseError : ErrorHandler}
@@ -78,7 +78,7 @@ Stem.factory('StemResources', function($resource) {
 				}, 
 			}),
 		LibraryModules:
-			$resource('/stem/api/LibraryModules/:id', { id: '@_id' }, {
+			$resource('/stem/api/LibraryModules/:_id', { id: '@_id' }, {
 				
 			})
 	};

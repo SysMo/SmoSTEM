@@ -9,7 +9,7 @@ Stem.controller('QuantityEditorCtrl', function($scope, PageSettings, StemResourc
 	// Used for string representation of numerical values
 	$scope.multiplierStrings = [];
 	// Fetch the quantity information
-	$scope.quantity =  StemResources.Quantities.get({id: PageSettings.quantityID}, 
+	$scope.quantity =  StemResources.Quantities.get({_id: PageSettings.quantityID}, 
 			function() {
 		for (var i = 0; i < $scope.quantity.units.length; i++) {
 			$scope.multiplierStrings.push(StemUtil.formatNumber($scope.quantity.units[i][1].mult));
@@ -84,4 +84,18 @@ Stem.controller('ModelEditorCtrl', function($scope,
 Stem.controller('LibraryModuleCollectionCtrl', function($scope, PageSettings, StemResources){
 	$scope.LibraryModules = new StemResources.StandardResource('LibraryModules', 'LibraryModuleEditor');
 	$scope.LibraryModules.query();
+});
+
+//Editor for an individual quantity
+Stem.controller('LibraryModuleEditorCtrl', function($scope, PageSettings, StemResources, StemUtil) {
+	$scope.module = StemResources.LibraryModules.get({_id: PageSettings.moduleID});
+	$scope.addFunction = function(index) {
+		console.log('Add');
+	};
+	$scope.deleteFunction = function(index) {
+		console.log('Delete');		
+	};
+	$scope.editFunction = function(index) {
+		console.log('Edit');
+	};
 });

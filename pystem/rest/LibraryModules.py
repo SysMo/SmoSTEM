@@ -59,3 +59,5 @@ class LibraryModuleAPI(Resource):
 	def get(self, moduleID = None):
 		if (moduleID == None):
 			return jsonResponse([{'name' : module['name'], '_id' : module['_id']} for module in Modules])
+		else:
+			return ModuleNumpy

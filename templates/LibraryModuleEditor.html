@@ -1,0 +1,46 @@
+{% extends "StemBase.html" %}
+
+{% block PageSettings %}
+moduleID: '{{moduleID}}',    
+{% endblock %}
+
+{% block BodyContent %}
+{% raw %}
+<div style="margin:10;" ng-controller="LibraryModuleEditorCtrl">
+  <h1>Library module editor</h1>
+  <form role="form">
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input type="text" id="name" ng-model="module.name">
+    </div>
+    <div class="form-group">
+      <label for="description">Description:</label>
+      <textarea id="description" ng-model="module.description"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="import-path">Import path:</label>
+      <input type="text" id="import-path" ng-model="module.importPath">
+    </div>
+    <div class="form-group">
+      <label for="import-name">Import name:</label>
+      <input type="text" id="import-name" ng-model="module.importName">
+    </div>
+  </form>
+  <div ng-repeat="function in module.functions track by $index">
+  	<h3>
+  		<div style="display: inline-block" class="ui-state-default">
+  			<span style="display: inline-block" class="ui-icon ui-icon-circle-plus" ng-click="addFunction($index + 1)"></span>
+  			<span style="display: inline-block" class="ui-icon ui-icon-circle-close" ng-click="deleteFunction($index)"></span>
+  		</div>
+  		<div style="display: inline-block" ng-bind="function.name" ng-click="editFunction($index)"></div>
+  	</h3>
+  	<div>{{function.description}}</div>
+  </div>
+  <br><br><br>
+  <div class="btn-group" role="group" aria-label="Action buttons">
+	<button class="btn btn-primary" ng-click="save()">Save</button>
+	<button class="btn btn-primary" ng-click="listQuantities()">Quantities</button>
+  </div> 
+</div>
+{% endraw %}
+{% endblock %}

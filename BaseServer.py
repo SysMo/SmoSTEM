@@ -48,6 +48,9 @@ def quantityEditor(quantityID):
 def listLibraryModules():
 	return render_template('LibraryModules.html')
 
+@app.route("/LibraryModuleEditor/<moduleID>")
+def libraryModuleEditor(moduleID):
+	return render_template('LibraryModuleEditor.html', moduleID = moduleID)
 
 api.add_resource(ModelAPI, '/stem/api/Models', '/stem/api/Models/<string:modelID>', 
 		resource_class_kwargs = {'conn':mongoConnection[app.config['STEM_DATABASE']]})

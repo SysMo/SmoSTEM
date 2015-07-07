@@ -35,24 +35,6 @@ class ModelAPI(Resource):
 	def __init__(self, conn):
 		self.conn = conn
 		
-# 	def toJSTypes(self, model):
-# 		""" Helper to convert BSON types to JS types suitable for rendering """
-# 		model['created'] = model['created'].strftime('%Y-%m-%d %H:%M:%S')
-# 		model['_id'] = str(model['_id'])
-
-# 	def create(self, modelData):
-# 		""" Helper to create a new model and initialize it with default values """
-# 		model = {
-# 			'name': modelData.get('name', u'Untitled'),
-# 			'description': modelData.get('description', u'Lorem ipsum dolores ....'),
-# 			'created': datetime.datetime.utcnow(),
-# 			'board': modelData.get('board', {
-# 				'layouts': []
-# 			}),
-# 			'equations': modelData.get('equations', '')
-# 		}
-# 		return model
-
 	def get(self, modelID = None):
 		"""
 		Returns a model or a list of models
@@ -101,7 +83,8 @@ class ModelAPI(Resource):
 	def put(self, modelID):
 		# update a model definition
 		putData = request.json
-		print putData.get('board').get('layouts')
+		#print putData.get('board').get('layouts')
+		print putData
 		self.conn.Models.update(
 			{'_id': ObjectId(modelID)}, {
 				'$set': {
