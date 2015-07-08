@@ -117,9 +117,9 @@ Stem.controller('HeaderController', ['$scope', 'Menus',
 	Menus.addMenuItem('topbar', 'Models', '/Models');
 	Menus.addMenuItem('topbar', 'Quantities', '/Quantities');
 	Menus.addMenuItem('topbar', 'Library Modules', '/LibraryModules');
-//	Menus.addMenuItem('topbar', 'Categories', 'categories', 'dropdown', '/categories(/create)?');	
-//	Menus.addSubMenuItem('topbar', 'categories', 'List Categories', 'categories');
-//	Menus.addSubMenuItem('topbar', 'categories', 'New Category', 'categories/create');
+	Menus.addMenuItem('topbar', 'Categories', 'categories', 'dropdown', '/categories(/create)?');	
+	Menus.addSubMenuItem('topbar', 'categories', 'List Categories', 'categories');
+	Menus.addSubMenuItem('topbar', 'categories', 'New Category', 'categories/create');
 	console.log(Menus);
 	$scope.isCollapsed = false;
 	$scope.menu = Menus.getMenu('topbar');
