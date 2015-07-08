@@ -12,7 +12,7 @@ from flask_restful import Resource, abort
 from bson.objectid import ObjectId
 from pystem.model.ModelActions import ModelActionExecutor
 from mongokit import Document
-from pystem.flask.Utilities import jsonResponse
+from pystem.flask.Utilities import makeJsonResponse
 
 class Model(Document):
 	__collection__ = "Models"
@@ -41,13 +41,13 @@ class ModelAPI(Resource):
 		"""
 		if (modelID is None):
 			modelCursor = self.conn.Models.find({}, {'name': True, 'description': True, 'created': True})
-			return jsonResponse(list(modelCursor))
+			return makeJsonResponse(list(modelCursor))
 		else:
 			model = self.conn.Models.one({"_id": ObjectId(modelID)})
 			print model
 			if (model == None):
 				abort(500, msg = "No model exists with this ID")
-			return jsonResponse(model)
+			return makeJsonResponse(model)
 
 	def post(self, modelID = None):
 		"""
@@ -58,7 +58,7 @@ class ModelAPI(Resource):
 		if (modelID is None):
 			model = self.conn.Model()
 			modelID = self.conn.Models.insert(model)
-			return jsonResponse({'_id': modelID})
+			return makeJsonResponse({'_id': modelID})
 		else:
 			action = params['action']
 			try:

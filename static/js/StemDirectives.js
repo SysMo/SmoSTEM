@@ -614,3 +614,48 @@ Stem.directive('stemFormulasEditor', [function() {
 		templateUrl: "stem-formulas-editor.html",
 	}
 }]);
+
+Stem.directive('stemListItemActions', [function() {
+	return {
+		scope: {
+			add: "&add",
+			del: "&del",
+			edit: "&edit",
+		},
+		templateUrl: "stem-list-item-actions",
+		link: function(scope, element, attributes) {
+			if (!("add" in attributes)) {
+				scope.add = false;
+			}
+			if (!("del" in attributes)) {
+				scope.del = false;
+			}
+			if (!("edit" in attributes)) {
+				scope.edit = false;
+			}
+		}
+	}
+}]);
+
+Stem.directive('tooltip', function(){
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs){
+            var mouseIn;
+        	$(element).hover(function(){
+                // on mouseenter
+        		mouseIn = true;
+                $(element).tooltip('show');
+            }, function(){
+                // on mouseleave
+            	mouseIn = false;
+                $(element).tooltip('hide');
+            });
+            $(element).keyup(function(){
+            	if (mouseIn) {
+            		$(element).tooltip('show');
+            	}
+            });
+        }
+    };
+});

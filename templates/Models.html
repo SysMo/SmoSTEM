@@ -3,16 +3,12 @@
 {% raw %}
 <div style="margin: 10px;" ng-controller="ModelCollectionCtrl">
   <h1>Models</h1>
-  <button type="button" class="btn btn-primary" ng-click="Models.create()">New</button>
-  <br><br>
+  <p>
   <div ng-repeat="model in Models.collection">
-    <h2>{{model.name}}</h2>
+    <h2><a href="#" ng-click="Models.edit(model)">{{model.name}}</a></h2>
+    <span stem-list-item-actions del="Models.del(model)" edit="Models.edit(model)"></span>
     <div>{{model.description}}</div>
     <div>Created: {{model.created}}</div>
-    <div class="btn-group" role="group" aria-label="Model buttons">
-      <button class="btn btn-primary" ng-click="Models.edit(model)">Edit</button>
-      <button class="btn btn-primary" ng-click="Models.del(model)">Delete</button>
-    </div>
     <br>
   </div>
 </div>

@@ -349,4 +349,20 @@
 </div>
 </script>
 
+<!-- Stem List Item Actions -->
+<script type="text/ng-template" id="stem-list-item-actions">
+<div style="display: inline;">
+	&nbsp;
+	<div style="display: inline;" ng-if="add">
+		<span class="glyphicon glyphicon-plus" ng-click="add()" data-toggle="tooltip" title="Add" tooltip></span>
+	</div>
+	<div style="display: inline;" ng-if="del">
+		<span class="glyphicon glyphicon-remove" ng-click="del()" data-toggle="tooltip" title="Delete" tooltip></span>
+	</div>
+	<div style="display: inline;" ng-if="edit">
+		<span class="glyphicon glyphicon glyphicon-edit" ng-click="edit()" data-toggle="tooltip" title="Edit" tooltip></span>
+	</div>
+	&nbsp;
+</div>
+</script>
 {% endraw %}

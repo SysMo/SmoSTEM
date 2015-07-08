@@ -45,3 +45,12 @@
 .content {
 	margin-top: 50px;
 }
+
+h1 {
+	padding-top: 10;
+	text-align: center;
+}
+
+.glyphicon {
+	cursor: pointer;
+}

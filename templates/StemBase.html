@@ -31,7 +31,7 @@
 	<script src="/static/js/StemCore.js"></script>
     
     <!-- Menu Service -->
-    <script type="text/javascript" src="/static/js/services/menus.client.service.js"></script>
+    <script type="text/javascript" src="/static/js/services/MenuService.js"></script>
 	
     <script src="/static/js/StemResources.js"></script>
 	<script src="/static/js/StemDirectives.js"></script>
@@ -80,9 +80,11 @@
               <a ng-href="{{subitem.link}}" data-ng-bind="subitem.title"></a>
             </li>
           </ul>
-          <a ng-switch-when="action" ng-click="item.link()" data-ng-bind="item.title"></a>          
+          <a ng-switch-when="action" ng-href="#" ng-click="item.link()">
+            <span data-ng-bind="item.title"></span>&nbsp;
+            <span ng-if="item.uiRoute" class="glyphicon {{item.uiRoute}}"></span>
+          </a>
           <a ng-switch-default ng-href="{{item.link}}" data-ng-bind="item.title"></a>
-          <a ng-switch-default ng-href="{{item.link}}"><span class="glyphicon glyphicon-floppy-disk"></span></a>
         </li>
       </ul>
       </nav>

@@ -9,7 +9,7 @@ from flask import request
 from flask_restful import Resource, abort
 from bson.objectid import ObjectId
 from mongokit import Document
-from pystem.flask.Utilities import jsonResponse
+from pystem.flask.Utilities import makeJsonResponse
 
 class Quantity(Document):
 	__collection__ = "Quantities"
@@ -46,13 +46,13 @@ class QuantityAPI(Resource):
 				cursor = self.conn.Quantity.find(sort = [('name', 1)])
 			else:
 				cursor = self.conn.Quantities.find({}, {'name': True}, sort = [('name', 1)])
-			return jsonResponse(list(cursor))
+			return makeJsonResponse(list(cursor))
 		else:
 			quantity = self.conn.Quantities.one({'_id': ObjectId(quantityID)})
 			print quantity
 			if (quantity is None):
 				abort(500, msg = "No quantity exists with this ID")
-			return jsonResponse(quantity)
+			return makeJsonResponse(quantity)
 	
 	def post(self):
 		"""
@@ -61,7 +61,7 @@ class QuantityAPI(Resource):
 		quantity = self.conn.Quantity()
 		quantity.validate()
 		quantity.save()
-		return jsonResponse({'_id': quantity._id})
+		return makeJsonResponse({'_id': quantity._id})
 	
 	def delete(self, quantityID):
 		self.conn.Quantities.remove({"_id": ObjectId(quantityID)})

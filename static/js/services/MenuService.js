@@ -87,7 +87,7 @@ Stem.service('Menus', [
 				link: menuItemURL,
 				menuItemType: menuItemType || 'item',
 				menuItemClass: menuItemType,
-				uiRoute: menuItemUIRoute || ('/' + menuItemURL),
+				uiRoute: menuItemUIRoute, // || ('/' + menuItemURL),
 				isPublic: ((isPublic === null || typeof isPublic === 'undefined') ? this.menus[menuId].isPublic : isPublic),
 				roles: ((roles === null || typeof roles === 'undefined') ? this.menus[menuId].roles : roles),
 				position: position || 0,

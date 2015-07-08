@@ -19,6 +19,11 @@ def _default(obj):
 		return str(obj)
 	else:
 		return default(obj)
+
+def _object_hook(dct):
+	if ('_id' in dct):
+		dct['_id'] = ObjectId(dct['_id'])
+	return dct
 	
 def _json_convert(obj):
 	"""Recursive helper method that converts BSON types so they can be
@@ -33,10 +38,14 @@ def _json_convert(obj):
 	except TypeError:
 		return obj
 
-def jsonResponse(data):
+def makeJsonResponse(data):
 	"""Convert Mongo object(s) to JSON"""
 	return Response(json.dumps(_json_convert(data)), content_type='application/json')
 
+def parseJsonResponse(data):
+	"""Convert JSON to Mongo object(s)"""
+	return json.loads(data, object_hook = _object_hook)
+	
 # # Register a RESTful API
 # def registerAPI(app, view, endpoint, url, pk, pk_type='string'):
 # 	"""Utility function to register RESTful API"""
