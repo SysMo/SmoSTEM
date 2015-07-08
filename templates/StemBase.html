@@ -8,8 +8,8 @@
 	<script src="/static/ext/jquery/jquery-ui.js"></script>
 	<link rel="stylesheet" href="/static/ext/jquery/jquery-ui.css">
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="/static/ext/bootstrap/bootstrap.min.css"> 
-    <script src="/static/ext/bootstrap/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/ext/bootstrap/css/bootstrap.min.css"> 
+    <script src="/static/ext/bootstrap/js/bootstrap.min.js"></script>
 	<!-- Angular -->
 	<script src="/static/ext/angular/angular.js"></script>
 	<script src="/static/ext/angular/angular-resource.js"></script>
@@ -82,6 +82,7 @@
           </ul>
           <a ng-switch-when="action" ng-click="item.link()" data-ng-bind="item.title"></a>          
           <a ng-switch-default ng-href="{{item.link}}" data-ng-bind="item.title"></a>
+          <a ng-switch-default ng-href="{{item.link}}"><span class="glyphicon glyphicon-floppy-disk"></span></a>
         </li>
       </ul>
       </nav>
