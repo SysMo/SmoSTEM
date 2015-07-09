@@ -48,7 +48,9 @@ modelID: '{{modelID}}',
 		<div ng-if="model.board && quantitiesLoaded">
             <h1 style="margin-left: 10px;" ng-bind="model.name"></h1>
             <div style="margin-left: 10px;" ng-bind="model.description"></div>
-	  		<div stem-board="model.board"></div>
+	  		<div stem-board="model.board" container-selector="#main" 
+	  			layouts-selector="#LayoutsToolbar > ul > li"
+	  			components-selector="#ModelComponentsToolbar > ul > li"></div>
 	  	</div>
 		<div ng-if="!model.board">
 	  		<div>Loading model</div>

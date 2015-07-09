@@ -1,18 +1,34 @@
-Stem.directive('stemModal', [function() {
+Stem.directive('stemModal', function($timeout) {
 	return {
 		restrict : 'A',
 		scope : {
 			stemModel : '=model'
 		},
+		controller: function($scope) {
+			$scope.setImage = function() {
+				if ($scope.stemModel.background !== undefined) {
+					$("body").css("background-image", "url('" + $scope.stemModel.background + "')");
+				}
+			}
+			$scope.setImage();
+		},
+		link: function(scope, element, attrs) {
+			scope.$watch(function() {return scope.stemModel.$resolved;}, function(newValue, oldValue){
+				scope.setImage();
+			});
+		},
 		templateUrl: "stem-modal.html",
 	}
-}]);
+});
 
 Stem.directive('stemBoard', function(stemClasses, $timeout) {
 	return {
 		restrict: 'A',
 		scope: {
 			stemBoard: '=',
+			containerSelector: '@',
+			layoutsSelector: '@',
+			componentsSelector: '@'
 		},
 		templateUrl: "stem-board.html",
 		controller: function($scope) {
@@ -27,10 +43,10 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 			}			
 		},
 		link: function (scope, element, attributes) {
-			$(scope.stemBoard.containerSelector).css('min-height', '520');
+			$(scope.containerSelector).css('min-height', '520');
 			// Initialize droppable board
-			$(scope.stemBoard.containerSelector).droppable({
-				accept: scope.stemBoard.layoutsSelector,
+			$(scope.containerSelector).droppable({
+				accept: scope.layoutsSelector,
 				activeClass: 'droppable-hover',
 				drop: function( event, ui ) {
 					var layoutClassId = ui.draggable.context.id; // id of li element; is the same as component type
@@ -57,7 +73,7 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 			});
 			
 			// Initialize set of draggable layouts
-			$(scope.stemBoard.layoutsSelector).each(function(index, element){
+			$(scope.layoutsSelector).each(function(index, element){
 				$(element)
 				.draggable({
 					appendTo: "body",
@@ -74,7 +90,7 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 			});
 			
 			// Initialize set of draggable components
-			$(scope.stemBoard.componentsSelector).each(function(index, element){
+			$(scope.componentsSelector).each(function(index, element){
 				$(element)
 				.draggable({
 					appendTo: "body",
@@ -128,7 +144,7 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 				element.css('height', '500px');
 			}
 			element.droppable({
-				accept: scope.$parent.stemBoard.componentsSelector,
+				accept: scope.$parent.componentsSelector,
 				activeClass: 'droppable-hover',
 				drop: function(event, ui) {
 					var fieldClassId = ui.draggable.context.id; // id of li element; is the same as component type
@@ -223,8 +239,8 @@ Stem.directive('stemFreeLayout', function(stemClasses, $timeout) {
 				element.css('height', '500px');
 			}
 			element.droppable({
-				accept: scope.$parent.stemBoard.componentsSelector + '#fields_Scalar, ' +
-						scope.$parent.stemBoard.componentsSelector + '#fields_TextArea, ' +
+				accept: scope.$parent.componentsSelector + '#fields_Scalar, ' +
+						scope.$parent.componentsSelector + '#fields_TextArea, ' +
 						'#' + scope.stemLayout.id + ' [stem-scalar], #' +
 						scope.stemLayout.id + ' [stem-text-area]',
 				activeClass: 'droppable-hover',
@@ -319,6 +335,7 @@ Stem.directive('stemScalar', function() {
 			$scope.onUnitChange();
 		}, 
 		link: function(scope, element, attrs) {
+			element.css("width", "450px");
 			if (scope.layout == 'free') {
 				element.css({'position': 'absolute', 'left': scope.stemScalar.left, 'top': scope.stemScalar.top});
 				if (scope.stemScalar.angle === undefined) {
@@ -571,6 +588,7 @@ Stem.directive('stemFormulas', function() {
 		},
 		templateUrl: "stem-formulas.html",
 		link: function(scope, element, attributes) {
+			element.css("width", "450px");
 			// Watching for the node to be created
 			scope.$watch(function() { return element[0].childNodes[1].childNodes[5]; }, function(newValue, oldValue) {
 				$(element[0].childNodes[1]).height(scope.stemFormulas.height);

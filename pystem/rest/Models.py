@@ -12,10 +12,11 @@ from flask_restful import Resource, abort
 from bson.objectid import ObjectId
 from pystem.model.ModelActions import ModelActionExecutor
 from mongokit import Document
-from pystem.flask.Utilities import makeJsonResponse
+from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
 
 class Model(Document):
 	__collection__ = "Models"
+	use_dot_notation = True
 	structure = {
 			'name': unicode,
 			'description': unicode,
@@ -23,6 +24,7 @@ class Model(Document):
 			'board': {
 				'layouts': []
 			},
+			'background': unicode
 	}
 	required_fields = ['name']
 	default_values = {
@@ -73,8 +75,6 @@ class ModelAPI(Resource):
 					exception = sys.exc_info()[0].__name__ + ": " + str(e),
 					traceback = tb
 				)
-			
-			
 	
 	def delete(self, modelID):
 		self.conn.Models.remove({"_id": ObjectId(modelID)})
@@ -82,16 +82,7 @@ class ModelAPI(Resource):
 
 	def put(self, modelID):
 		# update a model definition
-		putData = request.json
-		#print putData.get('board').get('layouts')
-		print putData
-		self.conn.Models.update(
-			{'_id': ObjectId(modelID)}, {
-				'$set': {
-					'name': putData.get('name'), 
-					'description': putData.get('description'),
-					'board': {
-						'layouts' : putData.get('board').get('layouts'),
-					}
-				}
-			}, upsert=False)
+		modelData = parseJsonResponse(request.data)
+		model = self.conn.Model(modelData)
+		model.created = datetime.datetime.strptime(model.created, "%Y-%m-%d %H:%M:%S")
+		model.save()
