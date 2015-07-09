@@ -5,7 +5,7 @@ Created on Jun 19, 2015
 '''
 
 import os
-import BaseServer as BS
+import StemServer as BS
 import unittest
 import tempfile
 import json

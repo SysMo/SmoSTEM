@@ -32,7 +32,7 @@ quantityID: '{{quantityID}}',
       <th>Offset</th>
     </tr>
     <tr ng-repeat="unit in quantity.units track by $index">
-      <td><span stem-list-item-actions add="addUnit($index + 1)" del="deleteUnit($index)"></span></td>
+      <td><span stem-list-item-actions add="addUnit($index + 1)"></span></td>
       <td><input type="text" ng-model="unit[0]"></td>
       <td><input type="text" ng-change="onMultiplierChange($index)" ng-model="multiplierStrings[$index]"></td>
       <td><input type="numerical" step="any" ng-model="unit[1].offset"></td>

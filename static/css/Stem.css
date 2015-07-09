@@ -5,7 +5,7 @@
     padding: 5px;
 }
 
-#ModelComponentsToolbar, #LayoutsToolbar {
+#ModelComponentsToolbar, #LayoutsToolbar, #LibraryModulesToolbar {
     height: 60%;
     background: #EEE;
     margin: 10px;
@@ -15,11 +15,11 @@
 }
 
 /* Contains components to assemble models */
-#ModelComponentsToolbar, #LayoutsToolbar {
+#ModelComponentsToolbar, #LayoutsToolbar, #LibraryModulesToolbar {
 	width: 120px;
 }
 
-#ModelComponentsToolbar > ul > li, #LayoutsToolbar > ul > li {
+#ModelComponentsToolbar > ul > li, #LayoutsToolbar > ul > li, #LibraryModulesToolbar > ul > li {
 	margin-top: 10px;
 } 
 
