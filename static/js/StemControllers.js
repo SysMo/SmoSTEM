@@ -70,7 +70,7 @@ Stem.controller('ModelEditorCtrl', function($scope,
 		$scope.libraryModulesAccordionObj = {};
 		angular.forEach($scope.libraryModules, function(value, key) {
 			$scope.libraryModulesAccordionObj[key] = {};
-			$scope.libraryModulesAccordionObj[key].items = [];
+			$scope.libraryModulesAccordionObj[key].functions = [];
 			angular.forEach(value.functions, function(func, index) {
 				var signatureString = "";
 				signatureString += func.name
@@ -83,7 +83,7 @@ Stem.controller('ModelEditorCtrl', function($scope,
 					}
 				});
 				signatureString += ")";
-				$scope.libraryModulesAccordionObj[key].items.push(signatureString);
+				$scope.libraryModulesAccordionObj[key].functions.push({"signature": signatureString, "description": func.description, "arguments": func.arguments});
 			});
 		});
 		//console.log($scope.libraryModules);

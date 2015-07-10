@@ -1,4 +1,6 @@
 {% raw %}
+
+
 <!-- Stem Modal -->
 <script type="text/ng-template" id="stem-modal.html">
 <div class="modal fade" id="{{stemModel._id}}-modal">
@@ -365,6 +367,16 @@
 		<span class="glyphicon glyphicon glyphicon-edit" ng-click="edit()" data-toggle="tooltip" title="Edit" tooltip></span>
 	</div>
 	&nbsp;
+</div>
+</script>
+
+<!-- Function Popover Template -->
+<script type="text/ng-template" id="function-popover-template.html">
+<div style="width: 200px;">
+  <div ng-repeat="argument in func.arguments">
+    <div><span style="color: blue;">{{argument.name}}</span>:&nbsp<span>{{argument.description}}</span></div>
+  </div>
+  <div style="border-top: 1px solid #DDD; margin-top: 5px;">{{func.description}}</div>
 </div>
 </script>
 {% endraw %}
