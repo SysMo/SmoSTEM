@@ -80,7 +80,7 @@
               <a ng-href="{{subitem.link}}" data-ng-bind="subitem.title"></a>
             </li>
           </ul>
-          <a ng-switch-when="action" ng-href="#" ng-click="item.link()">
+          <a ng-switch-when="action" ng-click="item.link()">
             <span data-ng-bind="item.title"></span>&nbsp;
             <span ng-if="item.uiRoute" class="glyphicon {{item.uiRoute}}"></span>
           </a>

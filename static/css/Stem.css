@@ -31,6 +31,10 @@
 	border: 4px solid blue;
 }
 
+nav > ul > li * {
+	cursor: pointer;	
+}
+
 #main {
 	width: 1090px; 
 }
