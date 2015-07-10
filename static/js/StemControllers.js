@@ -49,24 +49,45 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResour
 
 // Page with model editor
 Stem.controller('ModelEditorCtrl', function($scope, 
-		PageSettings, StemResources, StemQuantities, Menus){
+		PageSettings, StemResources, StemQuantities, StemLibraryModules, Menus){
 	// Add a link to the Models collection
 	Menus.addMenuItem('topbar', 'Models', '/Models');
 	// Get the model object from the server
 	$scope.model =  StemResources.Models.get({_id: PageSettings.modelID}, function() {
 		// Add the selectors for the different board parts
-//		angular.extend($scope.model.board, {
-//			containerSelector : '#main',
-//			layoutsSelector: '#LayoutsToolbar > ul > li',
-//			componentsSelector: '#ModelComponentsToolbar > ul > li'
-//		});
 	});
 	// Load quantities from server
-	$scope.quantitiesLoaded = false
+	$scope.quantitiesLoaded = false;
 	StemQuantities.loadQuantities(function(quantities){
 		$scope.quantities = quantities;
 		$scope.quantitiesLoaded = true;
-		console.log($scope.quantities);
+	});
+	// Load library modules from server
+	$scope.libraryModulesLoaded = false;
+	StemLibraryModules.loadLibraryModules(function(libraryModules){
+		$scope.libraryModules = libraryModules;
+		console.log($scope.libraryModules);
+		$scope.libraryModulesAccordionObj = {};
+		angular.forEach($scope.libraryModules, function(value, key) {
+			$scope.libraryModulesAccordionObj[key] = {};
+			$scope.libraryModulesAccordionObj[key].functions = [];
+			angular.forEach(value.functions, function(func, index) {
+				var signatureString = "";
+				signatureString += func.name
+				signatureString += "(";
+				angular.forEach(func.arguments, function(argument, index) {
+					if (index == func.arguments.length - 1) {
+						signatureString += argument.name;
+					} else {
+						signatureString += argument.name + ", ";
+					}
+				});
+				signatureString += ")";
+				$scope.libraryModulesAccordionObj[key].functions.push({"signature": signatureString, "description": func.description, "arguments": func.arguments});
+			});
+		});
+		//console.log($scope.libraryModules);
+		$scope.libraryModulesLoaded = true;
 	});
 	// Compute model
 	$scope.compute = function() {

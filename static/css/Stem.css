@@ -13,18 +13,16 @@ body {
 #ModelComponentsToolbar, #LayoutsToolbar, #LibraryModulesToolbar {
     height: 60%;
     background: #EEE;
-    margin: 10px;
-    margin-left: 20px;
     padding:10px;
     
 }
 
 /* Contains components to assemble models */
 #ModelComponentsToolbar, #LayoutsToolbar, #LibraryModulesToolbar {
-	width: 120px;
+	/*width: 120px;*/
 }
 
-#ModelComponentsToolbar > ul > li, #LayoutsToolbar > ul > li, #LibraryModulesToolbar > ul > li {
+#ModelComponentsToolbar > ul > li, #LayoutsToolbar > ul > li, #LibraryModulesToolbar ul > li {
 	margin-top: 10px;
 } 
 
@@ -62,4 +60,25 @@ h1 {
 
 .glyphicon {
 	cursor: pointer;
+}
+
+.panel-title {
+	font-size: 100%;
+}
+
+.panel-heading {
+	padding-left: 5px;
+}
+
+.panel-body {
+	padding: 0px;
+}
+
+.panel-body ul {
+	list-style-type: none;
+	padding-left: 10px;
+}
+
+.popover-content {
+	color: black;
 }

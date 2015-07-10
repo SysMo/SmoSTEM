@@ -21,28 +21,40 @@ modelID: '{{modelID}}',
   <div stem-modal model="model"></div>
   <div>
   	<div style="position: fixed; top: 70;" id="ToolBars">
-      <div id="LayoutsToolbar">
-	  	<span style="color: blue;">Layouts</span>
-	  	<ul style="list-style-type: none; padding: 0px;">
-	      <li id="grid_Wide">Grid(wide)</li>
-	      <li id="grid_Narrow">Grid(narrow)</li>
-	      <li id="free">Free</li>
-	    </ul>
-	  </div>
-	  <div id="ModelComponentsToolbar">
-	  	<span style="color: blue;">Components</span>
-	    <ul style="list-style-type: none; padding: 0px;">
-	      <li id="fields_Scalar"><img src='/static/img/Variable.png'>&nbsp; Variable</li>
-          <li id="fields_Formulas"><img src='/static/img/Formulas.png'>&nbsp; Formulas</li>
-	      <li id="fields_Table"><img src='/static/img/Table.png'>&nbsp; Table</li>
-	      <li id="fields_TextArea"><img src='/static/img/Text.png'>&nbsp; Text</li>
-	    </ul>
-	  </div>
-      <div id="LibraryModulesToolbar">
-        <span style="color: blue;">Library modules</span>
-        <ul style="list-style-type: none; padding: 0px;">
-        </ul>
-      </div>
+  	<accordion close-others="true">
+  	  <accordion-group style="color: blue;" heading="Layouts" is-open="true">
+        <div id="LayoutsToolbar">
+	  	  <ul style="list-style-type: none; padding: 0px;">
+	        <li id="grid_Wide">Grid(wide)</li>
+	        <li id="grid_Narrow">Grid(narrow)</li>
+	        <li id="free">Free</li>
+	      </ul>
+	    </div>
+	  </accordion-group>
+	  <accordion-group style="color: blue;" heading="Components">
+	    <div id="ModelComponentsToolbar">
+	      <ul style="list-style-type: none; padding: 0px;">
+	        <li id="fields_Scalar"><img src='/static/img/Variable.png'>&nbsp; Variable</li>
+            <li id="fields_Formulas"><img src='/static/img/Formulas.png'>&nbsp; Formulas</li>
+	        <li id="fields_Table"><img src='/static/img/Table.png'>&nbsp; Table</li>
+	        <li id="fields_TextArea"><img src='/static/img/Text.png'>&nbsp; Text</li>
+	      </ul>
+	    </div>
+	  </accordion-group>
+	  <accordion-group style="color: blue;" heading="Library Modules">
+        <div id="LibraryModulesToolbar">
+          <div ng-if="libraryModulesLoaded">
+        	<accordion close-others="true">
+			  <accordion-group heading="{{name}}" ng-repeat="(name, value) in libraryModulesAccordionObj">
+			    <ul>
+			      <li stem-draggable="{{func.signature}}" style="cursor: pointer;" ng-repeat="func in value.functions" ng-bind="func.signature" popover-title="{{func.signature}}" popover-template="'function-popover-template.html'" popover-trigger="click" popover-placement="right"></li>
+			    </ul>
+			  </accordion-group>
+			</accordion>
+          </div>
+         </div>
+      </accordion-group>
+    </accordion>
 	</div>
 	<div id="main" style="position: absolute; left: 150; top: 70;">
 		<div ng-if="model.board && quantitiesLoaded">
