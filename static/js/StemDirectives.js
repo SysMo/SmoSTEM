@@ -1,16 +1,3 @@
-Stem.directive('stemAccordion', function(StemUtil) {
-	return {
-		restrict : 'A',
-		scope : {
-			accordionModel : '=stemAccordion'
-		},
-		controller: function($scope) {
-			$scope.id = StemUtil.guid();
-		},
-		templateUrl: "stem-accordion.html",
-	}
-});
-
 Stem.directive('stemModal', function($timeout) {
 	return {
 		restrict : 'A',

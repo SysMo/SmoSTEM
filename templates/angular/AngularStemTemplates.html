@@ -1,15 +1,4 @@
 {% raw %}
-<!-- Stem Accordion -->
-<script type="text/ng-template" id="stem-accordion.html">
-  <accordion close-others="true">
-    <accordion-group heading="{{name}}" ng-repeat="(name, value) in accordionModel">
-      <ul>
-        <li ng-repeat="item in value.items" ng-bind="item"></li>
-      </ul>
-    </accordion-group>
-  </accordion>
-</script>
-
 <!-- Stem Modal -->
 <script type="text/ng-template" id="stem-modal.html">
 <div class="modal fade" id="{{stemModel._id}}-modal">
