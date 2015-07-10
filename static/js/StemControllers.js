@@ -49,7 +49,7 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResour
 
 // Page with model editor
 Stem.controller('ModelEditorCtrl', function($scope, 
-		PageSettings, StemResources, StemQuantities, Menus){
+		PageSettings, StemResources, StemQuantities, StemLibraryModules, Menus){
 	// Add a link to the Models collection
 	Menus.addMenuItem('topbar', 'Models', '/Models');
 	// Get the model object from the server
@@ -57,10 +57,17 @@ Stem.controller('ModelEditorCtrl', function($scope,
 		// Add the selectors for the different board parts
 	});
 	// Load quantities from server
-	$scope.quantitiesLoaded = false
+	$scope.quantitiesLoaded = false;
 	StemQuantities.loadQuantities(function(quantities){
 		$scope.quantities = quantities;
 		$scope.quantitiesLoaded = true;
+	});
+	// Load library modules from server
+	$scope.libraryModulesLoaded = false;
+	StemLibraryModules.loadLibraryModules(function(libraryModules){
+		$scope.libraryModules = libraryModules;
+		console.log($scope.libraryModules);
+		$scope.libraryModulesLoaded = true;
 	});
 	// Compute model
 	$scope.compute = function() {

@@ -44,8 +44,11 @@ class LibraryModuleAPI(Resource):
 
 	def get(self, moduleID = None):
 		if (moduleID is None):
-			#full = request.args.get('full', False)
-			cursor = self.conn.LibraryModules.find({}, {'name': True, 'description': True}, sort = [('name', 1)])
+			full = request.args.get('full', False)
+			if (full):
+				cursor = self.conn.LibraryModules.find(sort = [('name', 1)])
+			else:
+				cursor = self.conn.LibraryModules.find({}, {'name': True, 'description': True}, sort = [('name', 1)])
 			return makeJsonResponse(list(cursor))
 		else:
 			module = self.conn.LibraryModules.one({'_id': ObjectId(moduleID)})

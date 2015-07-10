@@ -67,6 +67,21 @@ Stem.factory('StemQuantities', function StemQuantities (StemResources, $timeout)
 	return StemQuantities;
 })
 
+// Library modules
+Stem.factory('StemLibraryModules', function StemLibraryModules (StemResources, $timeout) {
+	var StemLibraryModules = {
+		libraryModules: {},
+		loadLibraryModules: function(cb) {
+			var libraryModuleList = StemResources.LibraryModules.load(function (data) {
+				libraryModuleList.forEach(function(value, index) {
+					StemLibraryModules.libraryModules[value.name] = value;
+				});
+				cb(StemLibraryModules.libraryModules);
+			});
+		}
+	};
+	return StemLibraryModules;
+});
 
 // User defined 'Classes'
 Stem.factory('stemClasses', function stemClasses(StemUtil) {

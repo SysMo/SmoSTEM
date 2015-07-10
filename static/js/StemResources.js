@@ -79,6 +79,16 @@ Stem.factory('StemResources', function($resource) {
 			}),
 		LibraryModules:
 			$resource('/stem/api/LibraryModules/:_id', { _id: '@_id' }, {
+				get: {
+					interceptor : {responseError : ErrorHandler}
+				},
+				load: {
+					method: 'GET',
+					params: {
+						full: true
+					},
+					isArray: true
+				},
 				update: { 
 					method: 'PUT', 
 					interceptor : {responseError : ErrorHandler}
