@@ -299,10 +299,15 @@ Stem.directive('stemScalar', function() {
 				$( '#' + $scope.stemScalar.id +'-modal').modal( "show" );
 			};
 			$scope.stemScalar.quantities = StemQuantities.quantities;
+			var quantityName = $scope.stemScalar.quantity;
+			if (!(quantityName && quantityName in $scope.stemScalar.quantities)) {
+				$scope.stemScalar.quantity = 'Dimensionless';
+			}
 			$scope.stemScalar.unitOptions = $scope.stemScalar.quantities[$scope.stemScalar.quantity].units;
-			// Ensure that the scalar has a quantity and unit
-			$scope.stemScalar.quantity = $scope.stemScalar.quantity || 'Dimensionless';
-			$scope.stemScalar.displayUnit = $scope.stemScalar.displayUnit || '-';
+			var displayUnit = $scope.stemScalar.displayUnit;
+			if (!(displayUnit && displayUnit in $scope.stemScalar.unitOptions)) {
+				$scope.stemScalar.displayUnit = $scope.stemScalar.quantities[$scope.stemScalar.quantity].SIUnit;
+			}
 			$scope.onInputValueChange = function() {
 				var numValue = parseFloat($scope.displayValue);
 				if (!isNaN(numValue)) {
