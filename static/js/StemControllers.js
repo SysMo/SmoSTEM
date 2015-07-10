@@ -55,18 +55,12 @@ Stem.controller('ModelEditorCtrl', function($scope,
 	// Get the model object from the server
 	$scope.model =  StemResources.Models.get({_id: PageSettings.modelID}, function() {
 		// Add the selectors for the different board parts
-//		angular.extend($scope.model.board, {
-//			containerSelector : '#main',
-//			layoutsSelector: '#LayoutsToolbar > ul > li',
-//			componentsSelector: '#ModelComponentsToolbar > ul > li'
-//		});
 	});
 	// Load quantities from server
 	$scope.quantitiesLoaded = false
 	StemQuantities.loadQuantities(function(quantities){
 		$scope.quantities = quantities;
 		$scope.quantitiesLoaded = true;
-		console.log($scope.quantities);
 	});
 	// Compute model
 	$scope.compute = function() {
