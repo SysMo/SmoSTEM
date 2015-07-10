@@ -1,3 +1,16 @@
+Stem.directive('stemAccordion', function(StemUtil) {
+	return {
+		restrict : 'A',
+		scope : {
+			accordionModel : '=stemAccordion'
+		},
+		controller: function($scope) {
+			$scope.id = StemUtil.guid();
+		},
+		templateUrl: "stem-accordion.html",
+	}
+});
+
 Stem.directive('stemModal', function($timeout) {
 	return {
 		restrict : 'A',
@@ -279,11 +292,11 @@ Stem.directive('stemFreeLayout', function(stemClasses, $timeout) {
 	}
 });
 
-Stem.directive('stemLayoutEditor', [function() {
+Stem.directive('stemLayoutProperties', [function() {
 	return {
 		restrict : 'A',
 		scope: {
-			stemLayout: "=stemLayoutEditor"
+			stemLayout: "=stemLayoutProperties"
 		},
 		controller: function($scope) {
 			$scope.setImage = function() {
@@ -297,7 +310,7 @@ Stem.directive('stemLayoutEditor', [function() {
 				scope.setImage();
 			});
 		},
-		templateUrl: "stem-layout-editor.html",
+		templateUrl: "stem-layout-properties.html",
 	}
 }]);
 
@@ -362,11 +375,11 @@ Stem.directive('stemScalar', function() {
 	}
 });
 
-Stem.directive('stemScalarEditor', function() {
+Stem.directive('stemScalarProperties', function() {
 	return {
 		restrict : 'A',
 		scope: {
-			stemScalar: "=stemScalarEditor"
+			stemScalar: "=stemScalarProperties"
 		},
 		controller: function($scope, StemQuantities) {
 			$scope.quantities = StemQuantities.quantities;
@@ -386,7 +399,7 @@ Stem.directive('stemScalarEditor', function() {
 				}
 			});
 		},
-		templateUrl: "stem-scalar-editor.html",
+		templateUrl: "stem-scalar-properties.html",
 	}
 });
 
@@ -451,11 +464,11 @@ Stem.directive('stemTable', function(StemTable, StemQuantities, StemUtil, $compi
 	}
 });
 
-Stem.directive('stemTableEditor', [function() {
+Stem.directive('stemTableProperties', [function() {
 	return {
 		restrict : 'A',
 		scope: {
-			stemTable: '=stemTableEditor'
+			stemTable: '=stemTableProperties'
 		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
@@ -468,11 +481,11 @@ Stem.directive('stemTableEditor', [function() {
 				}
 			});
 		},
-		templateUrl: "stem-table-editor.html",
+		templateUrl: "stem-table-properties.html",
 	}
 }]);
 
-Stem.directive('stemTableColumnEditor', function($timeout, StemQuantities, StemUtil) {
+Stem.directive('stemTableColumnProperties', function($timeout, StemQuantities, StemUtil) {
 	return {
 		restrict : 'A',
 		controller: function($scope) {
@@ -506,7 +519,7 @@ Stem.directive('stemTableColumnEditor', function($timeout, StemQuantities, StemU
 			});
 			
 		},
-		templateUrl: "stem-table-column-editor.html",
+		templateUrl: "stem-table-column-properties.html",
 	}
 });
 
@@ -561,10 +574,10 @@ Stem.directive('stemTextArea', function() {
 	}
 });
 
-Stem.directive('stemTextAreaEditor', [function() {
+Stem.directive('stemTextAreaProperties', [function() {
 	return {
 		scope: {
-			stemTextArea: "=stemTextAreaEditor"
+			stemTextArea: "=stemTextAreaProperties"
 		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
@@ -577,7 +590,7 @@ Stem.directive('stemTextAreaEditor', [function() {
 				}
 			});
 		},
-		templateUrl: "stem-text-area-editor.html",
+		templateUrl: "stem-text-area-properties.html",
 	}
 }]);
 
@@ -619,10 +632,10 @@ Stem.directive('stemFormulas', function() {
 	}
 });
 
-Stem.directive('stemFormulasEditor', [function() {
+Stem.directive('stemFormulasProperties', [function() {
 	return {
 		scope: {
-			stemFormulas: "=stemFormulasEditor"
+			stemFormulas: "=stemFormulasProperties"
 		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
@@ -635,7 +648,7 @@ Stem.directive('stemFormulasEditor', [function() {
 				}
 			});
 		},
-		templateUrl: "stem-formulas-editor.html",
+		templateUrl: "stem-formulas-properties.html",
 	}
 }]);
 

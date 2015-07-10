@@ -67,6 +67,26 @@ Stem.controller('ModelEditorCtrl', function($scope,
 	StemLibraryModules.loadLibraryModules(function(libraryModules){
 		$scope.libraryModules = libraryModules;
 		console.log($scope.libraryModules);
+		$scope.libraryModulesAccordionObj = {};
+		angular.forEach($scope.libraryModules, function(value, key) {
+			$scope.libraryModulesAccordionObj[key] = {};
+			$scope.libraryModulesAccordionObj[key].items = [];
+			angular.forEach(value.functions, function(func, index) {
+				var signatureString = "";
+				signatureString += func.name
+				signatureString += "(";
+				angular.forEach(func.arguments, function(argument, index) {
+					if (index == func.arguments.length - 1) {
+						signatureString += argument.name;
+					} else {
+						signatureString += argument.name + ", ";
+					}
+				});
+				signatureString += ")";
+				$scope.libraryModulesAccordionObj[key].items.push(signatureString);
+			});
+		});
+		//console.log($scope.libraryModules);
 		$scope.libraryModulesLoaded = true;
 	});
 	// Compute model

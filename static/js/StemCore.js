@@ -1,4 +1,4 @@
-var Stem = angular.module('Stem',['ngResource']);
+var Stem = angular.module('Stem',['ngResource', 'ui.bootstrap']);
 
 // Utility functions
 Stem.factory('StemUtil', function StemUtil () {

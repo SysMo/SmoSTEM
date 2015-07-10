@@ -1,4 +1,15 @@
 {% raw %}
+<!-- Stem Accordion -->
+<script type="text/ng-template" id="stem-accordion.html">
+  <accordion close-others="true">
+    <accordion-group heading="{{name}}" ng-repeat="(name, value) in accordionModel">
+      <ul>
+        <li ng-repeat="item in value.items" ng-bind="item"></li>
+      </ul>
+    </accordion-group>
+  </accordion>
+</script>
+
 <!-- Stem Modal -->
 <script type="text/ng-template" id="stem-modal.html">
 <div class="modal fade" id="{{stemModel._id}}-modal">
@@ -35,11 +46,11 @@
 	<div ng-switch on="layout.type">
 		<div ng-switch-when="grid">
 			<div stem-grid-layout="layout"></div>
-			<div stem-layout-editor="layout"></div>
+			<div stem-layout-properties="layout"></div>
 		</div>
 		<div ng-switch-when="free">
 			<div stem-free-layout="layout"></div>
-			<div stem-layout-editor="layout"></div>
+			<div stem-layout-properties="layout"></div>
 		</div>
 	</div>
 </div>
@@ -55,19 +66,19 @@
 		  <div ng-switch on="field.type">
 		    <div ng-switch-when="stem.ScalarField">
 		      <div stem-scalar="field" layout="stemLayout.type" layout-id="stemLayout.id">></div>
-		      <div stem-scalar-editor="field"></div>
+		      <div stem-scalar-properties="field"></div>
 		    </div>
 		    <div ng-switch-when="stem.TableField">
 		      <div stem-table="field"></div>
-		      <div stem-table-editor="field"></div>
+		      <div stem-table-properties="field"></div>
 		    </div>
 		    <div ng-switch-when="stem.TextField">
 		      <div stem-text-area="field" layout="stemLayout.type" layout-id="stemLayout.id"></div>
-		      <div stem-text-area-editor="field"></div>
+		      <div stem-text-area-properties="field"></div>
 		    </div>
 		    <div ng-switch-when="stem.FormulasField">
 		      <div stem-formulas="field"></div>
-		      <div stem-formulas-editor="field"></div>
+		      <div stem-formulas-properties="field"></div>
 		    </div>
 		    <div ng-switch-default>
 		      Unimplemented type {{field.type}}
@@ -88,11 +99,11 @@
 		  <div ng-switch on="field.type">
 		    <div ng-switch-when="stem.ScalarField">
 		      <div stem-scalar="field" layout="stemLayout.type" layout-id="stemLayout.id"></div>
-		      <div stem-scalar-editor="field"></div>
+		      <div stem-scalar-properties="field"></div>
 		    </div>
 		    <div ng-switch-when="stem.TextField">
 		      <div stem-text-area="field" layout="stemLayout.type" layout-id="stemLayout.id"></div>
-		      <div stem-text-area-editor="field"></div>
+		      <div stem-text-area-properties="field"></div>
 		    </div>
 		    <div ng-switch-default>
 		      Unimplemented type {{field.type}}
@@ -104,7 +115,7 @@
 </script>
 
 <!-- Stem Layout Editor -->
-<script type="text/ng-template" id="stem-layout-editor.html">
+<script type="text/ng-template" id="stem-layout-properties.html">
 <div class="modal fade" id="{{stemLayout.id}}-modal">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -156,7 +167,7 @@
 </script>
 
 <!-- Stem Scalar Editor -->
-<script type="text/ng-template" id="stem-scalar-editor.html">
+<script type="text/ng-template" id="stem-scalar-properties.html">
 <div class="modal fade" id="{{stemScalar.id}}-modal">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -199,11 +210,11 @@
   	<table id="{{stemTable.id}}-table"></table>
   </div>
 </div>
-<div stem-table-column-editor></div>
+<div stem-table-column-properties></div>
 </script>
 
 <!-- Stem Table Editor -->
-<script type="text/ng-template" id="stem-table-editor.html">
+<script type="text/ng-template" id="stem-table-properties.html">
 <div class="modal fade" id="{{stemTable.id}}-modal">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -232,7 +243,7 @@
 </script>
 
 <!-- Stem Table Column Editor -->
-<script type="text/ng-template" id="stem-table-column-editor.html">
+<script type="text/ng-template" id="stem-table-column-properties.html">
 <div class="modal fade" id="{{stemTable.id}}-table-columnModal">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -281,7 +292,7 @@
 </script>
 
 <!-- Stem Text Area Editor -->
-<script type="text/ng-template" id="stem-text-area-editor.html">
+<script type="text/ng-template" id="stem-text-area-properties.html">
 <div class="modal fade" id="{{stemTextArea.id}}-modal">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -323,7 +334,7 @@
 </script>
 
 <!-- Stem Formulas Editor -->
-<script type="text/ng-template" id="stem-formulas-editor.html">
+<script type="text/ng-template" id="stem-formulas-properties.html">
 <div class="modal fade" id="{{stemFormulas.id}}-modal">
 	<div class="modal-dialog">
 		<div class="modal-content">
