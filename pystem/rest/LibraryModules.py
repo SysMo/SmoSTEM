@@ -38,29 +38,6 @@ class LibraryModule(Document):
 		}]
 	}
 
-# ModuleNumpy = {
-# 	'name': 'NumPy',
-# 	'description': 'Array manipulations',
-# 	'importPath': 'numpy',
-# 	'importName': 'np',
-# 	'functions': [{
-# 		'name': 'sin',
-# 		'description': 'sine',
-# 		'arguments': [{
-# 			'name': 'x',
-# 			'description': 'angle in radians',
-# 			'defaultValue': ''
-# 		}]}, {
-# 		'name': 'cos',
-# 		'description': 'cosine',
-# 		'arguments': [{
-# 			'name': 'x',
-# 			'description': 'angle in radians',
-# 			'defaultValue': ''
-# 		}]
-# 	}]
-# }
-#Modules = [ModuleNumpy]
 class LibraryModuleAPI(Resource):
 	def __init__(self, conn):
 		self.conn = conn	
@@ -91,8 +68,7 @@ class LibraryModuleAPI(Resource):
 			params = request.args
 			action = params.get('action')			
 			if (action == "createFunction"):
-				function = LibraryFunction()
-				print function
+				pass
 			else:
 				abort(500, msg = "Unknown action {}".format(action))
 		
@@ -101,12 +77,7 @@ class LibraryModuleAPI(Resource):
 		return {'status': 0}
 
 	def put(self, moduleID):
-		modelData = parseJsonResponse(request.data)
-		print modelData
-		module = self.conn.LibraryModule(modelData)
+		moduleData = parseJsonResponse(request.data)
+		module = self.conn.LibraryModule(moduleData)
 		module.validate()
-		print module
- 		module.save()
-# 		self.conn.LibraryModules.update(
-# 			{'_id': ObjectId(moduleID)}, module, upsert = False
-# 		)
+		module.save()
