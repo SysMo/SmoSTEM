@@ -352,9 +352,9 @@ Stem.directive('stemScalar', function() {
 			if (!(quantityName && quantityName in $scope.quantities)) {
 				$scope.stemScalar.quantity = 'Dimensionless';
 			}
-			$scope.stemScalar.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
+			$scope.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
 			var displayUnit = $scope.stemScalar.displayUnit;
-			if (!(displayUnit && displayUnit in $scope.stemScalar.unitOptions)) {
+			if (!(displayUnit && $scope.unitOptions.filter(function(el) {return el[0] == displayUnit}).length > 0 )) {
 				$scope.stemScalar.displayUnit = $scope.quantities[$scope.stemScalar.quantity].SIUnit;
 			}
 			$scope.onInputValueChange = function() {
@@ -397,14 +397,10 @@ Stem.directive('stemScalar', function() {
 
 Stem.directive('stemScalarProperties', function() {
 	return {
-		restrict : 'A',
-		scope: {
-			stemScalar: "=stemScalarProperties"
-		},
+		restrict: 'A',
 		controller: function($scope, StemQuantities) {
-			$scope.quantities = StemQuantities.quantities;
 			$scope.setDisplayUnit = function() {
-				$scope.stemScalar.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
+				$scope.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
 				$scope.stemScalar.displayUnit = $scope.quantities[$scope.stemScalar.quantity].SIUnit;
 			};
 		},
@@ -678,6 +674,9 @@ Stem.directive('stemListItemActions', [function() {
 			add: "&add",
 			del: "&del",
 			edit: "&edit",
+			duplicate: "&duplicate",
+			moveUp: "&moveUp",
+			moveDown: "&moveDown",
 		},
 		templateUrl: "stem-list-item-actions",
 		link: function(scope, element, attributes) {
@@ -689,6 +688,15 @@ Stem.directive('stemListItemActions', [function() {
 			}
 			if (!("edit" in attributes)) {
 				scope.edit = false;
+			}
+			if (!("duplicate" in attributes)) {
+				scope.duplicate = false;
+			}
+			if (!("moveUp" in attributes)) {
+				scope.moveUp = false;
+			}
+			if (!("moveDown" in attributes)) {
+				scope.moveDown = false;
 			}
 		}
 	}

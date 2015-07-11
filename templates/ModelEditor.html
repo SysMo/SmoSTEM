@@ -7,22 +7,12 @@ modelID: '{{modelID}}',
 {% block BodyContent %}
 {% raw %}
 <div ng-controller="ModelEditorCtrl">
-<!--   <div style="position: fixed; width: 100%; height: 60px; z-index:900; background: #EEC; padding-left: 20px; padding-right: 20px;" > -->
-<!-- 	  <div style="position: relative; bottom: 15; float: left;"> -->
-<!-- 		  <h1 style="display: inline-block;" ng-bind="model.name"></h1> -->
-<!-- 	  </div> -->
-<!-- 	  <div style="position: relative; top: 12; float: right;" class="btn-group" role="group" aria-label="Model buttons"> -->
-<!-- 	    <button class="btn btn-primary" ng-click="save()" id="{{model._id}}-saveButton"> -->
-<!-- 	    	Save</button> -->
-<!-- 	    <button class="btn btn-primary" ng-click="compute()">Compute</button> -->
-<!-- 	    <button class="btn btn-primary" data-toggle="modal" data-target="#{{model._id}}-modal">Properties</button> -->
-<!-- 	  </div>  -->
-<!--   </div> -->
   <div stem-modal model="model"></div>
   <div>
   	<div style="position: fixed; top: 70;" id="ToolBars">
   	<accordion close-others="true">
-  	  <accordion-group style="color: blue;" heading="Layouts" is-open="true">
+  	<!-- is-open="true": not valid must be assignlable both ways -->
+  	  <accordion-group style="color: blue;" heading="Layouts">
         <div id="LayoutsToolbar">
 	  	  <ul style="list-style-type: none; padding: 0px;">
 	        <li id="grid_Wide">Grid(wide)</li>
