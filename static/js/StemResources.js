@@ -31,7 +31,12 @@ Stem.factory('StemResources', function($resource) {
 				entity.$save(function() {
 					window.location.href = editorPath + "/" + entity._id;
 				});
-				
+			}
+			
+			this.duplicate = function(entity) {
+				entity.$duplicate(function() {
+					window.location.href = editorPath + "/" + entity._id;
+				});
 			}
 		},
 		Models:
@@ -51,6 +56,13 @@ Stem.factory('StemResources', function($resource) {
 					method: 'POST', 
 					params: {
 						action: "compute" 
+					},
+					interceptor : {responseError : ErrorHandler}
+				},
+				duplicate: {
+					method: 'POST',
+					params: {
+						action: "duplicate" 
 					},
 					interceptor : {responseError : ErrorHandler}
 				}

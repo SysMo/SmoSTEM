@@ -64,7 +64,7 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 			componentsSelector: '@'
 		},
 		templateUrl: "stem-board.html",
-		controller: function($scope) {
+		controller: function($scope, StemUtil) {
 			$scope.addLayout = function(layout) {
 				$scope.stemBoard.layouts.push(layout);
 			},
@@ -73,7 +73,19 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 				if (index >= 0) {
 					$scope.stemBoard.layouts.splice(index, 1);
 				}
-			}			
+			},
+			$scope.duplicateLayout = function(layout) {
+				var copy = angular.copy(layout);
+				copy.title = "Copy_of_" + layout.title;
+				copy.id = StemUtil.guid();
+				angular.forEach(copy.fields, function(value, index) {
+					value.id = StemUtil.guid();
+				});
+				var index = $scope.stemBoard.layouts.indexOf(layout);
+				if (index >= 0) {
+					$scope.stemBoard.layouts.splice(index + 1, 0, copy);
+				}
+			}
 		},
 		link: function (scope, element, attributes) {
 			$(scope.containerSelector).css('min-height', '520');

@@ -1,5 +1,5 @@
 <!-- Stem List Item Actions -->
-<script type="text/ng-template" id="stem-list-item-actions">
+<script type="text/ng-template" id="stem-list-item-actions.html">
 <div style="display: inline;">
 	&nbsp;
 	<div style="display: inline;" ng-if="add">
@@ -22,4 +22,11 @@
 	</div>
 	&nbsp;
 </div>
+</script>
+
+<!-- Stem Input Numerical -->
+<script type="text/ng-template" id="stem-input-numerical.html">
+<span>
+	<input ng-model="displayValue" ng-change="onInputChange()" ng-blur="updateDisplay()">
+</span>
 </script>

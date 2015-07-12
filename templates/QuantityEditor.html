@@ -34,8 +34,8 @@ quantityID: '{{quantityID}}',
     <tr ng-repeat="unit in quantity.units track by $index">
       <td><span stem-list-item-actions add="addUnit($index + 1)"></span></td>
       <td><input type="text" ng-model="unit[0]"></td>
-      <td><input type="text" ng-change="onMultiplierChange($index)" ng-model="multiplierStrings[$index]"></td>
-      <td><input type="numerical" step="any" ng-model="unit[1].offset"></td>
+      <td><div stem-input-numerical="unit[1].mult"></div></td>
+      <td><div stem-input-numerical="unit[1].offset"></div></td>
     </tr>
   </table> 
 </div>
