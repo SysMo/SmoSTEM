@@ -1,10 +1,15 @@
 {% extends "StemBase.html" %}
 
+{% block Scripts %}
+<script src="/static/js/directives/ModelDirectives.js"></script>	    
+{% endblock %}
+
 {% block PageSettings %}
 modelID: '{{modelID}}',    
 {% endblock %}
 
 {% block BodyContent %}
+{% include 'angular/ModelDirectiveTemplates.html' %}
 {% raw %}
 <div ng-controller="ModelEditorCtrl">
   <div stem-modal model="model"></div>

@@ -34,11 +34,14 @@
     <script type="text/javascript" src="/static/js/services/MenuService.js"></script>
 	
     <script src="/static/js/StemResources.js"></script>
-	<script src="/static/js/StemDirectives.js"></script>
-    <script src="/static/js/StemControllers.js"></script>
+	<script src="/static/js/directives/CoreDirectives.js"></script>
+    <script src="/static/js/controllers/StemControllers.js"></script>
 	<!-- Stem Table -->
 	<link rel="stylesheet" href="/static/css/StemTable.css">
 	<script src="/static/js/StemTable.js"></script>
+    {% block Scripts %}
+		    
+    {% endblock %}
 
   <script>
   Stem.factory('PageSettings', function() {
@@ -52,7 +55,7 @@
   </script>
 </head>
 <body ng-app="Stem">
-  {% include 'angular/AngularStemTemplates.html' %}
+  {% include 'angular/CoreDirectiveTemplates.html' %}
   {% raw %}
   <header class="navbar navbar-fixed-top navbar-inverse">
     <div class="container" data-ng-controller="HeaderController">

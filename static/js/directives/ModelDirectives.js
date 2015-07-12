@@ -483,9 +483,6 @@ Stem.directive('stemTable', function(StemTable, StemQuantities, StemUtil, $compi
 Stem.directive('stemTableProperties', [function() {
 	return {
 		restrict : 'A',
-		scope: {
-			stemTable: '=stemTableProperties'
-		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
@@ -592,9 +589,6 @@ Stem.directive('stemTextArea', function() {
 
 Stem.directive('stemTextAreaProperties', [function() {
 	return {
-		scope: {
-			stemTextArea: "=stemTextAreaProperties"
-		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
@@ -650,9 +644,6 @@ Stem.directive('stemFormulas', function() {
 
 Stem.directive('stemFormulasProperties', [function() {
 	return {
-		scope: {
-			stemFormulas: "=stemFormulasProperties"
-		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
@@ -665,40 +656,6 @@ Stem.directive('stemFormulasProperties', [function() {
 			});
 		},
 		templateUrl: "stem-formulas-properties.html",
-	}
-}]);
-
-Stem.directive('stemListItemActions', [function() {
-	return {
-		scope: {
-			add: "&add",
-			del: "&del",
-			edit: "&edit",
-			duplicate: "&duplicate",
-			moveUp: "&moveUp",
-			moveDown: "&moveDown",
-		},
-		templateUrl: "stem-list-item-actions",
-		link: function(scope, element, attributes) {
-			if (!("add" in attributes)) {
-				scope.add = false;
-			}
-			if (!("del" in attributes)) {
-				scope.del = false;
-			}
-			if (!("edit" in attributes)) {
-				scope.edit = false;
-			}
-			if (!("duplicate" in attributes)) {
-				scope.duplicate = false;
-			}
-			if (!("moveUp" in attributes)) {
-				scope.moveUp = false;
-			}
-			if (!("moveDown" in attributes)) {
-				scope.moveDown = false;
-			}
-		}
 	}
 }]);
 
