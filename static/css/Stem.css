@@ -82,3 +82,7 @@ h1 {
 .popover-content {
 	color: black;
 }
+
+.tooltip {
+	z-index: 100000;
+}

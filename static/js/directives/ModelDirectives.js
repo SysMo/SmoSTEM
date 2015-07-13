@@ -441,9 +441,15 @@ Stem.directive('stemTable', function(StemTable, StemQuantities, StemUtil, $compi
 			$scope.quantities = StemQuantities.quantities;
 			// Ensure that the tabale columns have a quantity and unit
 			for (var i=0; i<$scope.stemTable.columns.length; i++) {
-				$scope.stemTable.columns[i].quantity = $scope.stemTable.columns[i].quantity || 'Dimensionless';
-				$scope.stemTable.columns[i].displayUnit = $scope.stemTable.columns[i].displayUnit || '-';
-				$scope.stemTable.columns[i].unitOptions = $scope.quantities[$scope.stemTable.columns[i].quantity].units;
+				var quantityName = $scope.stemTable.columns[i].quantity;
+				if (!(quantityName && quantityName in $scope.quantities)) {
+					$scope.stemTable.columns[i].quantity = 'Dimensionless';
+				}
+				var unitOptions = $scope.quantities[$scope.stemTable.columns[i].quantity].units;
+				var displayUnit = $scope.stemTable.columns[i].displayUnit;
+				if (!(displayUnit && unitOptions.filter(function(el) {return el[0] == displayUnit}).length > 0 )) {
+					$scope.stemTable.columns[i].displayUnit = $scope.quantities[$scope.stemTable.columns[i].quantity].SIUnit;
+				}
 			}
 			
 			$scope.edit = function() {
@@ -487,6 +493,7 @@ Stem.directive('stemTable', function(StemTable, StemQuantities, StemUtil, $compi
 					scope.activeColumn = scope.stemTable.columns[i];
 					scope.onUnitChange();
 				}
+				scope.activeColumn = null;
 			});
 		}
 	}
@@ -514,9 +521,12 @@ Stem.directive('stemTableColumnProperties', function($timeout, StemQuantities, S
 	return {
 		restrict : 'A',
 		controller: function($scope) {
-			$scope.setDisplayUnit = function() {
-				$scope.activeColumn.unitOptions = $scope.quantities[$scope.activeColumn.quantity].units;
+			$scope.onQuantityChange = function() {
+				$scope.setUnitOptions();
 				$scope.activeColumn.displayUnit = $scope.quantities[$scope.activeColumn.quantity].SIUnit;
+			};
+			$scope.setUnitOptions = function() {
+				$scope.unitOptions = $scope.quantities[$scope.activeColumn.quantity].units;
 			};
 		},
 		link: function(scope, element, attributes) {
@@ -532,6 +542,7 @@ Stem.directive('stemTableColumnProperties', function($timeout, StemQuantities, S
 			
 			element.find('.modal').on('show.bs.modal', function (e) {
 				scope.updateValue();
+				scope.setUnitOptions();
 				$timeout(function() {
 					scope.$apply();
 				});

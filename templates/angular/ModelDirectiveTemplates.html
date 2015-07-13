@@ -253,9 +253,9 @@
 					<div>Column format</div>
 					<input type="text" ng-model="activeColumn.format">
 					<div>Quantity</div>
-					<select ng-model="activeColumn.quantity" ng-options="key as key for (key, value) in quantities" ng-change="setDisplayUnit()"></select>
+					<select ng-model="activeColumn.quantity" ng-options="key as key for (key, value) in quantities" ng-change="onQuantityChange()"></select>
 					<div>Unit</div>
-					<select ng-model="activeColumn.displayUnit" ng-options="item[0] as item[0] for item in activeColumn.unitOptions"></select>
+					<select ng-model="activeColumn.displayUnit" ng-options="item[0] as item[0] for item in unitOptions"></select>
 				</form>
 			</div>
 			<div class="modal-footer">
