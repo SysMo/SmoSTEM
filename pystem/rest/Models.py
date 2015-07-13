@@ -73,10 +73,10 @@ class ModelAPI(Resource):
 					# Copy object (not sure if it works)
 					model = self.conn.Model.one({"_id": ObjectId(modelID)})
 					del model['_id']
-					model['name'] = 'Copy of ' + model['name']
-					model['created'] = datetime.datetime.utcnow()
+					model.name = 'Copy of ' + model.name
+					model.created = datetime.datetime.utcnow()
 					model.save()
-					return makeJsonResponse({'_id': modelID})
+					return makeJsonResponse({'_id': model._id})
 				else:
 					raise Exception('Unknown action {}'.format(action))
 			except Exception, e:
