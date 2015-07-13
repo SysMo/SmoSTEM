@@ -34,7 +34,7 @@ Stem.factory('StemResources', function($resource) {
 			}
 			
 			this.duplicate = function(entity) {
-				entity.$duplicate(function() {
+				entity.$save(function() {
 					window.location.href = editorPath + "/" + entity._id;
 				});
 			}
@@ -43,14 +43,12 @@ Stem.factory('StemResources', function($resource) {
 			$resource('/stem/api/Models/:_id', { _id: '@_id' }, 
 			{	
 				get: {
-					method: 'GET'
-				},
-				post: {
-					method: 'POST',
+					method: 'GET',
 					interceptor : {responseError : ErrorHandler}
 				},
 				update: { 
-					method:'PUT' 
+					method:'PUT',
+					interceptor : {responseError : ErrorHandler}
 				}, 
 				compute: { 
 					method: 'POST', 
@@ -59,13 +57,6 @@ Stem.factory('StemResources', function($resource) {
 					},
 					interceptor : {responseError : ErrorHandler}
 				},
-				duplicate: {
-					method: 'POST',
-					params: {
-						action: "duplicate" 
-					},
-					interceptor : {responseError : ErrorHandler}
-				}
 			}),
 		Quantities:
 			$resource('/stem/api/Quantities/:_id', { _id: '@_id' },
@@ -78,10 +69,7 @@ Stem.factory('StemResources', function($resource) {
 					params: {
 						full: true
 					},
-					isArray: true
-				},
-				post: {
-					method: 'POST',
+					isArray: true,
 					interceptor : {responseError : ErrorHandler}
 				},
 				update: { 
@@ -99,19 +87,13 @@ Stem.factory('StemResources', function($resource) {
 					params: {
 						full: true
 					},
-					isArray: true
+					isArray: true,
+					interceptor : {responseError : ErrorHandler}
 				},
 				update: { 
 					method: 'PUT', 
 					interceptor : {responseError : ErrorHandler}
 				},
-				createFunction: {
-					method: 'POST',
-					params: {
-						action: "createFunction" 
-					},
-					interceptor : {responseError : ErrorHandler}
-				}
 			})
 	};
 	return StemResources;

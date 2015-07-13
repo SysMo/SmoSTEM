@@ -42,11 +42,10 @@ class ModelAPI(Resource):
 		Returns a model or a list of models
 		"""
 		if (modelID is None):
-			modelCursor = self.conn.Models.find({}, {'name': True, 'description': True, 'created': True})
+			modelCursor = self.conn.Models.find({}, {'name': True, 'description': True, 'created': True}, sort = [('name', 1)])
 			return makeJsonResponse(list(modelCursor))
 		else:
 			model = self.conn.Models.one({"_id": ObjectId(modelID)})
-			print model
 			if (model == None):
 				abort(500, msg = "No model exists with this ID")
 			return makeJsonResponse(model)
@@ -55,38 +54,35 @@ class ModelAPI(Resource):
 		"""
 		Create a new model or run an action on model
 		"""
-		# TODO: This is a mess, have to fix it
-		params = request.args
-		if (modelID is None):
-			model = self.conn.Model()
-			modelID = self.conn.Models.insert(model)
-			return makeJsonResponse({'_id': modelID})
-		else:
-			action = params['action']
-			try:
-				if (action == 'compute'):
-					modelData = parseJsonResponse(request.data)
-					ex = ModelActionExecutor(modelData)
-					ex.execute(action)
-					return makeJsonResponse(modelData)
-				elif (action == 'duplicate'):
-					# Copy object (not sure if it works)
+		action = request.args.get('action', 'create')
+		try:
+			if (action == 'create'):
+				if (modelID is None):
+					# Create new model
+					model = self.conn.Model()
+				else:
+					# Duplicate existing model
 					model = self.conn.Model.one({"_id": ObjectId(modelID)})
 					del model['_id']
 					model.name = 'Copy of ' + model.name
 					model.created = datetime.datetime.utcnow()
-					model.save()
-					return makeJsonResponse({'_id': model._id})
-				else:
-					raise Exception('Unknown action {}'.format(action))
-			except Exception, e:
-				tb = traceback.format_exc()
-				print type(e)
-				abort(500,
-					msg = "Unhandled error",
-					exception = sys.exc_info()[0].__name__ + ": " + str(e),
-					traceback = tb
-				)
+				model.save()
+				return makeJsonResponse({'_id': model._id})
+			elif (action == 'compute'):
+				modelData = parseJsonResponse(request.data)
+				ex = ModelActionExecutor(modelData)
+				ex.execute(action)
+				return makeJsonResponse(modelData)
+			else:
+				raise Exception('Unknown action {}'.format(action))
+		except Exception, e:
+			tb = traceback.format_exc()
+			print type(e)
+			abort(500,
+				msg = "Unhandled error",
+				exception = sys.exc_info()[0].__name__ + ": " + str(e),
+				traceback = tb
+			)
 	
 	def delete(self, modelID):
 		self.conn.Models.remove({"_id": ObjectId(modelID)})
