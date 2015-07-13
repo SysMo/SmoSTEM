@@ -55,7 +55,7 @@ class ModelAPI(Resource):
 		"""
 		Create a new model or run an action on model
 		"""
-		modelData = parseJsonResponse(request.data)
+		# TODO: This is a mess, have to fix it
 		params = request.args
 		if (modelID is None):
 			model = self.conn.Model()
@@ -65,16 +65,18 @@ class ModelAPI(Resource):
 			action = params['action']
 			try:
 				if (action == 'compute'):
+					modelData = parseJsonResponse(request.data)
 					ex = ModelActionExecutor(modelData)
 					ex.execute(action)
 					return makeJsonResponse(modelData)
 				elif (action == 'duplicate'):
-					del modelData['_id']					
-					newModel = self.conn.Model(modelData)
-					newModel.name = 'Copy of ' + newModel.name
-					newModel.created = datetime.datetime.utcnow()
-					newModel.save()
-					return makeJsonResponse(newModel)
+					# Copy object (not sure if it works)
+					model = self.conn.Model.one({"_id": ObjectId(modelID)})
+					del model['_id']
+					model['name'] = 'Copy of ' + model['name']
+					model['created'] = datetime.datetime.utcnow()
+					model.save()
+					return makeJsonResponse({'_id': modelID})
 				else:
 					raise Exception('Unknown action {}'.format(action))
 			except Exception, e:
