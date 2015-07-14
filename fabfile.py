@@ -40,3 +40,9 @@ def deploy():
 	sudo('chown -R www-data:www-data {env.installDir}'.format(env = env))
 	sudo('service apache2 restart')
 	#sudo('/etc/init.d/celeryd restart')
+	
+def backupMongoStem():
+	"""
+	Export the database content to JSON files
+	"""
+	local('mongoexport --db stem --collection LibraryModules > backup/LibraryModules.json')

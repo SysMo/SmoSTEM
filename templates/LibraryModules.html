@@ -5,7 +5,7 @@
   <h1>Library Modules</h1>
     <p>
     <div ng-repeat="module in LibraryModules.collection">
-      <h2><a href="#" ng-click="LibraryModules.edit(module)">{{module.name}}</a></h2>
+      <h2><a ng-click="LibraryModules.edit(module)">{{module.name}}</a></h2>
       <span stem-list-item-actions del="LibraryModules.del(module)" edit="LibraryModules.edit(module)"></span>
       <div>{{module.description}}</div>
       <br>

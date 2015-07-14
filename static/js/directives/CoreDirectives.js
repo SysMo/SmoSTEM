@@ -24,9 +24,6 @@ Stem.directive('stemListItemActions', function() {
 			if (!("add" in attributes)) {
 				scope.add = false;
 			}
-			if (!("del" in attributes)) {
-				scope.del = false;
-			}
 			if (!("edit" in attributes)) {
 				scope.edit = false;
 			}
@@ -38,6 +35,9 @@ Stem.directive('stemListItemActions', function() {
 			}
 			if (!("moveDown" in attributes)) {
 				scope.moveDown = false;
+			}
+			if (!("del" in attributes)) {
+				scope.del = false;
 			}
 		}
 	}

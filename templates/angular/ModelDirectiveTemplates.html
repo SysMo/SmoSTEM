@@ -362,10 +362,10 @@
 <!-- Function Popover Template -->
 <script type="text/ng-template" id="function-popover-template.html">
 <div style="width: 200px;">
+  <div style="border-bottom: 1px solid #DDD; margin-bottom: 5px;">{{func.description}}</div>
   <div ng-repeat="argument in func.arguments">
     <div><span style="color: blue;">{{argument.name}}</span>:&nbsp<span>{{argument.description}}</span></div>
   </div>
-  <div style="border-top: 1px solid #DDD; margin-top: 5px;">{{func.description}}</div>
 </div>
 </script>
 {% endraw %}
