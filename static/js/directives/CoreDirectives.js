@@ -1,6 +1,7 @@
-Stem.directive('stemListItemActions', [function() {
+Stem.directive('stemListItemActions', function() {
 	return {
 		scope: {
+			containerSelector: '@',
 			add: "&add",
 			del: "&del",
 			edit: "&edit",
@@ -9,6 +10,16 @@ Stem.directive('stemListItemActions', [function() {
 			moveDown: "&moveDown",
 		},
 		templateUrl: "stem-list-item-actions.html",
+		controller: function($scope, $timeout) {
+			$scope.deleteItem = function() {
+				$timeout(function(){
+					var answer = confirm("Proceed with deletion?");
+					if (answer == true) {
+					    $scope.del();
+					}
+				});
+			}
+		},
 		link: function(scope, element, attributes) {
 			if (!("add" in attributes)) {
 				scope.add = false;
@@ -30,7 +41,7 @@ Stem.directive('stemListItemActions', [function() {
 			}
 		}
 	}
-}]);
+});
 
 Stem.directive('stemInputNumerical', [function() {
 	return {

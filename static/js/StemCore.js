@@ -83,6 +83,16 @@ Stem.factory('StemLibraryModules', function StemLibraryModules (StemResources, $
 	return StemLibraryModules;
 });
 
+Stem.filter('getLibNamespace', function () {
+	return function (func, lib) {
+		if (lib.importName) {
+			return lib.importName + '.' + func.signature;
+		} else {
+			return func.signature;
+		}
+	};
+});
+
 // User defined 'Classes'
 Stem.factory('stemClasses', function stemClasses(StemUtil) {
 	var classes = {};
