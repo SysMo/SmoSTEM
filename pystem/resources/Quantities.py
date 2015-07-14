@@ -6,10 +6,11 @@ Created on Jun 29, 2015
 '''
 
 from flask import request
-from flask_restful import Resource, abort
 from bson.objectid import ObjectId
 from mongokit import Document
 from pystem.flask.Utilities import makeJsonResponse
+from StemResource import StemResource
+from pystem.Exceptions import APIException
 
 class Quantity(Document):
 	__collection__ = "Quantities"
@@ -32,10 +33,7 @@ class Quantity(Document):
 		'SIUnit': u'<nounit>'
 	}
 
-class QuantityAPI(Resource):
-	def __init__(self, conn):
-		self.conn = conn
-		
+class QuantityAPI(StemResource):
 	def get(self, quantityID = None):
 		"""
 		Returns a model or a list of models
@@ -49,9 +47,8 @@ class QuantityAPI(Resource):
 			return makeJsonResponse(list(cursor))
 		else:
 			quantity = self.conn.Quantities.one({'_id': ObjectId(quantityID)})
-			print quantity
 			if (quantity is None):
-				abort(500, msg = "No quantity exists with this ID")
+				raise APIException("No quantity exists with ID {}".format(quantityID))
 			return makeJsonResponse(quantity)
 	
 	def post(self):

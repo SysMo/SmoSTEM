@@ -1,5 +1,5 @@
 import json
-import sys
+import sys, traceback
 from flask import Flask, Response
 from flask import render_template
 from flask.json import jsonify
@@ -12,10 +12,11 @@ from werkzeug.exceptions import HTTPException
 from flask_restful import Api
 
 from mongokit import Connection
-from pystem.rest.Models import Model, ModelAPI 
-from pystem.rest.Quantities import Quantity, QuantityAPI
-from pystem.rest.LibraryModules import LibraryModule, LibraryModuleAPI 
-from pystem.rest.Users import User 
+from pystem.resources.Models import Model, ModelAPI 
+from pystem.resources.Quantities import Quantity, QuantityAPI
+from pystem.resources.LibraryModules import LibraryModule, LibraryModuleAPI 
+from pystem.resources.Users import User 
+from pystem.Exceptions import APIException, NonAPIException
 
 app = Flask(__name__)
 app.config.from_object('Settings')
@@ -70,6 +71,29 @@ api.add_resource(LibraryModuleAPI, '/stem/api/LibraryModules', '/stem/api/Librar
 		resource_class_kwargs = {'conn':mongoConnection[app.config['STEM_DATABASE']]})
 mongoConnection.register([Quantity, Model, LibraryModule])
 
+#Exception handling
+@app.errorhandler(APIException)
+def handleAPIException(error):
+	errorInfo = {
+		'msg': str(error),
+		'type': 'APIException',
+		'excType': sys.exc_info()[0].__name__
+	}
+	response = jsonify(errorInfo)
+	response.status_code = error.status_code
+	return response
+
+@app.errorhandler(NonAPIException)
+def handleNonAPIException(error):
+	errorInfo = {
+		'msg': str(error),
+		'type': 'Exception',
+		'excType': error.excType,
+		'traceback': error.traceback
+	}
+	response = jsonify(errorInfo)
+	response.status_code = error.status_code
+	return response
 
 if __name__ == "__main__":
 	app.run()

@@ -1,12 +1,25 @@
 //Provides the API for querying and manipulating models on the server
 Stem.factory('StemResources', function($resource) {
 	function ErrorHandler(response) {
-		console.log(response);
-		$('#errorModal .modal-body').html(
-			'<p>' + response.data.msg + '</p>' +
-			'<p>' + response.data.exception + '</p>' +
-			'<pre>' + response.data.traceback + '</pre>'		
-		);
+		var errorData = response.data;
+		var errorView;
+		if (errorData.type == 'APIException') {
+			errorView = 
+			'<p>' + errorData.excType + '</p>' +
+			'<p>' + errorData.msg + '</p>';					
+		} else if (errorData.type == 'Exception') {
+			errorView = 
+			'<p>' + errorData.excType + '</p>' +
+			'<p>' + errorData.msg + '</p>' +
+			'<pre>' + errorData.traceback + '</pre>';		
+		} else {
+			if ('msg' in errorData) {
+				errorView = errorData.msg;
+			} else {
+				errorView = angular.toJson(errorData);
+			}
+		}
+		$('#errorModal .modal-body').html(errorView);
 		$('#errorModal').modal("show");
 	}
 	var StemResources = {

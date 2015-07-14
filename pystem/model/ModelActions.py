@@ -5,7 +5,7 @@ Created on Jun 27, 2015
 '''
 import numpy as np
 from Formulas import FormulaBlockProcessor
-import Exceptions as E
+import pystem.Exceptions as E
 
 class Field(object):
 	def __init__(self, jsonField):
@@ -49,14 +49,10 @@ class Field(object):
 		
 
 
-class ModelActionExecutor(object):
+class ModelCalculator(object):
 	def __init__(self, modelData):
 		self.modelData = modelData
 
-	def execute(self, action):
-		if (action == 'compute'):
-			self.compute()
-		
 	def compute(self):
 		self.fields = {}
 		self.fieldValues = {}

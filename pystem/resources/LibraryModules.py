@@ -6,19 +6,11 @@ Created on Jul 6, 2015
 @licence: See License.txt in the main folder
 '''
 from flask import request
-from flask_restful import Resource, abort
 from bson.objectid import ObjectId
 from mongokit import Document
 from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
-
-# class LibraryFunction(Document):
-# 	use_dot_notation = True
-# 	structure = {
-# 		'_id': ObjectId,
-# 	}
-# 	default_values = {
-# 		'name': 'function'
-# 	}
+from StemResource import StemResource
+from pystem.Exceptions import APIException
 
 class LibraryModule(Document):
 	__collection__ = "LibraryModules"
@@ -38,10 +30,7 @@ class LibraryModule(Document):
 		}]
 	}
 
-class LibraryModuleAPI(Resource):
-	def __init__(self, conn):
-		self.conn = conn	
-
+class LibraryModuleAPI(StemResource):
 	def get(self, moduleID = None):
 		if (moduleID is None):
 			full = request.args.get('full', False)
@@ -54,12 +43,8 @@ class LibraryModuleAPI(Resource):
 			module = self.conn.LibraryModules.one({'_id': ObjectId(moduleID)})
 			print makeJsonResponse(module)
 			if (module is None):
-				abort(500, msg = "No module exists with this ID")
+				raise APIException("No module exists with ID {}".format(moduleID))
 			return makeJsonResponse(module)
-# 		if (moduleID == None):
-# 			return makeJsonResponse([{'_id' : module['_id'], 'name' : module['name'], 'description': module['description']} for module in Modules])
-# 		else:
-# 			return ModuleNumpy
 	
 	def post(self, moduleID = None):
 		if (moduleID == None):
@@ -70,10 +55,7 @@ class LibraryModuleAPI(Resource):
 		else:
 			params = request.args
 			action = params.get('action')			
-			if (action == "createFunction"):
-				pass
-			else:
-				abort(500, msg = "Unknown action {}".format(action))
+			raise APIException("Unknown POST action {}".format(action))
 		
 	def delete(self, moduleID):
 		self.conn.LibraryModules.remove({"_id": ObjectId(moduleID)})
@@ -82,5 +64,4 @@ class LibraryModuleAPI(Resource):
 	def put(self, moduleID):
 		moduleData = parseJsonResponse(request.data)
 		module = self.conn.LibraryModule(moduleData)
-		module.validate()
 		module.save()

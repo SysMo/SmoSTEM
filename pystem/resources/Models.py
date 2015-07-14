@@ -8,11 +8,12 @@ Created on Jun 29, 2015
 import datetime
 import sys, traceback
 from flask import request
-from flask_restful import Resource, abort
 from bson.objectid import ObjectId
-from pystem.model.ModelActions import ModelActionExecutor
+from pystem.model.ModelActions import ModelCalculator
 from mongokit import Document
 from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
+from pystem.Exceptions import APIException
+from StemResource import StemResource
 
 class Model(Document):
 	__collection__ = "Models"
@@ -32,11 +33,9 @@ class Model(Document):
 		'description': u'',
 		'created': datetime.datetime.utcnow,
 	}
+			
 
-class ModelAPI(Resource):
-	def __init__(self, conn):
-		self.conn = conn
-		
+class ModelAPI(StemResource):
 	def get(self, modelID = None):
 		"""
 		Returns a model or a list of models
@@ -47,7 +46,7 @@ class ModelAPI(Resource):
 		else:
 			model = self.conn.Models.one({"_id": ObjectId(modelID)})
 			if (model == None):
-				abort(500, msg = "No model exists with this ID")
+				raise APIException("No model exists with ID {}".format(modelID))
 			return makeJsonResponse(model)
 
 	def post(self, modelID = None):
@@ -55,34 +54,27 @@ class ModelAPI(Resource):
 		Create a new model or run an action on model
 		"""
 		action = request.args.get('action', 'create')
-		try:
-			if (action == 'create'):
-				if (modelID is None):
-					# Create new model
-					model = self.conn.Model()
-				else:
-					# Duplicate existing model
-					model = self.conn.Model.one({"_id": ObjectId(modelID)})
-					del model['_id']
-					model.name = 'Copy of ' + model.name
-					model.created = datetime.datetime.utcnow()
-				model.save()
-				return makeJsonResponse({'_id': model._id})
-			elif (action == 'compute'):
-				modelData = parseJsonResponse(request.data)
-				ex = ModelActionExecutor(modelData)
-				ex.execute(action)
-				return makeJsonResponse(modelData)
+#		try:
+		if (action == 'create'):
+			if (modelID is None):
+				# Create new model
+				model = self.conn.Model()
 			else:
-				raise Exception('Unknown action {}'.format(action))
-		except Exception, e:
-			tb = traceback.format_exc()
-			print type(e)
-			abort(500,
-				msg = "Unhandled error",
-				exception = sys.exc_info()[0].__name__ + ": " + str(e),
-				traceback = tb
-			)
+				# Duplicate existing model
+				model = self.conn.Model.one({"_id": ObjectId(modelID)})
+				del model['_id']
+				model.name = 'Copy of ' + model.name
+				model.created = datetime.datetime.utcnow()
+			model.save()
+			return makeJsonResponse({'_id': model._id})
+		elif (action == 'compute'):
+			modelData = parseJsonResponse(request.data)
+			ex = ModelCalculator(modelData)
+			ex.compute()
+			return makeJsonResponse(modelData)
+		else:
+			raise APIException('Unknown POST action {} for ModelAPI'.format(action))
+
 	
 	def delete(self, modelID):
 		self.conn.Models.remove({"_id": ObjectId(modelID)})
@@ -91,6 +83,10 @@ class ModelAPI(Resource):
 	def put(self, modelID):
 		# update a model definition
 		modelData = parseJsonResponse(request.data)
-		model = self.conn.Model(modelData)
-		model.created = datetime.datetime.strptime(model.created, "%Y-%m-%d %H:%M:%S")
-		model.save()
+		self.conn.Models.update({ '_id': ObjectId(modelID)} , { '$set': {
+				'name': modelData['name'],
+				'description': modelData['description'],
+				'board': modelData['board'],
+				'background': modelData['background']
+			}
+		}) 
