@@ -52,7 +52,6 @@ Stem.controller('ModelEditorCtrl', function($scope,
 	$scope.libraryModulesLoaded = false;
 	StemLibraryModules.loadLibraryModules(function(libraryModules){
 		$scope.libraryModules = libraryModules;
-		console.log($scope.libraryModules);
 		$scope.libraryModulesAccordionObj = {};
 		angular.forEach($scope.libraryModules, function(value, key) {
 			$scope.libraryModulesAccordionObj[key] = {};
