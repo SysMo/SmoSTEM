@@ -84,5 +84,5 @@ h1 {
 }
 
 .tooltip {
-	z-index: 100000;
+	/* position: fixed; */
 }

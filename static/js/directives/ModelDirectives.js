@@ -86,6 +86,20 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 					$scope.stemBoard.layouts.splice(index + 1, 0, copy);
 				}
 			}
+			$scope.moveDown = function(layout) {
+				var index = $scope.stemBoard.layouts.indexOf(layout);
+				if (index >= 0) {
+					$scope.stemBoard.layouts.splice(index, 1);
+					$scope.stemBoard.layouts.splice(index + 1, 0, layout);
+				}
+			}
+			$scope.moveUp = function(layout) {
+				var index = $scope.stemBoard.layouts.indexOf(layout);
+				if (index > 0) {
+					$scope.stemBoard.layouts.splice(index, 1);
+					$scope.stemBoard.layouts.splice(index - 1, 0, layout);
+				}
+			}
 		},
 		link: function (scope, element, attributes) {
 			$(scope.containerSelector).css('min-height', '520');
