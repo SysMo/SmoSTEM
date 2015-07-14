@@ -3,6 +3,7 @@ import sys
 from flask import Flask, Response
 from flask import render_template
 from flask.json import jsonify
+from flask.ext.login import LoginManager
 
 from werkzeug.exceptions import default_exceptions
 from werkzeug.exceptions import HTTPException
@@ -14,18 +15,27 @@ from mongokit import Connection
 from pystem.rest.Models import Model, ModelAPI 
 from pystem.rest.Quantities import Quantity, QuantityAPI
 from pystem.rest.LibraryModules import LibraryModule, LibraryModuleAPI 
+from pystem.rest.Users import User 
 
 app = Flask(__name__)
 app.config.from_object('Settings')
 app.debug = True
 api = Api(app)
-#mongoClient = MongoClient()
 mongoConnection = Connection()
+loginManager = LoginManager(app)
+
+@loginManager.user_loader
+def loadUser(userID):
+	return mongoConnection[app.config['STEM_DATABASE']].User.one(userID)
 
 # Pages
 @app.route("/")
 def index():
 	return render_template('StemBase.html')
+
+@app.route("/login")
+def login():
+	pass
 
 @app.route("/Models")
 def listModels():
