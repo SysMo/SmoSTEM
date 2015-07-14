@@ -14,7 +14,7 @@ modelID: '{{modelID}}',
 <div ng-controller="ModelEditorCtrl">
   <div stem-modal model="model"></div>
   <div>
-  	<div style="position: fixed; top: 70;" id="ToolBars">
+  	<div style="position: fixed; top: 70; z-index: 1040;" id="ToolBars">
   	<accordion close-others="true">
   	<!-- is-open="true": not valid must be assignlable both ways -->
   	  <accordion-group style="color: blue;" heading="Layouts" is-open="true">
@@ -40,9 +40,9 @@ modelID: '{{modelID}}',
         <div id="LibraryModulesToolbar">
           <div ng-if="libraryModulesLoaded">
         	<accordion close-others="true">
-			  <accordion-group heading="{{name}}" ng-repeat="(name, value) in libraryModulesAccordionObj">
+			  <accordion-group heading="{{name}}" ng-repeat="(name, lib) in libraryModulesAccordionObj">
 			    <ul>
-			      <li stem-draggable="{{func.signature}}" style="cursor: pointer;" ng-repeat="func in value.functions" ng-bind="func.signature" popover-title="{{func.signature}}" popover-template="'function-popover-template.html'" popover-trigger="click" popover-placement="right"></li>
+			      <li stem-draggable="{{func|getLibNamespace:lib}}" style="cursor: pointer;" ng-repeat="func in lib.functions" ng-bind="func.signature" popover-title="{{func|getLibNamespace:lib}}" popover-template="'function-popover-template.html'" popover-trigger="click" popover-placement="right"></li>
 			    </ul>
 			  </accordion-group>
 			</accordion>
