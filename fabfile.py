@@ -6,11 +6,11 @@ Created on Jul 13, 2015
 @licence: See License.txt in the main folder
 '''
 import os
-from fabric.api import run, sudo, env, cd, prefix, hosts, local, lcd
+from fabric.api import run, sudo, env, cd, prefix, hosts, local, lcd, put
 
-srvAddress = 'platform.sysmoltd.com' 
-
-env.hosts = srvAddress
+srvAddress = 'stem.sysmoltd.com' 
+if (len(env.hosts) == 0):
+	env.hosts = [srvAddress]
 env.projectRoot = os.getcwd()
 env.installDir = '/srv/Stem/'
 env.deploy_folderList = [
@@ -40,9 +40,18 @@ def deploy():
 	sudo('chown -R www-data:www-data {env.installDir}'.format(env = env))
 	sudo('service apache2 restart')
 	#sudo('/etc/init.d/celeryd restart')
+
+def update_mongo(collection):
+	put('backup/mongo/{collection}.json'.format(collection = collection), '/tmp/')
+	run('mongoimport --db stem --collection {collection} < /tmp/{collection}.json'.format(collection = collection))
 	
 def backupMongoStem():
 	"""
 	Export the database content to JSON files
 	"""
-	local('mongoexport --db stem --collection LibraryModules > backup/LibraryModules.json')
+	collections = ['Quantities', 'LibraryModules']
+	for collection in collections:
+		run('mongoexport --db stem --collection {collection} > backup/mongo/{collection}.json'.format(collection = collection))
+	
+def testTask():
+	print "Hosts: {}".format(env.hosts)
