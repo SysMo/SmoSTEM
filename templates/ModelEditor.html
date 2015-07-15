@@ -56,7 +56,9 @@ modelID: '{{modelID}}',
 	<toast></toast>
 	<div id="main" style="position: absolute; left: 150; top: 70;">
 		<div ng-if="model.board && quantitiesLoaded">
-            <h1 style="margin-left: 10px;" ng-bind="model.name"></h1>
+            <h1 style="margin-left: 10px;">
+            	<span style="color: blue; cursor: pointer;" ng-bind="model.name" ng-click="editProps()"></span>
+            </h1>
             <div style="margin-left: 10px;" ng-bind="model.description"></div>
 	  		<div stem-board="model.board" container-selector="#main" 
 	  			layouts-selector="#LayoutsToolbar > ul > li"
