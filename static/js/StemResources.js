@@ -1,5 +1,5 @@
 //Provides the API for querying and manipulating models on the server
-Stem.factory('StemResources', function($resource) {
+Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 	function ErrorHandler(response) {
 		var errorData = response.data;
 		var errorView;
@@ -22,6 +22,15 @@ Stem.factory('StemResources', function($resource) {
 		$('#errorModal .modal-body').html(errorView);
 		$('#errorModal').modal("show");
 	}
+	function OnSuccess(response) {
+		$timeout(function() {
+			ngToast.success({
+		        content:'Success',
+		        dismissOnTimeout: true,
+		        timeout: 1500
+		     });  
+	    });
+	};
 	var StemResources = {
 		StandardResource: function(resourceName, editorPath) {
 			this.editorPath = editorPath
@@ -61,14 +70,20 @@ Stem.factory('StemResources', function($resource) {
 				},
 				update: { 
 					method:'PUT',
-					interceptor : {responseError : ErrorHandler}
+					interceptor : {	
+						response: OnSuccess,
+						responseError : ErrorHandler
+					}
 				}, 
 				compute: { 
 					method: 'POST', 
 					params: {
 						action: "compute" 
 					},
-					interceptor : {responseError : ErrorHandler}
+					interceptor : {	
+						response: OnSuccess,
+						responseError : ErrorHandler
+					}
 				},
 			}),
 		Quantities:

@@ -603,6 +603,7 @@ Stem.directive('stemTextArea', function() {
 						$(this).height(this.clientHeight + 20);
 					}
 				});
+				$( '#' + scope.stemTextArea.id +'-textarea').markdown({resize: 'both', fullscreen: {enable: false}});
 			});
 			if (scope.layout == 'free') {
 				element.css({'position': 'absolute', 'left': scope.stemTextArea.left, 'top': scope.stemTextArea.top});

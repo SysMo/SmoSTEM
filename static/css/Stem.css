@@ -82,3 +82,7 @@ h1 {
 .popover-content {
 	color: black;
 }
+
+.collapsing {
+	transition-duration: 0s;
+}
