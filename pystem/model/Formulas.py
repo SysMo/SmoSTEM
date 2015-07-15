@@ -8,7 +8,7 @@ Created on Jul 2, 2015
 from __future__ import division
 import ast
 from FunctionRegistry import FunctionRegistry
-import Exceptions as E
+import pystem.Exceptions as E
 
 class ExpressionEvaluator(object):
 	def __init__(self, ctx, funcRegistry):	

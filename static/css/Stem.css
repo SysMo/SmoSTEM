@@ -1,5 +1,4 @@
 body {
-    background-repeat: no-repeat;
     background-attachment: fixed;
 }
 
@@ -19,7 +18,7 @@ body {
 
 /* Contains components to assemble models */
 #ModelComponentsToolbar, #LayoutsToolbar, #LibraryModulesToolbar {
-	/*width: 120px;*/
+	width: 160px;
 }
 
 #ModelComponentsToolbar > ul > li, #LayoutsToolbar > ul > li, #LibraryModulesToolbar ul > li {
@@ -40,6 +39,7 @@ nav > ul > li * {
 
 #main {
 	width: 1090px; 
+	margin-left: 20px;
 }
 
 .ui-resizable-s {

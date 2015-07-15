@@ -2,7 +2,7 @@
 Stem.controller('QuantitiesCtrl', function($scope, StemResources, Menus) {
 	$scope.Quantities = new StemResources.StandardResource('Quantities', 'QuantityEditor');
 	$scope.Quantities.query();
-	Menus.addMenuItem('topbar', 'New', $scope.Quantities.create, 'action');
+	Menus.addMenuItem('topbar', 'New', $scope.Quantities.create, 'action', 'glyphicon-plus');
 });
 
 //Editor for an individual quantity
@@ -30,7 +30,7 @@ Stem.controller('QuantityEditorCtrl', function($scope, PageSettings, StemResourc
 Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResources, Menus){
 	$scope.Models = new StemResources.StandardResource('Models', 'ModelEditor');
 	$scope.Models.query();
-	Menus.addMenuItem('topbar', 'New', $scope.Models.create, 'action');
+	Menus.addMenuItem('topbar', 'New', $scope.Models.create, 'action', 'glyphicon-plus');
 });
 
 // Page with model editor

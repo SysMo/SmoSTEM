@@ -6,7 +6,7 @@
     <p>
 	<div ng-repeat="quantity in Quantities.collection">
       <span stem-list-item-actions del="Quantities.del(quantity)" edit="Quantities.edit(quantity)"></span>
-      <a ng-href="#" ng-click="Quantities.edit(quantity)" ng-bind="quantity.name"></a>  
+      <a ng-click="Quantities.edit(quantity)" ng-bind="quantity.name"></a>  
 	</div>
 </div>
 {% endraw %}
