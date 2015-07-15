@@ -14,7 +14,7 @@ modelID: '{{modelID}}',
 <div ng-controller="ModelEditorCtrl">
   <div stem-modal model="model"></div>
   <div>
-  	<div style="position: fixed; top: 70; z-index: 1040;" id="ToolBars">
+  	<div style="position: fixed; top: 70; z-index: 1020;" id="ToolBars">
   	<accordion close-others="true">
   	<!-- is-open="true": not valid must be assignlable both ways -->
   	  <accordion-group style="color: blue;" heading="Layouts" is-open="true">
@@ -51,6 +51,7 @@ modelID: '{{modelID}}',
       </accordion-group>
     </accordion>
 	</div>
+	<toast></toast>
 	<div id="main" style="position: absolute; left: 150; top: 70;">
 		<div ng-if="model.board && quantitiesLoaded">
             <h1 style="margin-left: 10px;" ng-bind="model.name"></h1>

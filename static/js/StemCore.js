@@ -1,4 +1,12 @@
-var Stem = angular.module('Stem',['ngResource', 'ui.bootstrap']);
+var Stem = angular.module('Stem',['ngResource', 'ui.bootstrap', 'ngAnimate',
+                                  'ngSanitize', 'ngToast']);
+
+Stem.config(['ngToastProvider', function(ngToast) {
+    ngToast.configure({
+      //verticalPosition: 'bottom',
+      //horizontalPosition: 'center'
+    });
+ }]);
 
 // Utility functions
 Stem.factory('StemUtil', function StemUtil () {
