@@ -2,6 +2,9 @@
 <script type="text/ng-template" id="stem-list-item-actions.html">
 <div style="display: inline;">
 	&nbsp;
+	<div style="display: inline;" ng-if="resize">
+		<span class="glyphicon glyphicon-text-height" ng-click="resize()"></span>
+	</div>
 	<div style="display: inline;" ng-if="add">
 		<span class="glyphicon glyphicon-plus" ng-click="add()"></span>
 	</div>

@@ -51,10 +51,11 @@
 <script type="text/ng-template" id="stem-grid-layout.html">
   <div id="{{stemLayout.id}}" style="overflow: auto; background: #EEE; padding: 10px; margin: 10px; float: left;">
   	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemLayout.title}}</span>
-  	<span id="{{stemLayout.id}}-list-item-actions" stem-list-item-actions style="float: right;" container-selector="#{{stemLayout.id}}-list-item-actions" del="$parent.removeLayout(stemLayout)" 
+  	<span id="{{stemLayout.id}}-list-item-actions" stem-list-item-actions style="float: right;" del="$parent.removeLayout(stemLayout)" 
   		duplicate="$parent.duplicateLayout(stemLayout)"
   		move-down="$parent.moveDown(stemLayout)"
-  		move-up="$parent.moveUp(stemLayout)"></span>
+  		move-up="$parent.moveUp(stemLayout)"
+  		resize="resize()"></span>
 	<!-- <button class="close" ng-click="$parent.removeLayout(stemLayout)">&times;</button> -->
 	<div class="sortables_div" style="height: 90%;">
 		<div ng-repeat="field in stemLayout.fields">
@@ -88,7 +89,6 @@
 		duplicate="$parent.duplicateLayout(stemLayout)"
 		move-down="$parent.moveDown(stemLayout)"
   		move-up="$parent.moveUp(stemLayout)"></span>
-	<!-- <button class="close" style="" ng-click="$parent.removeLayout(stemLayout)">&times;</button> -->
 	<div id="{{stemLayout.id}}-draggables_div" style="height: 90%;">
 		<div ng-repeat="field in stemLayout.fields">
 		  <div ng-switch on="field.type">

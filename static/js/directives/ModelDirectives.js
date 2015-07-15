@@ -49,6 +49,14 @@ Stem.directive('stemModal', function($timeout) {
 			scope.$watch(function() {return scope.stemModel.$resolved;}, function(newValue, oldValue){
 				scope.setImage();
 			});
+			element.find('input').on('keyup', function(event) {
+				if (event.which == 13) {
+					$('#' + scope.stemModel._id +'-modal').modal("hide");
+				}
+			});
+			element.on('shown.bs.modal', function () {
+				$(this).find('input').first().focus().select();
+			});
 		},
 		templateUrl: "stem-modal.html",
 	}
@@ -178,6 +186,13 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 		templateUrl: "stem-grid-layout.html",
 		replace: true,
 		controller: function($scope) {
+			$scope.resize = function() {
+				var el = $('#' + $scope.stemLayout.id);
+				if (el[0].scrollHeight > el[0].clientHeight) {
+					el.height(el[0].scrollHeight);
+					$scope.stemLayout.height = el.height();
+				}
+			}
 			$scope.edit = function() {
 				$( '#' + $scope.stemLayout.id +'-modal').modal( "show" );
 			};
@@ -355,6 +370,14 @@ Stem.directive('stemLayoutProperties', [function() {
 			scope.$watch(function() {return element[0];}, function(newValue, oldValue){
 				scope.setImage();
 			});
+			element.find('input').on('keyup', function(event) {
+				if (event.which == 13) {
+					$('#' + scope.stemLayout.id +'-modal').modal("hide");
+				}
+			});
+			element.on('shown.bs.modal', function () {
+				$(this).find('input').first().focus().select();
+			});
 		},
 		templateUrl: "stem-layout-properties.html",
 	}
@@ -439,6 +462,14 @@ Stem.directive('stemScalarProperties', function() {
 					$('#' + scope.stemScalar.id + '-OkButton').prop('disabled', false);
 					$(this).next().html('');
 				}
+			});
+			element.find('input').on('keyup', function(event) {
+				if (event.which == 13) {
+					$('#' + scope.stemScalar.id +'-modal').modal("hide");
+				}
+			});
+			element.on('shown.bs.modal', function () {
+				$(this).find('input').first().focus().select();
 			});
 		},
 		templateUrl: "stem-scalar-properties.html",
@@ -526,6 +557,14 @@ Stem.directive('stemTableProperties', [function() {
 					$(this).next().html('');
 				}
 			});
+			element.find('input').on('keyup', function(event) {
+				if (event.which == 13) {
+					$('#' + scope.stemTable.id +'-modal').modal("hide");
+				}
+			});
+			element.on('shown.bs.modal', function () {
+				$(this).find('input').first().focus().select();
+			});
 		},
 		templateUrl: "stem-table-properties.html",
 	}
@@ -552,8 +591,7 @@ Stem.directive('stemTableColumnProperties', function($timeout, StemQuantities, S
 					$('#' + scope.stemTable.id + '-columnModal-OkButton').prop('disabled', false);
 					$(this).next().html('');
 				}
-			});
-			
+			});	
 			element.find('.modal').on('show.bs.modal', function (e) {
 				scope.updateValue();
 				scope.setUnitOptions();
@@ -583,7 +621,7 @@ Stem.directive('stemTextArea', function() {
 		},
 		controller: function($scope) {
 			$scope.edit = function() {
-				$( '#' + $scope.stemTextArea.id +'-modal').modal( "show" );
+				$('#' + $scope.stemTextArea.id +'-modal').modal( "show" );
 			};
 		},
 		templateUrl: "stem-text-area.html",
@@ -636,6 +674,14 @@ Stem.directive('stemTextAreaProperties', [function() {
 					$('#' + scope.stemTextArea.id + '-OkButton').prop('disabled', false);
 					$(this).next().html('');
 				}
+			});
+			element.find('input').on('keyup', function(event) {
+				if (event.which == 13) {
+					$('#' + scope.stemTextArea.id +'-modal').modal("hide");
+				}
+			});
+			element.on('shown.bs.modal', function () {
+				$(this).find('input').first().focus().select();
 			});
 		},
 		templateUrl: "stem-text-area-properties.html",
@@ -691,6 +737,14 @@ Stem.directive('stemFormulasProperties', [function() {
 					$('#' + scope.stemFormulas.id + '-OkButton').prop('disabled', false);
 					$(this).next().html('');
 				}
+			});
+			element.find('input').on('keyup', function(event) {
+				if (event.which == 13) {
+					$('#' + scope.stemFormulas.id +'-modal').modal("hide");
+				}
+			});
+			element.on('shown.bs.modal', function () {
+				$(this).find('input').first().focus().select();
 			});
 		},
 		templateUrl: "stem-formulas-properties.html",
