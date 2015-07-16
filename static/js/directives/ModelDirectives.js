@@ -509,36 +509,7 @@ Stem.directive('stemTable', function(StemTable, StemQuantities, StemUtil, $compi
 				element.css('width', '98%');
 			}
 	        scope.$watch(function () { return element[0].childNodes[1].childNodes[5].childNodes[1]; }, function(newValue, oldValue) {
-				scope.tableDOMobject = new StemTable.Table("#" + scope.stemTable.id + "-table", scope.stemTable.columns, scope.stemTable.value);
-				scope.onUnitChange = function() {
-					scope.tableDOMobject.columns[scope.activeColumnIndex] = scope.activeColumn;
-					angular.forEach(scope.tableDOMobject.data, function(row, rowIndex) {
-						row[scope.activeColumnIndex] = 
-							StemUtil.formatNumber(StemQuantities.fromSIUnit
-										(
-											scope.activeColumn.quantity, scope.activeColumn.displayUnit, 
-											scope.stemTable.value[rowIndex][scope.activeColumnIndex]
-										)
-							);
-					});
-				};
-				scope.updateValue = function() {
-					scope.activeColumnIndex = scope.tableDOMobject.activeColumnIndex;
-					scope.activeColumn = scope.stemTable.columns[scope.activeColumnIndex];
-					angular.forEach(scope.stemTable.value, function(row, rowIndex) {
-						row[scope.activeColumnIndex] = 
-							StemQuantities.toSIUnit(
-								scope.activeColumn.quantity, scope.activeColumn.displayUnit, 
-								parseFloat(scope.tableDOMobject.data[rowIndex][scope.activeColumnIndex])
-							);
-					});
-				};
-				for (var i=0; i<scope.stemTable.columns.length; i++) {
-					scope.activeColumnIndex = i;
-					scope.activeColumn = scope.stemTable.columns[i];
-					scope.onUnitChange();
-				}
-				scope.activeColumn = null;
+	        	scope.tableDOMobject = new StemTable.Table("#" + scope.stemTable.id + "-table", scope.stemTable.columns, scope.stemTable.value);
 			});
 		}
 	}
@@ -581,6 +552,33 @@ Stem.directive('stemTableColumnProperties', function($timeout, StemQuantities, S
 			$scope.setUnitOptions = function() {
 				$scope.unitOptions = $scope.quantities[$scope.activeColumn.quantity].units;
 			};
+			$scope.onColPropChange = function() {
+				$scope.colPropPristine = false;
+			};
+			$scope.onColFormatChange = function() {
+				$scope.colFormatPristine = false;
+			};
+			$scope.onUnitChange = function() {
+				$scope.unitPristine = false;
+			}
+			$scope.applyChanges = function() {
+				if ($scope.colPropPristine == false) {
+					$scope.tableDOMobject.onColPropChange($scope.activeColumnIndex);
+				}
+				if ($scope.colFormatPristine == false) {
+					$scope.tableDOMobject.onColFormatChange($scope.activeColumnIndex);
+				}
+				if ($scope.unitPristine == false) {
+					$scope.tableDOMobject.onUnitChange($scope.activeColumnIndex);
+				}
+				$scope.reset();
+			}
+			$scope.reset = function() {
+				$scope.colPropPristine = true;
+				$scope.colFormatPristine = true;
+				$scope.unitPristine = true;
+			}
+			$scope.reset();
 		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
@@ -593,19 +591,13 @@ Stem.directive('stemTableColumnProperties', function($timeout, StemQuantities, S
 				}
 			});	
 			element.find('.modal').on('show.bs.modal', function (e) {
-				scope.updateValue();
+				scope.activeColumnIndex = scope.tableDOMobject.activeColumnIndex;
+				scope.activeColumn = scope.stemTable.columns[scope.activeColumnIndex];
 				scope.setUnitOptions();
 				$timeout(function() {
 					scope.$apply();
 				});
 			});
-			
-			element.find('button').eq(1).on('click', function (e) {
-				scope.onUnitChange();
-				scope.tableDOMobject.renderTable();
-				scope.tableDOMobject.updateView();
-			});
-			
 		},
 		templateUrl: "stem-table-column-properties.html",
 	}

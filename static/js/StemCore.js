@@ -32,6 +32,9 @@ Stem.factory('StemUtil', function StemUtil () {
 			var mult = Math.pow(10,
 					sig - Math.floor(Math.log(Math.abs(n)) / Math.LN10) - 1);
 			return String(Math.round(n * mult) / mult);
+		},
+		numeralFormat: function(format, value) {
+			return format ? numeral(value).format(format) : numeral(value).value();
 		}
 	};
 })
