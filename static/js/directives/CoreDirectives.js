@@ -1,7 +1,7 @@
 Stem.directive('stemListItemActions', function() {
 	return {
 		scope: {
-			containerSelector: '@',
+			resize: "&resize",
 			add: "&add",
 			del: "&del",
 			edit: "&edit",
