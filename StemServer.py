@@ -1,21 +1,23 @@
-import json
-import sys, traceback
-from flask import Flask, Response
+import sys
+from flask import Flask
 from flask import render_template
 from flask.json import jsonify
-from flask.ext.login import LoginManager
 
-from werkzeug.exceptions import default_exceptions
-from werkzeug.exceptions import HTTPException
 
 # REST-ful flask extension
 from flask_restful import Api
-
+# Mongo schema validator
 from mongokit import Connection
+# Login functionality
+from flask_login import LoginManager
+# Password hashing
+from flask_bcrypt import Bcrypt
+
 from pystem.resources.Models import Model, ModelAPI 
 from pystem.resources.Quantities import Quantity, QuantityAPI
 from pystem.resources.LibraryModules import LibraryModule, LibraryModuleAPI 
-from pystem.resources.Users import User 
+from pystem.resources.Users import User, UserAPI
+import pystem.resources.Users
 from pystem.Exceptions import APIException, NonAPIException
 
 app = Flask(__name__)
@@ -24,19 +26,23 @@ app.debug = True
 api = Api(app)
 mongoConnection = Connection()
 loginManager = LoginManager(app)
+bcrypt = Bcrypt(app)
+pystem.resources.Users.bcrypt = bcrypt
 
+
+from bson import ObjectId
 @loginManager.user_loader
 def loadUser(userID):
-	return mongoConnection[app.config['STEM_DATABASE']].User.one(userID)
+	return mongoConnection[app.config['STEM_DATABASE']].User.one({"username": userID})
 
 # Pages
 @app.route("/")
 def index():
 	return render_template('StemBase.html')
 
-@app.route("/login")
-def login():
-	pass
+@app.route("/checkLogin")
+def checkLogin():
+	return "".format()
 
 @app.route("/Models")
 def listModels():
@@ -69,7 +75,9 @@ api.add_resource(QuantityAPI, '/stem/api/Quantities', '/stem/api/Quantities/<str
 		resource_class_kwargs = {'conn':mongoConnection[app.config['STEM_DATABASE']]})
 api.add_resource(LibraryModuleAPI, '/stem/api/LibraryModules', '/stem/api/LibraryModules/<string:moduleID>', 
 		resource_class_kwargs = {'conn':mongoConnection[app.config['STEM_DATABASE']]})
-mongoConnection.register([Quantity, Model, LibraryModule])
+api.add_resource(UserAPI, '/stem/api/Users', 
+		resource_class_kwargs = {'conn':mongoConnection[app.config['STEM_DATABASE']]})
+mongoConnection.register([Quantity, Model, LibraryModule, User])
 
 #Exception handling
 @app.errorhandler(APIException)
