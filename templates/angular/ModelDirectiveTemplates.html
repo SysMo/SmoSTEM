@@ -251,21 +251,21 @@
 			</div>
 			<div class="modal-body">
 				<form>
-					<div>Colum name</div>
-					<input type="text" ng-model="activeColumn.name" pattern="[a-zA-Z_][a-zA-Z0-9_]*" required>
+					<div>Column name</div>
+					<input type="text" ng-model="activeColumn.name" pattern="[a-zA-Z_][a-zA-Z0-9_]*" required ng-change="onColPropChange()">
 					<div></div>
 					<div>Column description</div>
-					<input type="text" ng-model="activeColumn.description">
+					<input type="text" ng-model="activeColumn.description" ng-change="onColPropChange()">
 					<div>Column format</div>
-					<input type="text" ng-model="activeColumn.format">
+					<input type="text" ng-model="activeColumn.format" ng-change="onColFormatChange()">
 					<div>Quantity</div>
 					<select ng-model="activeColumn.quantity" ng-options="key as key for (key, value) in quantities" ng-change="onQuantityChange()"></select>
 					<div>Unit</div>
-					<select ng-model="activeColumn.displayUnit" ng-options="item[0] as item[0] for item in unitOptions"></select>
+					<select ng-model="activeColumn.displayUnit" ng-options="item[0] as item[0] for item in unitOptions" ng-change="onUnitChange()"></select>
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" id="{{stemTable.id}}-columnModal-OkButton" class="btn btn-default" data-dismiss="modal">OK</button>
+				<button type="button" id="{{stemTable.id}}-columnModal-OkButton" class="btn btn-default" data-dismiss="modal" ng-click="applyChanges()">OK</button>
 			</div>
 		</div>
 	</div>
