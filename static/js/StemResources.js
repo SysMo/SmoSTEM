@@ -19,8 +19,8 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 				errorView = angular.toJson(errorData);
 			}
 		}
-		$('#errorModal .modal-body').html(errorView);
-		$('#errorModal').modal("show");
+		$('#ErrorModal .modal-body').html(errorView);
+		$('#ErrorModal').modal("show");
 	}
 	function OnSuccess(response) {
 		$timeout(function() {
@@ -121,6 +121,27 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 				update: { 
 					method: 'PUT', 
 					interceptor : {responseError : ErrorHandler}
+				},
+			}),
+		Users:
+			$resource('/stem/api/Users', {}, {
+				login: {
+					method: 'POST',
+					params: {
+						action: 'login'
+					}
+				},
+				logout: {
+					method: 'POST',
+					params: {
+						action: 'logout'
+					}
+				},
+				create: {
+					method: 'POST',
+					params: {
+						action: 'create'
+					}
 				},
 			})
 	};

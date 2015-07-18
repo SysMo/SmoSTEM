@@ -19,7 +19,7 @@ from pystem.resources.LibraryModules import LibraryModule, LibraryModuleAPI
 from pystem.resources.Users import User, UserAPI
 import pystem.resources.Users
 from pystem.Exceptions import APIException, NonAPIException
-
+import flask_login
 app = Flask(__name__)
 app.config.from_object('Settings')
 app.debug = True
@@ -62,6 +62,7 @@ def quantityEditor(quantityID):
 	
 
 @app.route("/LibraryModules")
+@flask_login.login_required
 def listLibraryModules():
 	return render_template('LibraryModules.html')
 

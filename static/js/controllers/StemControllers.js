@@ -145,8 +145,8 @@ Stem.controller('LibraryModuleEditorCtrl', function($scope, $timeout, PageSettin
 	Menus.addMenuItem('topbar', 'Save', $scope.save, 'action', 'glyphicon-floppy-disk');
 });
 
-Stem.controller('HeaderController', ['$scope', 'Menus',
-		 function($scope, Menus) {
+Stem.controller('HeaderController', ['$scope', 'Menus', 'UserService',
+		 function($scope, Menus, UserService) {
 	// Set top bar menu items
 	Menus.addMenuItem('topbar', 'Go To', 'GoTo', 'dropdown');
 	Menus.addSubMenuItem('topbar', 'GoTo', 'Models', '/Models');
@@ -165,4 +165,5 @@ Stem.controller('HeaderController', ['$scope', 'Menus',
    	});
 	// Activate tooltips
 	$('[data-toggle="tooltip"]').tooltip();
+	$scope.UserService = UserService;
 }]);

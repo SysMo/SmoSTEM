@@ -1,5 +1,5 @@
 var Stem = angular.module('Stem',['ngResource', 'ui.bootstrap', 'ngAnimate',
-                                  'ngSanitize', 'ngToast']);
+                                  'ngSanitize', 'ngToast', 'ngCookies']);
 
 Stem.config(['ngToastProvider', function(ngToast) {
     ngToast.configure({

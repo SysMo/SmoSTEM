@@ -39,6 +39,9 @@ Stem.directive('stemListItemActions', function() {
 			if (!("del" in attributes)) {
 				scope.del = false;
 			}
+			if (!("resize" in attributes)) {
+				scope.resize = false;
+			}
 		}
 	}
 });

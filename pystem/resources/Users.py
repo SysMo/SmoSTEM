@@ -47,8 +47,8 @@ class UserAPI(StemResource):
 		action = request.args.get('action', None)
 		if (action is None):
 			raise APIException("Parameter 'action' must be defined for POST method to Users resource")
-		userData = parseJsonResponse(request.data)
 		if (action == 'create'):
+			userData = parseJsonResponse(request.data)
 			userData[u'active'] = True
 			userData[u'password'] = unicode(bcrypt.generate_password_hash(userData[u'password']))
 			print userData
@@ -58,19 +58,28 @@ class UserAPI(StemResource):
 				'msg': 'Successfully created user {}'.format(user.username)
 			})
 		elif (action == 'login'):
-			print current_user
+			userData = parseJsonResponse(request.data)
 			if current_user.is_authenticated():
 				return makeJsonResponse({'msg': 'You are already logged in'})
 			else:
-				user = self.conn.User.one({'username': userData['username']})
+				user = self.conn.User.one({'email': userData['id']})
+				if (user is None):
+					raise APIException('User does not exist')
 				passwordValid = bcrypt.check_password_hash(user.password, userData['password'])
 				if (passwordValid):
 					login_user(user)
-					return makeJsonResponse({'msg': 'You have sucessfully logged in'})
+					response = makeJsonResponse({'msg': 'You have sucessfully logged in'})
+					response.set_cookie('username', user.username)
+					return response
 				else:
 					raise APIException('Incorrect password')
 		elif (action == 'logout'):
+			#if current_user.is_authenticated():
 			logout_user()
-			return makeJsonResponse({'msg': 'You have sucessfully logged out'})
+			response = makeJsonResponse({'msg': 'You have sucessfully logged out'})
+			response.set_cookie('username', '')
+			return response
+#			else:
+#				raise APIException('You are not logged in')
 		else:
 			raise APIException("Unknown action {}".format(action))
