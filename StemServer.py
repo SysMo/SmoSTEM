@@ -15,6 +15,8 @@ import flask_login
 from werkzeug.routing import BaseConverter, ValidationError
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
+
+# Custom converters
 class ObjectIDConverter(BaseConverter):
 	def to_python(self, value):
 		try:
@@ -23,11 +25,32 @@ class ObjectIDConverter(BaseConverter):
 			raise ValidationError()
 	def to_url(self, value):
 		return str(value)
+
 app.url_map.converters['ObjectID'] = ObjectIDConverter
+
+
+from flask_login import current_user
+from flask_principal import identity_loaded, RoleNeed, UserNeed
+
+@identity_loaded.connect_via(app)
+def on_identity_loaded(sender, identity):
+	# Set the identity user object
+	identity.user = current_user
+
+	if (current_user.is_authenticated()):
+		# Add the UserNeed to the identity
+		identity.provides.add(UserNeed(current_user.get_id()))
+	
+		# Assuming the User model has a list of roles, update the
+		# identity with the roles that the user provides
+		if hasattr(current_user, 'roles'):
+			for role in current_user.roles:
+				identity.provides.add(RoleNeed(role.name))
+
 
 @loginManager.user_loader
 def loadUser(userID):
-	return User.objects.get(username = userID)
+	return User.objects.get(id = ObjectId(userID))
 
 # Pages
 @app.route("/")
@@ -61,6 +84,7 @@ def listLibraryModules():
 	return render_template('LibraryModules.html')
 
 @app.route("/LibraryModuleEditor/<moduleID>")
+@adminPermission.require()
 def libraryModuleEditor(moduleID):
 	return render_template('LibraryModuleEditor.html', moduleID = moduleID)
 

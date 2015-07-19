@@ -7,7 +7,7 @@ Stem.service('UserService', ['$cookies', 'StemResources',
 			return $cookies.username;
 		}
 		this.isAuthenticated = function() {
-			return $cookies.username.length > 0;
+			return $cookies.username && $cookies.username.length > 0;
 		}
 		this.username = function() {
 			return $cookies.username;
