@@ -5,9 +5,7 @@ Created on Jul 14, 2015
 @copyright: SysMo Ltd.
 '''
 
-from flask import request, g
-from flask_restful import Resource, abort
-from bson.objectid import ObjectId
+from flask import request, session, current_app
 from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
 from StemResource import StemResource
 from flask_login import UserMixin, login_required
@@ -17,7 +15,8 @@ from ServerObjects import bcrypt, db
 import mongoengine.fields as F
 import datetime 
 from mongoengine.errors import DoesNotExist
-
+from flask_principal import Principal, Identity, AnonymousIdentity, \
+     identity_changed
 #from mongokit import Document
 # class User(Document, UserMixin):
 # 	__collection__ = "Users"
@@ -47,6 +46,7 @@ class User(db.Document, UserMixin):
 	fullName = F.StringField(max_length = 50)
 	password = F.StringField(required = True)
 	active = F.BooleanField(default = True)
+	
 	def get_id(self):
 		return self.username
 
@@ -77,6 +77,12 @@ class UserAPI(StemResource):
 				passwordValid = bcrypt.check_password_hash(user.password, userData['password'])
 				if (passwordValid):
 					login_user(user)
+					# Remove session keys set by Flask-Principal
+					for key in ('identity.name', 'identity.auth_type'):
+						session.pop(key, None)					
+					# Tell Flask-Principal the user is anonymous
+					identity_changed.send(current_app._get_current_object(),
+								  identity = Identity(user.id))
 					response = makeJsonResponse({'msg': 'You have sucessfully logged in'})
 					response.set_cookie('username', user.username)
 					return response
@@ -85,6 +91,8 @@ class UserAPI(StemResource):
 		elif (action == 'logout'):
 			#if current_user.is_authenticated():
 			logout_user()
+			identity_changed.send(current_app._get_current_object(),
+						  identity = AnonymousIdentity)
 			response = makeJsonResponse({'msg': 'You have sucessfully logged out'})
 			response.set_cookie('username', '')
 			return response
