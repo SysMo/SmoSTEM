@@ -4,7 +4,7 @@ Created on Jul 13, 2015
 @author: Atanas Pavlov
 '''
 from flask import Flask
-from flask.ext.mongoengine import MongoEngine
+from flask_mongoengine import MongoEngine
 import mongoengine.fields as F
 import datetime 
 

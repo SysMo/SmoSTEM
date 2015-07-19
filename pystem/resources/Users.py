@@ -8,40 +8,48 @@ Created on Jul 14, 2015
 from flask import request, g
 from flask_restful import Resource, abort
 from bson.objectid import ObjectId
-from mongokit import Document
 from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
 from StemResource import StemResource
 from flask_login import UserMixin, login_required
 from pystem.Exceptions import APIException
-from flask import current_app
 from flask_login import login_user, logout_user, current_user
+from ServerObjects import bcrypt, db
+import mongoengine.fields as F
+import datetime 
+from mongoengine.errors import DoesNotExist
 
-bcrypt = None
+#from mongokit import Document
+# class User(Document, UserMixin):
+# 	__collection__ = "Users"
+# 	use_dot_notation = True
+# 	structure = {
+# 		'username': unicode,
+# 		'email': unicode,
+# 		'fullName': unicode,
+# 		'password': unicode,
+# 		'active': bool
+# 	}
+# 	indexes = [
+# 		{
+# 			'fields': 'email',  # note: this may be an array
+# 			'unique': True,	 	# only unique values are allowed 
+# 		},
+# 		{
+# 			'fields': 'username',  # note: this may be an array
+# 			'unique': True,	 	# only unique values are allowed 
+# 		},
+# 	]	#required_fields = ['username', 'email', 'fullName', 'password', 'active']
+# 	
 
-class User(Document, UserMixin):
-	__collection__ = "Users"
-	use_dot_notation = True
-	structure = {
-		'username': unicode,
-		'email': unicode,
-		'fullName': unicode,
-		'password': unicode,
-		'active': bool
-	}
-	indexes = [
-		{
-			'fields': 'email',  # note: this may be an array
-			'unique': True,	 	# only unique values are allowed 
-		},
-		{
-			'fields': 'username',  # note: this may be an array
-			'unique': True,	 	# only unique values are allowed 
-		},
-	]	#required_fields = ['username', 'email', 'fullName', 'password', 'active']
-	
+class User(db.Document, UserMixin):
+	username = F.StringField(max_length = 20, required = True)
+	email = F.EmailField(required = True)
+	fullName = F.StringField(max_length = 50)
+	password = F.StringField(required = True)
+	active = F.BooleanField(default = True)
 	def get_id(self):
 		return self.username
-	
+
 class UserAPI(StemResource):
 	def post(self):
 		action = request.args.get('action', None)
@@ -52,7 +60,7 @@ class UserAPI(StemResource):
 			userData[u'active'] = True
 			userData[u'password'] = unicode(bcrypt.generate_password_hash(userData[u'password']))
 			print userData
-			user = self.conn.User(userData)
+			user = User(**userData)
 			user.save()
 			return makeJsonResponse({
 				'msg': 'Successfully created user {}'.format(user.username)
@@ -62,8 +70,9 @@ class UserAPI(StemResource):
 			if current_user.is_authenticated():
 				return makeJsonResponse({'msg': 'You are already logged in'})
 			else:
-				user = self.conn.User.one({'email': userData['id']})
-				if (user is None):
+				try:
+					user = User.objects.get(email = userData['id'])
+				except DoesNotExist:
 					raise APIException('User does not exist')
 				passwordValid = bcrypt.check_password_hash(user.password, userData['password'])
 				if (passwordValid):

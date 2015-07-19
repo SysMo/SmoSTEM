@@ -7,32 +7,41 @@ Created on Jun 29, 2015
 
 from flask import request
 from bson.objectid import ObjectId
-from mongokit import Document
-from pystem.flask.Utilities import makeJsonResponse
+from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
 from StemResource import StemResource
 from pystem.Exceptions import APIException
+from ServerObjects import db
+import mongoengine.fields as F
 
-class Quantity(Document):
-	__collection__ = "Quantities"
-	use_dot_notation = True
-	structure = {
-		'name': unicode,
-		'label': unicode,
-		'SIUnit': unicode,
-		'units': [(
-			unicode, {
-				'mult': float,
-				'offset': float
-			}
-		)]
-	}
-	required_fields = ['name', 'SIUnit']
-	default_values = {
-		'name': u'<noname>',
-		'label': u'',
-		'SIUnit': u'<nounit>'
-	}
+#from mongokit import Document
+# class Quantity(Document):
+# 	__collection__ = "Quantities"
+# 	use_dot_notation = True
+# 	structure = {
+# 		'name': unicode,
+# 		'label': unicode,
+# 		'SIUnit': unicode,
+# 		'units': [(
+# 			unicode, {
+# 				'mult': float,
+# 				'offset': float
+# 			}
+# 		)]
+# 	}
+# 	required_fields = ['name', 'SIUnit']
+# 	default_values = {
+# 		'name': u'<noname>',
+# 		'label': u'',
+# 		'SIUnit': u'<nounit>'
+# 	}
 
+class Quantity(db.Document):
+	meta = {'collection': 'Quantities'}
+	name = F.StringField(required=True, default = '<noname>')
+	label = F.StringField()
+	SIUnit = F.StringField(required=True, default = '<noname>')
+	units = F.ListField()
+	
 class QuantityAPI(StemResource):
 	def get(self, quantityID = None):
 		"""
@@ -41,38 +50,32 @@ class QuantityAPI(StemResource):
 		if (quantityID is None):
 			full = request.args.get('full', False)
 			if (full):
-				cursor = self.conn.Quantity.find(sort = [('name', 1)])
+				cursor = Quantity._get_collection().find(sort = [('name', 1)])
 			else:
-				cursor = self.conn.Quantities.find({}, {'name': True}, sort = [('name', 1)])
+				cursor = Quantity._get_collection().find({}, {'name': True}, sort = [('name', 1)])
 			return makeJsonResponse(list(cursor))
 		else:
-			quantity = self.conn.Quantities.one({'_id': ObjectId(quantityID)})
+			quantity = Quantity._get_collection().find_one({'_id': quantityID})
 			if (quantity is None):
 				raise APIException("No quantity exists with ID {}".format(quantityID))
 			return makeJsonResponse(quantity)
 	
 	def post(self):
 		"""
-		Create a new model
+		Create a new quantity
 		"""
-		quantity = self.conn.Quantity()
-		quantity.validate()
+		quantity = Quantity()
 		quantity.save()
-		return makeJsonResponse({'_id': quantity._id})
+		return makeJsonResponse({'_id': quantity.id}, 'Quantity created')
 	
 	def delete(self, quantityID):
-		self.conn.Quantities.remove({"_id": ObjectId(quantityID)})
-		return {'status': 0}
+		Quantity.objects.get(id = quantityID).delete()
+		return makeJsonResponse(None, 'Quantity deleted')
 
 	def put(self, quantityID):
-		putData = request.json
-		self.conn.Quantities.update(
-			{'_id': ObjectId(quantityID)}, {
-				'$set': {
-					'name': putData.get('name'),
-					'label': putData.get('label'),
-					'SIUnit': putData.get('SIUnit'),
-					'units': putData.get('units')
-				}
-			}, upsert = False
-		)
+		quantityData = parseJsonResponse(request.data)
+		del quantityData['_id']
+		quantity = Quantity.objects.get(id = quantityID)
+		quantity.modify(**quantityData)
+		quantity.save()
+		return makeJsonResponse(None, 'Quantity saved')

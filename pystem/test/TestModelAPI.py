@@ -43,7 +43,7 @@ class TestModelAPI(unittest.TestCase):
 			"username": "nasko",
 			"email": "nasko.js@gmail.com",
 			"fullName": "Atanas Pavlov",
-			"password": "djigidjaga"
+			"password": "bo4ko"
 		}
 		response = self.app.post('/stem/api/Users?action=create',
 				data = json.dumps(dct), content_type = 'application/json')
