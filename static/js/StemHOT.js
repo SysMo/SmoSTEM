@@ -1,12 +1,83 @@
 Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
+	function buildMenu(unitOptions, displayUnit) {
+        var
+          menu = document.createElement('UL'),
+          options = [],
+          item;
+
+        menu.className = 'changeTypeMenu';
+        
+        for (var i = 0, len = unitOptions.length; i< len; i++) {
+        	options.push(unitOptions[i][0]);
+        }
+
+        for (var i = 0, len = options.length; i< len; i++) {
+          item = document.createElement('LI');
+          if('innerText' in item) {
+            item.innerText = options[i];
+          } else {
+            item.textContent = options[i];
+          }
+          
+          item.data = {'unit': options[i]};
+
+          if (options[i] == displayUnit) {
+            item.className = 'active';
+          }
+          menu.appendChild(item);
+        }
+
+        return menu;
+    }
+	
+    function buildButton() {
+        var button = document.createElement('BUTTON');
+        button.innerHTML = '\u25BC';
+        button.className = 'changeType';
+        return button;
+    }
+    
+    function addButtonMenuEvent(button, menu) {
+        Handsontable.Dom.addEvent(button, 'click', function (event) {
+          var changeTypeMenu, position, removeMenu;
+
+          document.body.appendChild(menu);
+
+          event.preventDefault();
+          event.stopImmediatePropagation();
+
+          changeTypeMenu = document.querySelectorAll('.changeTypeMenu');
+
+          for (var i = 0, len = changeTypeMenu.length; i < len; i++) {
+            changeTypeMenu[i].style.display = 'none';
+          }
+          menu.style.display = 'block';
+          position = button.getBoundingClientRect();
+          
+          menu.style.top = (position.top + (window.scrollY || window.pageYOffset)) + 2 + 'px';
+          menu.style.left = (position.left) + 'px';
+
+          removeMenu = function (event) {
+            if (event.target.nodeName == 'LI' && event.target.parentNode.className.indexOf('changeTypeMenu') !== -1) {
+              if (menu.parentNode) {
+                menu.parentNode.removeChild(menu);
+              }
+            }
+          };
+          Handsontable.Dom.removeEvent(document, 'click', removeMenu);
+          Handsontable.Dom.addEvent(document, 'click', removeMenu);
+        });
+    }
+    
 	var StemHOT = {};
-	StemHOT.Table = function(idSelector, columns, data) {
+	
+	StemHOT.Table = function(idSelector, columns, data, scope) {
 		var table = this;
-		//this.scope = angularScope;
 		this.idSelector = idSelector;
 		this.node = $(idSelector)[0];
 		this.columns = columns;
 		this.data = data;
+		this.scope = scope;
 		// Setting display data
 		this.displayData = [];
 		$.each(table.data, function(rowIndex, row) {
@@ -23,18 +94,24 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		});
 		// Initializing hot table
 		this.hot = new Handsontable(this.node, {
-			//rowHeaders: true,
 			data: this.displayData,
 		    contextMenu: true,
+			colWidths: 150,
 		    colHeaders: function (col) {
-		    	var txt;
-		    	txt = table.columns[col].name;
-		    	txt = '<span>' + table.columns[col].name + '</span><br/> ';
-		    	txt += '<span>[' + table.columns[col].displayUnit + ']</span>';
+		    	var txt = '<span style="margin-right: 5px;">' + table.columns[col].name + ' [' + table.columns[col].displayUnit + ']</span>';
 		    	return txt;
 		    },
 		    rowHeaders: function (row) {
 		    	return String(row);
+		    },
+		    cells: function (row, col, prop) {
+		        var cellProperties;
+		        if (row === 0) {
+		          cellProperties = {
+		            type: 'text' // force text type for first row
+		          };
+		          return cellProperties;
+		        }
 		    },
 		    manualColumnResize: true,
 		    manualRowResize: true
@@ -87,7 +164,36 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 			},
 			afterRemoveRow: function(index, amount) {
 				table.data.splice(index, 1);
-			}
+			},
+			afterGetColHeader: function(col, TH) {
+		        var instance = this,
+		          menu,
+		          button;
+		        if (col > -1) {
+		        	button = buildButton();
+		        	menu = buildMenu(table.columns[col].unitOptions, table.columns[col].displayUnit);
+			        addButtonMenuEvent(button, menu);	
+			        Handsontable.Dom.addEvent(menu, 'click', function (event) {
+			          if (event.target.nodeName == 'LI') {
+			        	$(menu).find('li').each(function(index, el) {
+			        		if ($(el).hasClass('active')) {
+			        			$(el).removeClass('active');
+			        		}
+			        	});
+			        	$(event.target).addClass('active');
+			        	table.columns[col].displayUnit = event.target.data.unit;
+			        	table.scope.stemTable.columns[col].displayUnit = event.target.data.unit;
+			        	table.onUnitChange(col);
+			          }
+			          $(TH).find('.colHeader span').html(table.columns[col].name + ' [' + table.columns[col].displayUnit + ']');
+			        });
+			        if (TH.firstChild.lastChild.nodeName === 'BUTTON') {
+			          TH.firstChild.removeChild(TH.firstChild.lastChild);
+			        }
+			        TH.firstChild.appendChild(button);
+			        TH.style['white-space'] = 'normal';  
+		        }
+		    },
 		});
 	};
 	

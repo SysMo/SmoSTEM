@@ -484,16 +484,20 @@ Stem.directive('stemTable', function(StemHOT, StemQuantities, StemUtil, $compile
 		},
 		controller: function($scope) {
 			$scope.quantities = StemQuantities.quantities;
+			$scope.columns = angular.copy($scope.stemTable.columns);
 			// Ensure that the tabale columns have a quantity and unit
 			for (var i=0; i<$scope.stemTable.columns.length; i++) {
 				var quantityName = $scope.stemTable.columns[i].quantity;
 				if (!(quantityName && quantityName in $scope.quantities)) {
 					$scope.stemTable.columns[i].quantity = 'Dimensionless';
+					$scope.columns.quantity = 'Dimensionless';
 				}
 				var unitOptions = $scope.quantities[$scope.stemTable.columns[i].quantity].units;
+				$scope.columns[i].unitOptions = angular.copy(unitOptions);
 				var displayUnit = $scope.stemTable.columns[i].displayUnit;
 				if (!(displayUnit && unitOptions.filter(function(el) {return el[0] == displayUnit}).length > 0 )) {
 					$scope.stemTable.columns[i].displayUnit = $scope.quantities[$scope.stemTable.columns[i].quantity].SIUnit;
+					$scope.columns[i].displayUnit = $scope.quantities[$scope.stemTable.columns[i].quantity].SIUnit;
 				}
 			}
 			
@@ -509,7 +513,7 @@ Stem.directive('stemTable', function(StemHOT, StemQuantities, StemUtil, $compile
 				element.css('width', '98%');
 			}
 	        scope.$watch(function () { return element[0].childNodes[1].childNodes[5]; }, function(newValue, oldValue) {
-	        	scope.tableObj = new StemHOT.Table("#" + scope.stemTable.id + "-table", scope.stemTable.columns, scope.stemTable.value);
+	        	scope.tableObj = new StemHOT.Table("#" + scope.stemTable.id + "-table", scope.columns, scope.stemTable.value, scope);
 			});
 		}
 	}
@@ -559,9 +563,12 @@ Stem.directive('stemTableColumnProperties', function($timeout, StemQuantities, S
 			};
 			$scope.setUnitOptions = function() {
 				$scope.unitOptions = $scope.quantities[$scope.activeColumn.quantity].units;
+				$scope.columns[$scope.activeColumnIndex].unitOptions = angular.copy($scope.unitOptions);
 			};
 			$scope.applyChanges = function() {
+				$scope.columns[$scope.activeColumnIndex].quantity = $scope.activeColumn.quantity;
 				if ($scope.unitPristine == false) {
+					$scope.columns[$scope.activeColumnIndex].displayUnit = $scope.activeColumn.displayUnit;
 					$scope.tableObj.onUnitChange($scope.activeColumnIndex);
 				} else {
 					$scope.tableObj.onColPropChange($scope.activeColumnIndex);

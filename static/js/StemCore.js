@@ -53,7 +53,7 @@ Stem.factory('StemQuantities', function StemQuantities (StemResources, $timeout)
 		},
 		getUnitDefinition: function(quantity, unitName) {
 			var unitDef;
-			var unitList = this.quantities[quantity].units
+			var unitList = this.quantities[quantity].units;
 			for (var i = 0; i < unitList.length; i++) {
 				if (unitList[i][0] == unitName) {
 					unitDef = unitList[i][1];
@@ -64,14 +64,14 @@ Stem.factory('StemQuantities', function StemQuantities (StemResources, $timeout)
 		},
 		toSIUnit: function(quantity, unit, value) {
 			var SIValue;
-			var unitDefinition = this.getUnitDefinition(quantity, unit)
-			SIValue = value * unitDefinition.mult + (unitDefinition.offset || 0)
+			var unitDefinition = this.getUnitDefinition(quantity, unit);
+			SIValue = value * unitDefinition.mult + (unitDefinition.offset || 0);
 			return SIValue
 		},
 		fromSIUnit: function(quantity, unit, SIValue) {
 			var value;
-			var unitDefinition = this.getUnitDefinition(quantity, unit)
-			value = (SIValue - (unitDefinition.offset || 0)) / unitDefinition.mult
+			var unitDefinition = this.getUnitDefinition(quantity, unit);
+			value = (SIValue - (unitDefinition.offset || 0)) / unitDefinition.mult;
 			return value;
 		},
 	};
