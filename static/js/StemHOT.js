@@ -29,7 +29,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		    colHeaders: function (col) {
 		    	var txt;
 		    	txt = table.columns[col].name;
-		    	txt = '<span>' + table.columns[col].name + '</span> ';
+		    	txt = '<span>' + table.columns[col].name + '</span><br/> ';
 		    	txt += '<span>[' + table.columns[col].displayUnit + ']</span>';
 		    	return txt;
 		    },
@@ -49,8 +49,6 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		var table = this;
 		this.hot.updateSettings({
 			afterChange: function(changes, source) {
-				console.log(source);
-				console.log(changes);
 		    	if (source != 'loadData') {
 		    		$.each(changes, function(index, change) {
 		    			var rowIndex = change[0];
