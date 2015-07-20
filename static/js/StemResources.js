@@ -19,13 +19,14 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 				errorView = angular.toJson(errorData);
 			}
 		}
-		$('#errorModal .modal-body').html(errorView);
-		$('#errorModal').modal("show");
+		$('#ErrorModal .modal-body').html(errorView);
+		$('#ErrorModal').modal("show");
 	}
 	function OnSuccess(response) {
+		var msg = response.headers('X-status-msg') || 'Success';
 		$timeout(function() {
 			ngToast.success({
-		        content:'Success',
+		        content:msg,
 		        dismissOnTimeout: true,
 		        timeout: 1500
 		     });  
@@ -56,7 +57,7 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 			}
 			
 			this.duplicate = function(entity) {
-				entity.$save(function() {
+				entity.$clone(function() {
 					window.location.href = editorPath + "/" + entity._id;
 				});
 			}
@@ -64,8 +65,23 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 		Models:
 			$resource('/stem/api/Models/:_id', { _id: '@_id' }, 
 			{	
+				query : {
+					isArray: true,
+					interceptor : {responseError : ErrorHandler}
+				},
 				get: {
 					method: 'GET',
+					interceptor : {responseError : ErrorHandler}
+				},
+				save: {
+					method: 'POST',
+					interceptor : {responseError : ErrorHandler}
+				},
+				clone: {
+					method: 'POST',
+					params: {
+						action: "clone" 
+					},
 					interceptor : {responseError : ErrorHandler}
 				},
 				update: { 
@@ -74,7 +90,7 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 						response: OnSuccess,
 						responseError : ErrorHandler
 					}
-				}, 
+				},
 				compute: { 
 					method: 'POST', 
 					params: {
@@ -89,6 +105,10 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 		Quantities:
 			$resource('/stem/api/Quantities/:_id', { _id: '@_id' },
 			{
+				query : {
+					isArray: true,
+					interceptor : {responseError : ErrorHandler}
+				},
 				get: {
 					interceptor : {responseError : ErrorHandler}
 				},
@@ -100,13 +120,27 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 					isArray: true,
 					interceptor : {responseError : ErrorHandler}
 				},
+				save: {
+					method: 'POST',
+					interceptor : {
+						response: OnSuccess,
+						responseError : ErrorHandler
+					}
+				},
 				update: { 
 					method:'PUT', 
-					interceptor : {responseError : ErrorHandler}
+					interceptor : {
+						response: OnSuccess,
+						responseError : ErrorHandler
+					}
 				}, 
 			}),
 		LibraryModules:
 			$resource('/stem/api/LibraryModules/:_id', { _id: '@_id' }, {
+				query : {
+					isArray: true,
+					interceptor : {responseError : ErrorHandler}
+				},
 				get: {
 					interceptor : {responseError : ErrorHandler}
 				},
@@ -116,11 +150,36 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 						full: true
 					},
 					isArray: true,
+					interceptor : {responseError : ErrorHandler}
+				},
+				save: {
+					method: 'POST',
 					interceptor : {responseError : ErrorHandler}
 				},
 				update: { 
 					method: 'PUT', 
 					interceptor : {responseError : ErrorHandler}
+				},
+			}),
+		Users:
+			$resource('/stem/api/Users', {}, {
+				login: {
+					method: 'POST',
+					params: {
+						action: 'login'
+					}
+				},
+				logout: {
+					method: 'POST',
+					params: {
+						action: 'logout'
+					}
+				},
+				create: {
+					method: 'POST',
+					params: {
+						action: 'create'
+					}
 				},
 			})
 	};

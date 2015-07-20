@@ -10,6 +10,4 @@ from pystem.Exceptions import APIExceptionDecorator
 
 class StemResource(Resource):
 	decorators = [APIExceptionDecorator]
-	def __init__(self, conn):
-		self.conn = conn
 		

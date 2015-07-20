@@ -33,9 +33,11 @@ def _json_convert(obj):
 	except TypeError:
 		return obj
 
-def makeJsonResponse(data):
+def makeJsonResponse(data, msg = ''):
 	"""Convert Mongo object(s) to JSON"""
-	return Response(json.dumps(_json_convert(data)), content_type='application/json')
+	response = Response(json.dumps(_json_convert(data)), content_type='application/json')
+	response.headers['X-status-msg'] = msg
+	return response
 
 def parseJsonResponse(data):
 	"""Convert JSON to Mongo object(s)"""

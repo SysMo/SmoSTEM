@@ -1,42 +1,65 @@
-import json
-import sys, traceback
-from flask import Flask, Response
+import sys
+
 from flask import render_template
 from flask.json import jsonify
-from flask.ext.login import LoginManager
 
-from werkzeug.exceptions import default_exceptions
-from werkzeug.exceptions import HTTPException
+from ServerObjects import *
 
-# REST-ful flask extension
-from flask_restful import Api
-
-from mongokit import Connection
 from pystem.resources.Models import Model, ModelAPI 
 from pystem.resources.Quantities import Quantity, QuantityAPI
 from pystem.resources.LibraryModules import LibraryModule, LibraryModuleAPI 
-from pystem.resources.Users import User 
+from pystem.resources.Users import User, UserAPI
 from pystem.Exceptions import APIException, NonAPIException
+import flask_login
 
-app = Flask(__name__)
-app.config.from_object('Settings')
-app.debug = True
-api = Api(app)
-mongoConnection = Connection()
-loginManager = LoginManager(app)
+from werkzeug.routing import BaseConverter, ValidationError
+from bson.objectid import ObjectId
+from bson.errors import InvalidId
+
+# Custom converters
+class ObjectIDConverter(BaseConverter):
+	def to_python(self, value):
+		try:
+			return ObjectId(value)
+		except (InvalidId, ValueError, TypeError):
+			raise ValidationError()
+	def to_url(self, value):
+		return str(value)
+
+app.url_map.converters['ObjectID'] = ObjectIDConverter
+
+
+from flask_login import current_user
+from flask_principal import identity_loaded, RoleNeed, UserNeed
+
+@identity_loaded.connect_via(app)
+def on_identity_loaded(sender, identity):
+	# Set the identity user object
+	identity.user = current_user
+
+	if (current_user.is_authenticated()):
+		# Add the UserNeed to the identity
+		identity.provides.add(UserNeed(current_user.get_id()))
+	
+		# Assuming the User model has a list of roles, update the
+		# identity with the roles that the user provides
+		if hasattr(current_user, 'roles'):
+			for role in current_user.roles:
+				identity.provides.add(RoleNeed(role.name))
+
 
 @loginManager.user_loader
 def loadUser(userID):
-	return mongoConnection[app.config['STEM_DATABASE']].User.one(userID)
+	return User.objects.get(id = ObjectId(userID))
 
 # Pages
 @app.route("/")
 def index():
 	return render_template('StemBase.html')
 
-@app.route("/login")
-def login():
-	pass
+@app.route("/checkLogin")
+def checkLogin():
+	return "".format()
 
 @app.route("/Models")
 def listModels():
@@ -56,20 +79,20 @@ def quantityEditor(quantityID):
 	
 
 @app.route("/LibraryModules")
+@flask_login.login_required
 def listLibraryModules():
 	return render_template('LibraryModules.html')
 
 @app.route("/LibraryModuleEditor/<moduleID>")
+@adminPermission.require()
 def libraryModuleEditor(moduleID):
 	return render_template('LibraryModuleEditor.html', moduleID = moduleID)
 
-api.add_resource(ModelAPI, '/stem/api/Models', '/stem/api/Models/<string:modelID>', 
-		resource_class_kwargs = {'conn':mongoConnection[app.config['STEM_DATABASE']]})
-api.add_resource(QuantityAPI, '/stem/api/Quantities', '/stem/api/Quantities/<string:quantityID>', 
-		resource_class_kwargs = {'conn':mongoConnection[app.config['STEM_DATABASE']]})
-api.add_resource(LibraryModuleAPI, '/stem/api/LibraryModules', '/stem/api/LibraryModules/<string:moduleID>', 
-		resource_class_kwargs = {'conn':mongoConnection[app.config['STEM_DATABASE']]})
-mongoConnection.register([Quantity, Model, LibraryModule])
+api.add_resource(ModelAPI, '/stem/api/Models', '/stem/api/Models/<ObjectID:modelID>')
+api.add_resource(QuantityAPI, '/stem/api/Quantities', '/stem/api/Quantities/<ObjectID:quantityID>')
+api.add_resource(LibraryModuleAPI, '/stem/api/LibraryModules', '/stem/api/LibraryModules/<ObjectID:moduleID>')
+api.add_resource(UserAPI, '/stem/api/Users')
+#mongoConnection.register([Quantity, Model, LibraryModule, User])
 
 #Exception handling
 @app.errorhandler(APIException)

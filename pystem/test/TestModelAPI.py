@@ -38,5 +38,15 @@ class TestModelAPI(unittest.TestCase):
 		result = json.loads(self.app.get('/stem/api/Models').data)
 		self.assertEqual(len(result), 0)
 	
+	def testCreateUser(self):
+		dct = {
+			"username": "nasko",
+			"email": "nasko.js@gmail.com",
+			"fullName": "Atanas Pavlov",
+			"password": "bo4ko"
+		}
+		response = self.app.post('/stem/api/Users?action=create',
+				data = json.dumps(dct), content_type = 'application/json')
+		self.assertEqual(response.status_code, 200)
 if __name__ == '__main__':
 	unittest.main()
