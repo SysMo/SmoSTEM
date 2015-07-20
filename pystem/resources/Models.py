@@ -88,7 +88,7 @@ class ModelAPI(StemResource):
 			modelData = parseJsonResponse(request.data)
 			ex = ModelCalculator(modelData)
 			ex.compute()
-			return makeJsonResponse(None, 'Model computed')
+			return makeJsonResponse(modelData, 'Model computed')
 		else:
 			raise APIException('Unknown POST action {} for ModelAPI'.format(action))
 
