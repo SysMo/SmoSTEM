@@ -71,13 +71,13 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
     
 	var StemHOT = {};
 	
-	StemHOT.Table = function(idSelector, columns, data, scope) {
-		var table = this;
+	StemHOT.Table = function(idSelector, angularTableObj, angularScope) {
 		this.idSelector = idSelector;
 		this.node = $(idSelector)[0];
-		this.columns = columns;
-		this.data = data;
-		this.scope = scope;
+		this.columns = angularTableObj.columns;
+		this.data = angularTableObj.value;
+		this.scope = angularScope;
+		var table = this;
 		// Setting display data
 		this.displayData = [];
 		$.each(table.data, function(rowIndex, row) {
@@ -104,18 +104,11 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		    rowHeaders: function (row) {
 		    	return String(row);
 		    },
-		    cells: function (row, col, prop) {
-		        var cellProperties;
-		        if (row === 0) {
-		          cellProperties = {
-		            type: 'text' // force text type for first row
-		          };
-		          return cellProperties;
-		        }
-		    },
 		    manualColumnResize: true,
 		    manualRowResize: true
 		});
+		// Getting formats
+		this.onColFormatChange();
 		// Setting custom events
 		this.setEvents();
 		// Setting customized context menu
@@ -171,7 +164,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		          button;
 		        if (col > -1) {
 		        	button = buildButton();
-		        	menu = buildMenu(table.columns[col].unitOptions, table.columns[col].displayUnit);
+		        	menu = buildMenu(StemQuantities.quantities[table.columns[col].quantity].units, table.columns[col].displayUnit);
 			        addButtonMenuEvent(button, menu);	
 			        Handsontable.Dom.addEvent(menu, 'click', function (event) {
 			          if (event.target.nodeName == 'LI') {
@@ -230,6 +223,19 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		});
 	};
 	
+	StemHOT.Table.prototype.onColNameChange = function() {
+		this.hot.render();
+	};
+	StemHOT.Table.prototype.onColFormatChange = function() {
+		var table = this;
+		var format;
+		var formatSettings = [];
+		$.each(table.columns, function(colIndex, column) {
+			format = column.format || '0.00';
+			formatSettings.push({type: 'numeric', format: format});
+		});
+		this.hot.updateSettings({columns: formatSettings});
+	};
 	StemHOT.Table.prototype.onUnitChange = function(colIndex) {
 		var table = this;
 		$.each(table.data, function(rowIndex, row) {
@@ -237,9 +243,6 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
     				table.columns[colIndex].quantity, table.columns[colIndex].displayUnit, 
     				row[colIndex]);
 		});
-		this.hot.render();
-	};
-	StemHOT.Table.prototype.onColPropChange = function(colIndex) {
 		this.hot.render();
 	};
 	return StemHOT;
