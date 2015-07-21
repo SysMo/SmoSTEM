@@ -87,7 +87,7 @@ h1 {
 	transition-duration: 0s;
 }
 
-.changeType {
+.changeUnit {
   border: 1px solid #bbb;
   color: #bbb;
   background: #eee;
@@ -98,15 +98,15 @@ h1 {
   line-height: 9px;
   margin: 3px 3px 0 0;
 }
-.changeType:hover {
+.changeUnit:hover {
   border: 1px solid #777;
   color: #777;
   cursor: pointer;
 }
-.changeType.pressed {
+.changeUnit.pressed {
   background-color: #999;
 }
-.changeTypeMenu {
+.unitMenu {
   position: absolute;
   border: 1px solid #ccc;
   margin-top: 18px;
@@ -117,19 +117,19 @@ h1 {
   display: none;
   z-index: 10;
 }
-.changeTypeMenu li {
+.unitMenu li {
   text-align: left;
   list-style: none;
   padding: 2px 20px;
   cursor: pointer;
   margin-bottom: 0;
 }
-.changeTypeMenu li.active:before {
+.unitMenu li.active:before {
   font-size: 12px;
   content: "\2714";
   margin-left: -15px;
   margin-right: 3px;
 }
-.changeTypeMenu li:hover {
+.unitMenu li:hover {
   background: #eee;
 }

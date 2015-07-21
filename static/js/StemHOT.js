@@ -1,74 +1,4 @@
 Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
-	function buildMenu(unitOptions, displayUnit) {
-        var
-          menu = document.createElement('UL'),
-          options = [],
-          item;
-
-        menu.className = 'changeTypeMenu';
-        
-        for (var i = 0, len = unitOptions.length; i< len; i++) {
-        	options.push(unitOptions[i][0]);
-        }
-
-        for (var i = 0, len = options.length; i< len; i++) {
-          item = document.createElement('LI');
-          if('innerText' in item) {
-            item.innerText = options[i];
-          } else {
-            item.textContent = options[i];
-          }
-          
-          item.data = {'unit': options[i]};
-
-          if (options[i] == displayUnit) {
-            item.className = 'active';
-          }
-          menu.appendChild(item);
-        }
-
-        return menu;
-    }
-	
-    function buildButton() {
-        var button = document.createElement('BUTTON');
-        button.innerHTML = '\u25BC';
-        button.className = 'changeType';
-        return button;
-    }
-    
-    function addButtonMenuEvent(button, menu) {
-        Handsontable.Dom.addEvent(button, 'click', function (event) {
-          var changeTypeMenu, position, removeMenu;
-
-          document.body.appendChild(menu);
-
-          event.preventDefault();
-          event.stopImmediatePropagation();
-
-          changeTypeMenu = document.querySelectorAll('.changeTypeMenu');
-
-          for (var i = 0, len = changeTypeMenu.length; i < len; i++) {
-            changeTypeMenu[i].style.display = 'none';
-          }
-          menu.style.display = 'block';
-          position = button.getBoundingClientRect();
-          
-          menu.style.top = (position.top + (window.scrollY || window.pageYOffset)) + 2 + 'px';
-          menu.style.left = (position.left) + 'px';
-
-          removeMenu = function (event) {
-            if (event.target.nodeName == 'LI' && event.target.parentNode.className.indexOf('changeTypeMenu') !== -1) {
-              if (menu.parentNode) {
-                menu.parentNode.removeChild(menu);
-              }
-            }
-          };
-          Handsontable.Dom.removeEvent(document, 'click', removeMenu);
-          Handsontable.Dom.addEvent(document, 'click', removeMenu);
-        });
-    }
-    
 	var StemHOT = {};
 	
 	StemHOT.Table = function(idSelector, angularTableObj, angularScope) {
@@ -163,9 +93,9 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		          menu,
 		          button;
 		        if (col > -1) {
-		        	button = buildButton();
-		        	menu = buildMenu(StemQuantities.quantities[table.columns[col].quantity].units, table.columns[col].displayUnit);
-			        addButtonMenuEvent(button, menu);	
+		        	button = table.buildUnitMenuButton();
+		        	menu = table.buildUnitMenu(StemQuantities.quantities[table.columns[col].quantity].units, table.columns[col].displayUnit);
+		        	table.addUnitButtonMenuEvent(button, menu);	
 			        Handsontable.Dom.addEvent(menu, 'click', function (event) {
 			          if (event.target.nodeName == 'LI') {
 			        	$(menu).find('li').each(function(index, el) {
@@ -189,6 +119,64 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		    },
 		});
 	};
+	
+	StemHOT.Table.prototype.buildUnitMenu = function (unitOptions, displayUnit) {
+		var
+        	menu = document.createElement('UL'),
+        	options = [],
+        	item;
+        menu.className = 'unitMenu';
+        for (var i=0, len=unitOptions.length; i<len; i++) {
+        	options.push(unitOptions[i][0]);
+        }
+        for (var i=0, len=options.length; i<len; i++) {
+        	item = document.createElement('LI');
+        	if('innerText' in item) {
+        		item.innerText = options[i];
+        	} else {
+        		item.textContent = options[i];
+        	}
+        	item.data = {'unit': options[i]};
+        	if (options[i] == displayUnit) {
+        		item.className = 'active';
+        	}
+        	menu.appendChild(item);
+        }
+        return menu;
+	}
+	
+	StemHOT.Table.prototype.buildUnitMenuButton = function() {
+        var button = document.createElement('BUTTON');
+        button.innerHTML = '\u25BC';
+        button.className = 'changeUnit';
+        return button;
+    }
+	
+	StemHOT.Table.prototype.addUnitButtonMenuEvent = function(button, menu) {
+        Handsontable.Dom.addEvent(button, 'click', function (event) {
+          var unitMenu, position, removeMenu;
+          document.body.appendChild(menu);
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          unitMenu = document.querySelectorAll('.unitMenu');
+          for (var i=0, len=unitMenu.length; i<len; i++) {
+            unitMenu[i].style.display = 'none';
+          }
+          menu.style.display = 'block';
+          position = button.getBoundingClientRect();
+          menu.style.top = (position.top + (window.scrollY || window.pageYOffset)) + 2 + 'px';
+          menu.style.left = (position.left) + 'px';
+          removeMenu = function (event) {
+            if (event.target.nodeName == 'LI' && event.target.parentNode.className.indexOf('unitMenu') !== -1) {
+              if (menu.parentNode) {
+                menu.parentNode.removeChild(menu);
+              }
+            }
+          };
+          Handsontable.Dom.removeEvent(document, 'click', removeMenu);
+          Handsontable.Dom.addEvent(document, 'click', removeMenu);
+        });
+    }
 	
 	StemHOT.Table.prototype.setContextMenu = function() {
 		var table = this;
