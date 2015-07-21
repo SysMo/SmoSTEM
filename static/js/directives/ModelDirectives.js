@@ -551,27 +551,20 @@ Stem.directive('stemTableColumnProperties', function($timeout, StemQuantities, S
 		restrict : 'A',
 		controller: function($scope) {
 			$scope.reset = function() {
-				$scope.namePristine = true;
-				$scope.formatPristine = true;
+				$scope.propertiesPristine = true;
 				$scope.quantityPristine = true;
 			}
 			$scope.reset();
-			$scope.onNameChange = function() {
-				$scope.namePristine = false;
-			};
-			$scope.onFormatChange = function() {
-				$scope.formatPristine = false;
+			$scope.onPropChange = function() {
+				$scope.propertiesPristine = false;
 			};
 			$scope.onQuantityChange = function() {
 				$scope.quantityPristine = false;
 				$scope.activeColumn.displayUnit = $scope.quantities[$scope.activeColumn.quantity].SIUnit;
 			};
 			$scope.applyChanges = function() {
-				if ($scope.namePristine == false) {
-					$scope.HOTobj.onColNameChange();
-				}
-				if ($scope.formatPristine == false) {
-					$scope.HOTobj.onColFormatChange();
+				if ($scope.propertiesPristine == false) {
+					$scope.HOTobj.onColPropChange();
 				}
 				if ($scope.quantityPristine == false) {
 					$scope.HOTobj.onUnitChange($scope.activeColumnIndex);

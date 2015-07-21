@@ -250,12 +250,12 @@
 			<div class="modal-body">
 				<form>
 					<div>Column name</div>
-					<input type="text" ng-model="activeColumn.name" pattern="[a-zA-Z_][a-zA-Z0-9_]*" required ng-change="onNameChange()">
+					<input type="text" ng-model="activeColumn.name" pattern="[a-zA-Z_][a-zA-Z0-9_]*" required ng-change="onPropChange()">
 					<div></div>
 					<div>Column description</div>
 					<input type="text" ng-model="activeColumn.description">
 					<div>Column format</div>
-					<input type="text" ng-model="activeColumn.format" ng-change="onFormatChange()">
+					<input type="text" ng-model="activeColumn.format" ng-change="onPropChange()">
 					<div>Quantity</div>
 					<select ng-model="activeColumn.quantity" ng-options="key as key for (key, value) in quantities" ng-change="onQuantityChange()"></select>
 				</form>
