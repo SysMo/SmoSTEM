@@ -31,4 +31,4 @@ bcrypt = Bcrypt(app)
 principals = Principal(app)
 
 # Create a permission with a single Need, in this case a RoleNeed.
-adminPermission = Permission(RoleNeed('admin'))
+AdminPermission = Permission(RoleNeed('admin'))

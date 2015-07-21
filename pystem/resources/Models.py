@@ -13,7 +13,7 @@ from StemResource import StemResource
 from pystem.Exceptions import APIException
 from ServerObjects import db
 import mongoengine.fields as F
-from pystem.model.ModelActions import ModelCalculator
+from pystem.model.ModelCalculator import ModelCalculator
 
 # from mongokit import Document
 # class Model(Document):
@@ -35,8 +35,15 @@ from pystem.model.ModelActions import ModelCalculator
 # 		'created': datetime.datetime.utcnow,
 # 	}
 
+class Layout(db.EmbeddedDocument):
+	title = F.StringField()
+	width = F.StringField(choices = ('narrow', 'wide'))
+	type = F.StringField(choices = ('grid', 'free'))
+	fields = F.ListField()
+	hasScope = F.BooleanField(default = False) 
+
 class Board(db.EmbeddedDocument):
-	layouts = F.ListField()
+	layouts = F.ListField(F.EmbeddedDocumentField(Layout), default = [])
 
 class Model(db.Document):
 	meta = {
@@ -94,7 +101,8 @@ class ModelAPI(StemResource):
 
 	
 	def delete(self, modelID):
-		model = Model.objects.get(id = modelID).delete()
+		model = Model.objects.get(id = modelID)
+		model.delete()
 		return makeJsonResponse(None, 'Model deleted')
 
 	def put(self, modelID):
@@ -104,7 +112,7 @@ class ModelAPI(StemResource):
 		model.modify(
 			name = modelData['name'],
 			description = modelData['description'],
-			board = modelData['board'],
+			board = Board(**modelData['board']),
 			background = modelData.get('background')
 		)
 		model.save()
