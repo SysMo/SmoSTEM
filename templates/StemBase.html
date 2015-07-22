@@ -109,8 +109,10 @@
           <a ng-switch-default ng-href="{{item.link}}" data-ng-bind="item.title"></a>
         </li>
       </ul>
+      
       <ul class = "nav navbar-nav navbar-right" ng-if="!UserService.isAuthenticated()">      
       	<li ng-click="UserService.login()"><a>Login</a></li>
+      	<li ng-click="UserService.register()"><a>Register</a></li>
       </ul>
       <ul class = "nav navbar-nav navbar-right" ng-if="UserService.isAuthenticated()">
       	<li><a ng-bind="UserService.username()"></a></li>

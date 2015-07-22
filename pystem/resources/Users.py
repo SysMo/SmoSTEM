@@ -13,7 +13,7 @@ from pystem.Exceptions import APIException
 from flask_login import login_user, logout_user, current_user
 from ServerObjects import bcrypt, db
 import mongoengine.fields as F
-from mongoengine.errors import DoesNotExist
+from mongoengine.errors import DoesNotExist, NotUniqueError
 from flask_principal import Identity, AnonymousIdentity, identity_changed
 #from mongokit import Document
 # class User(Document, UserMixin):
@@ -48,7 +48,16 @@ class Role(db.Document):
 class User(db.Document, UserMixin):
 	meta = {
 		'collection': 'Users',
-		'indexes': ['username', 'email']
+		'indexes': [
+			{
+				'fields': ['username'],
+				'unique': True
+			},
+			{
+				'fields': ['email'],
+				'unique': True
+			},
+ 		]
 	} 
 	username = F.StringField(max_length = 20, required = True)
 	email = F.EmailField(required = True)
@@ -77,7 +86,11 @@ class UserAPI(StemResource):
 			user = User(**userData)
 			userRole = Role.objects.get(name='user')
 			user.roles = [userRole]
-			user.save()
+			try:
+				user.save()
+			except NotUniqueError, e:
+				# TODO
+				raise APIException('User with this name or email already exists')
 			return makeJsonResponse({
 				'msg': 'Successfully created user {}'.format(user.username)
 			})

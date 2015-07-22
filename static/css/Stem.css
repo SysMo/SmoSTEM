@@ -86,3 +86,7 @@ h1 {
 .collapsing {
 	transition-duration: 0s;
 }
+
+.form-control {
+	margin-bottom: 10px;
+}

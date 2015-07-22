@@ -62,6 +62,10 @@ def index():
 def checkLogin():
 	return "".format()
 
+@app.route("/register")
+def register():
+	return render_template('Register.html')
+
 @app.route("/Models")
 def listModels():
 	return render_template('Models.html')

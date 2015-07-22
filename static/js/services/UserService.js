@@ -28,7 +28,8 @@ Stem.service('UserService', ['$cookies', 'StemResources',
 		this.logout = function() {
 			StemResources.Users.logout();
 		}
-		this.create = function() {
+		this.register = function() {
+			window.location.href = "/register";
 		}
 	}
 ]);
