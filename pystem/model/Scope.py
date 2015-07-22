@@ -63,7 +63,7 @@ class RootScope(Scope):
 	def __init__(self):
 		super(RootScope, self).__init__()
 		self.imports = {}
-		self.importModule('pystem.model.Math', '', ['sin', 'cos', 'tan', 'pi', 'PI'])
+		self.importModule('pystem.modules.Math', '', ['sin', 'cos', 'tan', 'pi', 'PI'])
 		
 		
 	def getSymbolValue(self, name, searchImports = False):

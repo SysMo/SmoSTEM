@@ -209,7 +209,7 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 			$scope.dynamicStyle = {border: ''};
 			$scope.$watch('stemLayout.hasScope', function (newValue, oldValue) {
 				if ($scope.stemLayout.hasScope) {
-					$scope.dynamicStyle.border = '2px solid #A0A0A0';
+					$scope.dynamicStyle.border = '2px solid #606060';
 				} else {
 					$scope.dynamicStyle.border = 'none';					
 				}
