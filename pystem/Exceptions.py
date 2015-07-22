@@ -19,7 +19,7 @@ class SemanticError(APIException):
 		fullMsg = msg + ";\n line {}, column offset {}".format(node.lineno, node.col_offset)
 		super(SemanticError, self).__init__(fullMsg)
 
-class EvaluationError(APIException):
+class EvaluationError(Exception):
 	def __init__(self, msg, node):
 		fullMsg = str(msg) + ";\n line {}, column offset {}".format(node.lineno, node.col_offset)
 		super(EvaluationError, self).__init__(fullMsg)

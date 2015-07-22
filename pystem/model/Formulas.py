@@ -154,11 +154,9 @@ class ExpressionEvaluator(object):
 		return funcResult
 	
 class FormulaBlockProcessor(object):
-	def __init__(self, fields, values):
-		self.fields = fields
-		self.ctx = values
+	def __init__(self, scope):
+		self.scope = scope
 		self.blocks = []
-		self.funcRegistry = FunctionRegistry()
 		
 	def addBlock(self, name, content):
 		"""
@@ -169,7 +167,7 @@ class FormulaBlockProcessor(object):
 		self.blocks.append(blockAST)
 		
 	def process(self):
-		ee = ExpressionEvaluator(self.ctx, self.funcRegistry)
+		ee = ExpressionEvaluator(self.scope)
 		for block in self.blocks:
 			for statement in block.body:
 				if isinstance(statement, ast.Assign):

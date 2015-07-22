@@ -6,6 +6,7 @@ Created on Jun 27, 2015
 import numpy as np
 from Formulas import FormulaBlockProcessor
 import pystem.Exceptions as E
+from pystem.model.Scope import RootScope
 
 class Field(object):
 	def __init__(self, jsonField):
@@ -55,24 +56,29 @@ class ModelCalculator(object):
 
 	def compute(self):
 		self.fields = {}
-		self.fieldValues = {}
-		self.formulaProcessor = FormulaBlockProcessor(self.fields, self.fieldValues)
+		self.rootScope = RootScope()
 		self.preCompute()
 		self.formulaProcessor.process()
 		self.postCompute()
 		
-	def preCompute(self):
+	def computeRootScope(self):
+		formulaProcessor = FormulaBlockProcessor(self.rootScope)
+		# Set all the variables in the global scope
 		for block in self.modelData['board']['layouts']:
+			if block['hasScope']:
+				continue
 			for field in block['fields']:
 				fieldName = field['name']
 				if (field['type'] == 'stem.FormulasField'):
 					self.formulaProcessor.addBlock(fieldName, field['value'])
+				elif (field['type'] == 'stem.TextField'):
+					pass
 				else:
 					if (fieldName in self.fields):
 						raise E.FieldError('Duplicate field "{}"'.format(fieldName))
 					pField = Field(field)
 					self.fields[fieldName] = pField					 
-					self.fieldValues[fieldName] = pField.parseValue(field['value'])
+					self.rootScope.setSymbolValue(fieldName, pField.parseValue(field['value']))
 					
 	def postCompute(self):				
 		for block in self.modelData['board']['layouts']:

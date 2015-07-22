@@ -25,6 +25,23 @@ body {
 	margin-top: 10px;
 } 
 
+.GridLayout {
+	overflow: auto; 
+	background: #EEE; 
+	padding: 10px; 
+	margin: 10px; 
+	float: left;
+}
+
+.FreeLayout {
+	width: 1060px; 
+	overflow: auto; 
+	background: #EEE; 
+	padding: 10px; 
+	margin: 10px; 
+	float: left;	
+}
+
 .ui-draggable:hover {
 	cursor: pointer;
 }
