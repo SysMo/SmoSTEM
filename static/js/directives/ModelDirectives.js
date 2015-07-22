@@ -513,7 +513,6 @@ Stem.directive('stemTable', function(StemHOT, StemQuantities, StemUtil, $compile
 				element.css('width', '98%');
 			}
 	        scope.$watch(function () { return element[0].childNodes[1].childNodes[5]; }, function(newValue, oldValue) {
-	        	//scope.HOTobj = new StemHOT.Table("#" + scope.stemTable.id + "-table", scope.columns, scope.stemTable.value, scope);
 	        	scope.HOTobj = new StemHOT.Table("#" + scope.stemTable.id + "-table", scope.stemTable, scope);
 			});
 		}

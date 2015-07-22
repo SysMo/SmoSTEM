@@ -140,8 +140,13 @@ Stem.factory('stemClasses', function stemClasses(StemUtil) {
 			this.label = label || '';
 			this.name = name || ('T' + (classes.TableField.instanceCounter + 1).toString());
 			classes.TableField.instanceCounter++;
-			this.columns = columns || [{name : 'c1'}];
-			this.value = value || [[0]];
+			var defaultColumns = [], defaultValue = [];
+			for (var i=1; i<=5; i++) {
+				defaultColumns.push({name : 'c' + i});
+				defaultValue.push([0, 0, 0, 0, 0]);
+			}
+			this.columns = columns || defaultColumns;
+			this.value = value || defaultValue;
 		}
 	});	
 	createInstanceCounter(classes.TableField);

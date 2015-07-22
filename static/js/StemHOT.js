@@ -33,9 +33,6 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		    	var txt = '<span style="margin-right: 5px;">' + table.columns[col].name + ' [' + table.columns[col].displayUnit + ']</span>';
 		    	return txt;
 		    },
-		    rowHeaders: function (row) {
-		    	return String(row);
-		    },
 		    manualColumnResize: true,
 		    manualRowResize: true,
 		    cells: function (rowIndex, colIndex, prop) {
@@ -48,29 +45,42 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
             },
 		});
 		
-		// Setting customized context menu
 		this.setContextMenu();
 		
-		// Setting custom events
 		this.setEvents();
 		
-		// Dynamically changing inline width and height
-		$(this.idSelector + ' .wtHolder').each(function(index, el){
-			$(el).css('width', 'auto');
-			$(el).css('height', 'auto');
-		});
-	}
+		this.overrideInlineCss();
+	};
 	
+	
+	// Dynamically changing inline css properties
+	StemHOT.Table.prototype.overrideInlineCss = function() {
+		$(this.idSelector + ' .wtHolder').each(function(index, el){
+			$(el).css('width', 'auto').css('height', 'auto').css('overflow-x', 'auto');
+		});
+		$(this.idSelector + ' .ht_clone_top').each(function(index, el){
+			$(el).css('width', 'auto').css('height', 'auto').css('overflow-x', 'auto');
+		});
+		$(this.idSelector + ' .wtHider').each(function(index, el){
+			$(el).css('width', 'auto').css('height', 'auto');
+		});
+	};
+	
+	// Setting custom events
 	StemHOT.Table.prototype.setEvents = function() {
 		var table = this;
 		this.hot.updateSettings({
 			beforeDrawBorders: function() {
-				$(table.idSelector + ' .wtHolder').each(function(index, el){
-					el.style.width = 'auto';
-					el.style.height = 'auto';
-				});
+				table.overrideInlineCss();
 			},
-			afterChange: function(changes, source) {
+			afterScrollHorizontally: function() {
+				table.overrideInlineCss();
+			},
+			afterContextMenuHide: function() {
+				table.overrideInlineCss();
+			},
+ 			afterChange: function(changes, source) {
+ 				// Updating values on data change
 		    	if (source != 'loadData') {
 		    		$.each(changes, function(index, change) {
 		    			var rowIndex = change[0];
@@ -83,13 +93,10 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 							)
 			    	});
 		    	}
-		    	$(table.idSelector + ' .wtHolder').each(function(index, el){
-					el.style.width = 'auto';
-					el.style.height = 'auto';
-				});
+		    	table.overrideInlineCss();
 		    },
 			afterCreateCol: function(index, amount) {
-				table.columns.splice(index, 0, {name: "new", quantity: "Dimensionless", displayUnit: "-", unitOptions: ["-"]});
+				table.columns.splice(index, 0, {name: "c" + String(index+1), quantity: "Dimensionless", displayUnit: "-", unitOptions: ["-"]});
 				for (var i=0; i<table.data.length; i++) {
 					table.data[i].splice(index, 0, 0);
 					table.displayData[i][index] = 0;
@@ -104,10 +111,6 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 				$.each(table.displayData[index], function(i, el) {
 					el = 0;
 				});
-				$(table.idSelector + ' .wtHolder').each(function(index, el){
-					el.style.width = 'auto';
-					el.style.height = 'auto';
-				});
 			},
 			afterRemoveCol: function(index, amount) {
 				table.columns.splice(index, amount);
@@ -118,6 +121,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 			afterRemoveRow: function(index, amount) {
 				table.data.splice(index, amount);
 			},
+			// Building customized column headers
 			afterGetColHeader: function(col, TH) {
 		        var instance = this,
 		          menu,
@@ -150,6 +154,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		});
 	};
 	
+	// Builiding unit drop-down menu
 	StemHOT.Table.prototype.buildUnitMenu = function (unitOptions, displayUnit) {
 		var
         	menu = document.createElement('UL'),
@@ -175,6 +180,8 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
         return menu;
 	}
 	
+	
+	// Bulding carret button
 	StemHOT.Table.prototype.buildUnitMenuButton = function() {
         var button = document.createElement('BUTTON');
         button.innerHTML = '\u25BC';
@@ -182,6 +189,8 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
         return button;
     }
 	
+	
+	// Setting carret button click event
 	StemHOT.Table.prototype.addUnitButtonMenuEvent = function(button, menu) {
 		Handsontable.Dom.addEvent(button, 'click', function (event) {
           var unitMenu, position, removeMenu;
@@ -208,6 +217,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
         });
     }
 	
+	// Setting customized context menu
 	StemHOT.Table.prototype.setContextMenu = function() {
 		var table = this;
 		this.hot.updateSettings({
@@ -239,8 +249,10 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		});
 	};
 	
+	// Method executed after name, format change
 	StemHOT.Table.prototype.onColPropChange = function() {
 		this.hot.render();
+		this.overrideInlineCss();
 	};
 	
 	StemHOT.Table.prototype.onUnitChange = function(colIndex) {
@@ -251,10 +263,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
     				row[colIndex]);
 		});
 		this.hot.render();
-		$(table.idSelector + ' .wtHolder').each(function(index, el){
-			el.style.width = 'auto';
-			el.style.height = 'auto';
-		});
+		this.overrideInlineCss();
 	};
 	return StemHOT;
 });
