@@ -6,6 +6,7 @@ Created on Jul 2, 2015
 @licence: See License.txt in the main folder
 '''
 import sys, traceback
+from flask_principal import PermissionDenied
 
 class APIException(Exception):
 	status_code = 500
@@ -28,6 +29,16 @@ class AssignmentError(APIException):
 		fullMsg = str(msg) + ";\n line {}, column offset {}".format(node.lineno, node.col_offset)
 		super(AssignmentError, self).__init__(fullMsg)
 
+class LoginRequiredError(APIException):
+	def __init__(self, msg =''):
+		fullMsg = "Login required in order to complete this action.\n{}".format(msg)
+		super(LoginRequiredError, self).__init__(fullMsg)
+		
+class UnauthorizedError(APIException):
+	def __init__(self, msg = ''):
+		fullMsg = "You are not authorized to perform this action.\n{}".format(msg)
+		super(UnauthorizedError, self).__init__(fullMsg)
+
 class NonAPIException(Exception):
 	status_code = 500
 	def __init__(self, e):
@@ -42,6 +53,8 @@ class APIExceptionDecorator(object):
 	def __call__(self, *args, **kwargs):
 		try:
 			return self.method(*args, **kwargs)
+		except PermissionDenied, e:
+			raise UnauthorizedError()
 		except APIException, e:
 			raise
 		except Exception, e:

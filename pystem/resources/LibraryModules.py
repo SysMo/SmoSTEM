@@ -10,7 +10,7 @@ from bson.objectid import ObjectId
 from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
 from StemResource import StemResource
 from pystem.Exceptions import APIException
-from ServerObjects import db
+from ServerObjects import db, AdminPermission
 import mongoengine.fields as F
 from mongoengine.errors import DoesNotExist
 
@@ -65,23 +65,25 @@ class LibraryModuleAPI(StemResource):
 			return makeJsonResponse(module)
 	
 	def post(self, moduleID = None):
-		if (moduleID == None):
-			newModule = LibraryModule()
-			newModule.save()
-			return makeJsonResponse({'_id': newModule.id})
-		else:
-			params = request.args
-			action = params.get('action')			
-			raise APIException("Unknown POST action {}".format(action))
+		with AdminPermission.require():
+			if (moduleID == None):
+				newModule = LibraryModule()
+				newModule.save()
+				return makeJsonResponse({'_id': newModule.id})
+			else:
+				params = request.args
+				action = params.get('action')			
+				raise APIException("Unknown POST action {}".format(action))
 		
 	def delete(self, moduleID):
-		#LibraryModule.get_collection().remove({"_id": moduleID})
-		LibraryModule.objects.get(id = moduleID).delete()
-		return {'msg': 'Module deleted'}
+		with AdminPermission.require():
+			LibraryModule.objects.get(id = moduleID).delete()
+			return {'msg': 'Module deleted'}
 
 	def put(self, moduleID):
-		moduleData = parseJsonResponse(request.data)
-		del moduleData['_id']
-		module = LibraryModule.objects.get(id = moduleID)
-		module.modify(**moduleData)
-		module.save()
+		with AdminPermission.require():
+			moduleData = parseJsonResponse(request.data)
+			del moduleData['_id']
+			module = LibraryModule.objects.get(id = moduleID)
+			module.modify(**moduleData)
+			module.save()

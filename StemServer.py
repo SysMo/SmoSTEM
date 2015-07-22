@@ -30,7 +30,8 @@ app.url_map.converters['ObjectID'] = ObjectIDConverter
 
 
 from flask_login import current_user
-from flask_principal import identity_loaded, RoleNeed, UserNeed
+from flask_principal import identity_loaded, RoleNeed, UserNeed,\
+	PermissionDenied
 
 @identity_loaded.connect_via(app)
 def on_identity_loaded(sender, identity):
@@ -84,7 +85,6 @@ def listLibraryModules():
 	return render_template('LibraryModules.html')
 
 @app.route("/LibraryModuleEditor/<moduleID>")
-@adminPermission.require()
 def libraryModuleEditor(moduleID):
 	return render_template('LibraryModuleEditor.html', moduleID = moduleID)
 
