@@ -9,11 +9,11 @@ from __future__ import division
 import ast
 from FunctionRegistry import FunctionRegistry
 import pystem.Exceptions as E
+from pystem.model.Scope import UndefinedSymbolError
 
 class ExpressionEvaluator(object):
-	def __init__(self, ctx, funcRegistry):	
-		self.ctx = ctx
-		self.funcRegistry = funcRegistry
+	def __init__(self, scope):	
+		self.scope = scope
 		
 	def eval(self, expr):
 		try:
@@ -124,7 +124,7 @@ class ExpressionEvaluator(object):
 		Subscript(expr value, slice slice, expr_context ctx)
 		"""
 		if isinstance(varNode, ast.Name):
-			return self.ctx[varNode.id]
+			return self.scope.getSymbolValue(varNode.id, searchImports = True)
 		elif isinstance(varNode, ast.Attribute):
 			attrName = varNode.attr
 			if (attrName[0] == '_'):
@@ -142,9 +142,9 @@ class ExpressionEvaluator(object):
 		funcPNode = funcCallNode.func
 		if (isinstance(funcPNode, ast.Name)):
 			funcName = funcCallNode.func.id
-			if (funcName in self.funcRegistry.funcs):
-				func = self.funcRegistry.funcs[funcName]
-			else:
+			try:
+				func = self.scope.getSymbolValue(funcName, searchImports = True)
+			except UndefinedSymbolError, e:
 				raise E.SemanticError("No function {} defined".format(funcName), funcCallNode)
 		elif (isinstance(funcPNode, ast.Attribute)):
 			func = self.evalExpr(funcPNode)
@@ -156,20 +156,11 @@ class ExpressionEvaluator(object):
 class FormulaBlockProcessor(object):
 	def __init__(self, scope):
 		self.scope = scope
-		self.blocks = []
-		
-	def addBlock(self, name, content):
-		"""
-		Root node of ast.parse result:
-		Module(stmt* body)
-		"""
-		blockAST = ast.parse(content, filename = name)
-		self.blocks.append(blockAST)
 		
 	def process(self):
 		ee = ExpressionEvaluator(self.scope)
-		for block in self.blocks:
-			for statement in block.body:
+		for block in self.scope.formulaBlocks:
+			for statement in block.ast.body:
 				if isinstance(statement, ast.Assign):
 					# Assign(expr* targets, expr value)
 					value = ee.eval(statement.value)
@@ -185,9 +176,9 @@ class FormulaBlockProcessor(object):
 		if (isinstance(targetNode, ast.Name)):
 			varName = targetNode.id
 			if (topLevel):
-				self.ctx[varName] = value
+				self.scope.setSymbolValue(varName, value)
 			else:
-				return self.ctx[varName]
+				return self.scope.getSymbolValue(varName, searchImports = False)
 		elif (isinstance(targetNode, ast.Attribute)):
 			attrName = targetNode.attr
 			if (attrName[0] == '_'):

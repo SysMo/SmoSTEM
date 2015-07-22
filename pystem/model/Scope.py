@@ -3,6 +3,7 @@ import importlib
 import types
 import numpy as np
 from pystem.Exceptions import SemanticError
+import ast
 
 class ScopeEncoder(json.JSONEncoder):
 	def default(self, obj):
@@ -18,24 +19,33 @@ class ScopeEncoder(json.JSONEncoder):
 
 class UndefinedSymbolError(Exception):
 	pass
+class SymbolCollisionError(Exception):
+	pass
+
+class FormulaBlock(object):
+	def __init__(self, sectionName, blockName, formulas):
+		self.sectionName = sectionName
+		self.blockName = blockName
+		self.ast = ast.parse(formulas, filename = sectionName + '.' + blockName)
 
 class Scope(object):
 	def __init__(self, parent = None, symbols = None):
 		self.children = []
 		self.parent = parent
 		self.symbols = symbols or {}
-		self.statementBlocks = []
+		self.fields = {}
+		self.formulaBlocks = []
 		
 	def createChildScope(self, symbols = None):
 		child = Scope(self, symbols)
 		self.children.append(child)
 		return child
 		
-	def getSymbolValue(self, name):
+	def getSymbolValue(self, name, searchImports = False):
 		if (name in self.symbols.keys()):
 			return self.symbols[name]
 		elif (self.parent is not None):
-			return self.parent.getSymbolValue(name)
+			return self.parent.getSymbolValue(name, searchImports)
 		else:
 			pass
 		
@@ -45,22 +55,30 @@ class Scope(object):
 	def addSymbols(self, dct):
 		self.symbols.update(dct)
 
-	def addStatementBlock(self, block):
-		self.statementBlocks.append(block)
+	def addFormulaBlock(self, sectionName, blockName, statements):
+		self.formulaBlocks.append(FormulaBlock(
+					sectionName, blockName, statements))
 
 class RootScope(Scope):
 	def __init__(self):
 		super(RootScope, self).__init__()
 		self.imports = {}
+		self.importModule('pystem.model.Math', '', ['sin', 'cos', 'tan', 'pi', 'PI'])
 		
-	def getSymbolValue(self, name):
+		
+	def getSymbolValue(self, name, searchImports = False):
 		if (name in self.symbols.keys()):
 			return self.symbols[name]
-		elif (name in self.imports):
+		elif (searchImports and name in self.imports.keys()):
 			return self.imports[name]
 		else:
 			raise UndefinedSymbolError("Symbol {} not found".format(name))
-		
+
+	def setSymbolValue(self, name, value):
+		if (name in self.imports.keys()):
+			raise SymbolCollisionError("Symbol {} is import and cannot be assigned to".format(name))
+		self.symbols[name] = value
+				
 	def importModule(self, qualifiedName, importName, symbols):
 		module = importlib.import_module(qualifiedName)
 		if (importName is None) or (len(importName) == 0):
