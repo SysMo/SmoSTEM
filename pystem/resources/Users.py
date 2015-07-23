@@ -61,10 +61,12 @@ class UserAPI(StemResource):
 			username = request.args['username']
 			activationCode = request.args['activationCode']
 			user = User.objects.get(username = username)
+			if (user.confirmed):
+				return makeJsonResponse({'msg': 'You have already confirmed your email!'})
 			if (user is not None and str(user.id) == activationCode):
 				user.confirmed = True
 				user.save()
-				return makeJsonResponse('User {} confirmed'.format(user.username))
+				return makeJsonResponse({'msg': 'User {} confirmed'.format(user.username)})
 			else:
 				raise APIException('Confirmation failed')
 				
