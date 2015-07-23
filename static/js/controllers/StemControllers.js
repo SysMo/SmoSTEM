@@ -175,13 +175,13 @@ Stem.controller('RegisterCtrl', function($scope, StemResources){
 		$('#RegisterForm').submit(
 			function() {
 				var errorFlag = false;
-				$('#registrationErrorMessage').empty();
+				$('#registrationMessage').empty();
 				if (!emailRegExp.test($('#RegisterForm #inputEmail').val())) {
-					$('#registrationErrorMessage').append("<div>Email address must be valid.</div>");
+					$('#registrationMessage').css("color", "red").append("<div>Email address must be valid</div>");
 					errorFlag = true;
 				}
 				if ($('#RegisterForm #inputPassword').val() != $('#RegisterForm #confirmPassword').val()) {
-					$('#registrationErrorMessage').append("<div>Passwords don't match.</div>");
+					$('#registrationMessage').css("color", "red").append("<div>Passwords don't match</div>");
 					errorFlag = true;
 				}
 				if (errorFlag) {
@@ -193,17 +193,12 @@ Stem.controller('RegisterCtrl', function($scope, StemResources){
 						password: $('#RegisterForm #inputPassword').val()
 					}, 
 					function () {
-						StemResources.Users.login({
-								id: $('#RegisterForm #inputEmail').val(), 
-								password: $('#RegisterForm #inputPassword').val()
-							},
-							function () {
-								window.location.href = "/";
-							}
-						);
+						$('#registrationMessage').css("color", "green")
+							.append('<div>You have successfully registered</div>')
+							.append('<div style="color: black; margin-top: 5px;">Go to <a href="/Models">Models</a></div>');
 					},
-					function(err) {
-						console.log(err);
+					function(response) {
+						$('#registrationMessage').css("color", "red").append("<div>" + response.data.msg + "</div>");
 					}
 				);			
 			}

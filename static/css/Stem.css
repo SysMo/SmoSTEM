@@ -110,7 +110,6 @@ h1 {
 	margin-bottom: 10px;
 }
 
-#registrationErrorMessage {
-	color: red;
+#registrationMessage {
 	font-weight: 700;
 }
