@@ -39,6 +39,7 @@ class Layout(db.EmbeddedDocument):
 	id = F.StringField()
 	title = F.StringField()
 	width = F.StringField(choices = ('narrow', 'wide'))
+	height = F.StringField()
 	type = F.StringField(choices = ('grid', 'free'))
 	fields = F.ListField()
 	hasScope = F.BooleanField(default = False) 

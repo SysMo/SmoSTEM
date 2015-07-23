@@ -423,6 +423,7 @@ Stem.directive('stemScalar', function() {
 						$scope.stemScalar.quantity, $scope.stemScalar.displayUnit, numValue
 					);
 				}
+				console.log($scope.displayValue, numValue);
 			};
 			$scope.onUnitChange = function() {
 				$scope.displayValue = StemUtil.formatNumber(StemQuantities.fromSIUnit(
