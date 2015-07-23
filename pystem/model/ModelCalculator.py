@@ -8,13 +8,13 @@ import numpy as np
 from Formulas import FormulaBlockProcessor
 import pystem.Exceptions as E
 from pystem.model.Scope import RootScope, ScopeEncoder
-from pystem.Exceptions import EvaluationError
 
 class Field(object):
-	def __init__(self, jsonField):
+	def __init__(self, jsonField, section):
 		self.jsonField = jsonField
 		self.name = jsonField['name']
 		self.type = jsonField['type']
+		self.section = section
 		if (self.type == 'stem.TableField'):
 			self.dtype = [(str(column['name']), np.float) for column in jsonField['columns']]
 			
@@ -43,7 +43,7 @@ class Field(object):
 		elif (self.type == 'stem.TextField'):
 			jValue = value
 		else:
-			raise E.FieldError('Unknown field type {} for field {}'.format(self.type, self.name))
+			raise E.FieldError("Unknown field type {}".format(self['type']), self.section['title'], self.name)
 		return jValue
 	
 	def __str__(self):
@@ -96,12 +96,14 @@ class ModelCalculator(object):
 				pass
 			elif (field['type'] == 'stem.ScalarField' or field['type'] == 'stem.TableField'):
 				if (fieldName in scope.fields):
-					raise E.FieldError('Duplicate field "{}"'.format(fieldName))
-				pField = Field(field)
+					duplicateField = scope.fields[fieldName]
+					raise E.FieldError('Duplicate field (duplicate found in section {})'.format(duplicateField.section['title']),
+									section['title'], field['name'])
+				pField = Field(field, section = section)
 				scope.fields[fieldName] = pField					 
 				scope.setSymbolValue(fieldName, pField.parseValue(field['value']))
 			else:
-				raise EvaluationError("Unknown field type {} for field {}".format(field['type'], field['name']))
+				raise E.FieldError("Unknown field type {}".format(field['type']), section['title'], field['name'])
 
 	def postProcessSection(self, section, scope):
 		""" Set values of the calculated fields"""

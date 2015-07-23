@@ -2,7 +2,6 @@ import json
 import importlib
 import types
 import numpy as np
-from pystem.Exceptions import SemanticError
 import ast
 
 class ScopeEncoder(json.JSONEncoder):
@@ -27,6 +26,8 @@ class FormulaBlock(object):
 		self.sectionName = sectionName
 		self.blockName = blockName
 		self.ast = ast.parse(formulas, filename = sectionName + '.' + blockName)
+		self.sectionName = sectionName
+		self.blockName = blockName
 
 class Scope(object):
 	def __init__(self, parent = None, symbols = None):

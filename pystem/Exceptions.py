@@ -12,22 +12,23 @@ class APIException(Exception):
 	status_code = 500
 
 class FieldError(APIException):
+	def __init__(self, msg, sectionName, fieldName):
+		fullMsg = str(msg) + "\nSection '{}', block '{}' \n".format(
+				sectionName, fieldName)
+		super(FieldError, self).__init__(fullMsg)
+
+
+class FormulaError(APIException):
+	def __init__(self, msg, node, formulaBlock):
+		fullMsg = str(msg) + "\nsection '{}', block '{}' \nline '{}', column offset '{}'".format(
+				formulaBlock.sectionName, formulaBlock.blockName, node.lineno, node.col_offset)
+		super(FormulaError, self).__init__(fullMsg)
+
+class SemanticError(FormulaError):
 	pass
 
-class SemanticError(APIException):
-	def __init__(self, msg, node):
-		fullMsg = msg + ";\n line {}, column offset {}".format(node.lineno, node.col_offset)
-		super(SemanticError, self).__init__(fullMsg)
-
-class EvaluationError(Exception):
-	def __init__(self, msg, node):
-		fullMsg = str(msg) + ";\n line {}, column offset {}".format(node.lineno, node.col_offset)
-		super(EvaluationError, self).__init__(fullMsg)
-
-class AssignmentError(APIException):
-	def __init__(self, msg, node):
-		fullMsg = str(msg) + ";\n line {}, column offset {}".format(node.lineno, node.col_offset)
-		super(AssignmentError, self).__init__(fullMsg)
+class AssignmentError(FormulaError):
+	pass
 
 class LoginRequiredError(APIException):
 	def __init__(self, msg =''):
