@@ -33,7 +33,53 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 		        timeout: 1500
 		     });  
 	    });
-	};
+	}
+	function serializeMathJSON(data) {
+		var result = JSON.stringify(data, function(key, value) {
+			// Uses code from angular.toJsonReplacer
+			var val = value;
+			if (typeof key === 'string' && key.charAt(0) === '$' && key.charAt(1) === '$') {
+				val = undefined;
+			} else if (value && value.window === value) {
+				val = '$WINDOW';
+			} else if (value && document === value) {
+				val = '$DOCUMENT';
+			} else if (value && value.$evalAsync && value.$watch) {
+				val = '$SCOPE';
+			} else if (value === Infinity) {
+				val = '$float___inf';
+			} else if (value === -Infinity) {
+				val = '$float___-inf';
+			} else if (String(value) == "NaN") {
+				val = '$float___nan';
+			}
+			return val;
+		});
+		return result;
+	}
+	function parseMathJSON(data) {
+		result = angular.fromJson(data);
+		function jsonParserReplacer(obj) {
+			angular.forEach(obj, function(value, key, obj) {
+				if (angular.isString(value)) {
+					if (value.startsWith('$float___')) {
+						var valueStr = value.substr('$float___'.length);
+						if (valueStr == 'inf') {
+							obj[key] = Infinity;
+						} else if (valueStr == '-inf') {
+							obj[key] = -Infinity;
+						} else {
+							obj[key] = NaN
+						}
+					}
+				} else if (angular.isArray(value) || angular.isObject(value)) {
+					jsonParserReplacer(value);
+				} 
+			});
+		}
+		jsonParserReplacer(result);
+		return result;
+	}
 	var StemResources = {
 		StandardResource: function(resourceName, editorPath) {
 			this.editorPath = editorPath
@@ -73,6 +119,7 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 				},
 				get: {
 					method: 'GET',
+					transformResponse: parseMathJSON,
 					interceptor : {responseError : ErrorHandler}
 				},
 				save: {
@@ -84,10 +131,13 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 					params: {
 						action: "clone" 
 					},
+					transformRequest: serializeMathJSON,
+					transformResponse: parseMathJSON,
 					interceptor : {responseError : ErrorHandler}
 				},
 				update: { 
 					method:'PUT',
+					transformRequest: serializeMathJSON,
 					interceptor : {	
 						response: OnSuccess,
 						responseError : ErrorHandler
@@ -98,6 +148,8 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 					params: {
 						action: "compute" 
 					},
+					transformRequest: serializeMathJSON,
+					transformResponse: parseMathJSON,
 					interceptor : {	
 						response: OnSuccess,
 						responseError : ErrorHandler
