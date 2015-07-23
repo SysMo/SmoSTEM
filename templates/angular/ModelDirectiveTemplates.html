@@ -62,6 +62,12 @@
 		    <div ng-switch-when="stem.ScalarField">
 		      <div stem-scalar="field" layout="stemLayout.type" layout-id="stemLayout.id"></div>
 		    </div>
+		    <div ng-switch-when="stem.BoolField">
+		      <div stem-bool="field" layout="stemLayout.type" layout-id="stemLayout.id"></div>
+		    </div>
+		    <div ng-switch-when="stem.ChoiceField">
+		      <div stem-choice="field" layout="stemLayout.type" layout-id="stemLayout.id"></div>
+		    </div>
 		    <div ng-switch-when="stem.TableField">
 		      <div stem-table="field"></div>
 		    </div>
@@ -186,6 +192,102 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" id="{{stemField.id}}-OkButton" class="btn btn-default" data-dismiss="modal" ng-click="applyChanges()">OK</button>
+			</div>
+		</div>
+	</div>
+</div>
+</script>
+
+<!-- Stem Bool -->
+<script type="text/ng-template" id="stem-bool.html">
+<div id="{{stemBool.id}}" style="margin: 3px; padding: 3px; border: solid 1px #AAA; background: white;">
+  <div>
+    <div style="display: inline-block; width: 200px;">
+    	<span class="ui-icon ui-icon-arrowthick-2-n-s drag-handle"></span>
+    	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemBool.name}}</span>
+    </div>
+    <input style="display: inline-block; margin-right: 5px;" type="checkbox" 
+    	ng-model= "stemBool.value">
+	<span style="float: right;">
+    	<button class="close" ng-click="$parent.removeField(stemBool)">&times;</button>
+	</span>
+  </div>
+  <div>{{stemBool.label}}</div>
+  <div stem-bool-properties></div>
+</div>
+</script>
+
+<!-- Stem Bool Properties -->
+<script type="text/ng-template" id="stem-bool-properties.html">
+<div class="modal fade" id="{{stemBool.id}}-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title">Properties</h4>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div>Name</div>
+					<input type="text" ng-model="stemBool.name" pattern="[a-zA-Z_][a-zA-Z0-9_]*" required>
+					<div></div>
+					<div>Label</div>
+					<input type="text" ng-model="stemBool.label">
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="{{stemBool.id}}-OkButton" class="btn btn-default" data-dismiss="modal">OK</button>
+			</div>
+		</div>
+	</div>
+</div>
+</script>
+
+<!-- Stem Choice -->
+<script type="text/ng-template" id="stem-choice.html">
+<div id="{{stemChoice.id}}" style="margin: 3px; padding: 3px; border: solid 1px #AAA; background: white;">
+  <div>
+    <div style="display: inline-block; width: 200px;">
+    	<span class="ui-icon ui-icon-arrowthick-2-n-s drag-handle"></span>
+    	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemChoice.name}}</span>
+    </div>
+    <select style="height: 30px;" ng-model="stemChoice.value" ng-options="item as item for item in stemChoice.choices">
+    </select>
+	<span style="float: right;">
+    	<button class="close" ng-click="$parent.removeField(stemChoice)">&times;</button>
+	</span>
+  </div>
+  <div>{{stemChoice.label}}</div>
+  <div stem-choice-properties></div>
+</div>
+</script>
+
+<!-- Stem Choice Properties -->
+<script type="text/ng-template" id="stem-choice-properties.html">
+<div class="modal fade" id="{{stemChoice.id}}-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title">Properties</h4>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div>Name</div>
+					<input type="text" ng-model="stemChoice.name" pattern="[a-zA-Z_][a-zA-Z0-9_]*" required>
+					<div></div>
+					<div>Label</div>
+					<input type="text" ng-model="stemChoice.label">
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="{{stemChoice.id}}-OkButton" class="btn btn-default" data-dismiss="modal">OK</button>
 			</div>
 		</div>
 	</div>

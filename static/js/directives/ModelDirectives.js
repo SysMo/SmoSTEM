@@ -225,6 +225,7 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 			if (scope.stemLayout.height) {
 				element.css('height', scope.stemLayout.height);
 			} else {
+				scope.stemLayout.height = '500px';
 				element.css('height', '500px');
 			}
 			element.droppable({
@@ -237,6 +238,14 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 					switch (fieldClassId) {
 					case 'fields_Scalar':
 						field = new stemClasses.ScalarField(); 
+						scope.addField(field);
+						break;
+					case 'fields_Bool':
+						field = new stemClasses.BoolField(); 
+						scope.addField(field);
+						break;
+					case 'fields_Choice':
+						field = new stemClasses.ChoiceField(); 
 						scope.addField(field);
 						break;
 					case 'fields_Table':
@@ -320,6 +329,7 @@ Stem.directive('stemFreeLayout', function(stemClasses, $timeout) {
 			if (scope.stemLayout.height) {
 				element.css('height', scope.stemLayout.height);
 			} else {
+				scope.stemLayout.height = '500px';
 				element.css('height', '500px');
 			}
 			element.droppable({
@@ -493,6 +503,99 @@ Stem.directive('stemScalarProperties', function() {
 			});
 		},
 		templateUrl: "stem-scalar-properties.html",
+	}
+});
+
+Stem.directive('stemBool', function() {
+	return {
+		restrict: 'A',
+		scope: {
+			stemBool: '=',
+			layout: '=',
+			layoutId: '='
+		},
+		controller: function($scope) {
+			$scope.edit = function() {
+				$( '#' + $scope.stemBool.id +'-modal').modal( "show" );
+			};
+		}, 
+		link: function(scope, element, attrs) {
+			element.css("width", "270px");
+		},
+		templateUrl: "stem-bool.html"
+	}
+});
+
+Stem.directive('stemBoolProperties', function() {
+	return {
+		restrict: 'A',
+		link: function(scope, element, attributes) {
+			element.find('input').first().on('input', function(event) {
+				if (!this.checkValidity()) {
+					$('#' + scope.stemBool.id + '-OkButton').prop('disabled', true);
+					$(this).next().css('color', 'red').html('Name is required and must be a valid Python identifier.');
+				} else {
+					$('#' + scope.stemBool.id + '-OkButton').prop('disabled', false);
+					$(this).next().html('');
+				}
+			});
+			element.find('input').on('keyup', function(event) {
+				if (event.which == 13) {
+					$('#' + scope.stemBool.id +'-modal').modal("hide");
+				}
+			});
+			element.on('shown.bs.modal', function () {
+				$(this).find('input').first().focus().select();
+			});
+		},
+		templateUrl: "stem-bool-properties.html",
+	}
+});
+
+Stem.directive('stemChoice', function() {
+	return {
+		restrict: 'A',
+		scope: {
+			stemChoice: '=',
+			layout: '=',
+			layoutId: '='
+		},
+		controller: function($scope) {
+			console.log($scope.stemChoice);
+			$scope.edit = function() {
+				$( '#' + $scope.stemChoice.id +'-modal').modal( "show" );
+			};
+		}, 
+		link: function(scope, element, attrs) {
+			element.css("width", "450px");
+		},
+		templateUrl: "stem-choice.html"
+	}
+});
+
+Stem.directive('stemChoiceProperties', function() {
+	return {
+		restrict: 'A',
+		link: function(scope, element, attributes) {
+			element.find('input').first().on('input', function(event) {
+				if (!this.checkValidity()) {
+					$('#' + scope.stemChoice.id + '-OkButton').prop('disabled', true);
+					$(this).next().css('color', 'red').html('Name is required and must be a valid Python identifier.');
+				} else {
+					$('#' + scope.stemChoice.id + '-OkButton').prop('disabled', false);
+					$(this).next().html('');
+				}
+			});
+			element.find('input').on('keyup', function(event) {
+				if (event.which == 13) {
+					$('#' + scope.stemChoice.id +'-modal').modal("hide");
+				}
+			});
+			element.on('shown.bs.modal', function () {
+				$(this).find('input').first().focus().select();
+			});
+		},
+		templateUrl: "stem-choice-properties.html",
 	}
 });
 

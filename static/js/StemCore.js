@@ -133,6 +133,31 @@ Stem.factory('stemClasses', function stemClasses(StemUtil) {
 	});
 	createInstanceCounter(classes.ScalarField);
 	
+	classes.BoolField = classes.Field.extend({
+		init: function(name, label, value) {
+			this._super();
+			this.type = 'stem.BoolField'; 
+			this.label = label || '';
+			this.name = name || ('b' + (classes.BoolField.instanceCounter + 1).toString());
+			classes.BoolField.instanceCounter++;
+			this.value = value || true;
+		},
+	});
+	createInstanceCounter(classes.BoolField);
+	
+	classes.ChoiceField = classes.Field.extend({
+		init: function(name, label, choices, value) {
+			this._super();
+			this.type = 'stem.ChoiceField'; 
+			this.label = label || '';
+			this.name = name || ('c' + (classes.ChoiceField.instanceCounter + 1).toString());
+			classes.ChoiceField.instanceCounter++;
+			this.choices = choices || [];
+			this.value = value || this.choices[0] || null;
+		},
+	});
+	createInstanceCounter(classes.ChoiceField);
+	
 	classes.TableField = classes.Field.extend({
 		init: function(name, label, columns, value) {
 			this._super();
