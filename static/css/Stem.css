@@ -110,6 +110,6 @@ h1 {
 	margin-bottom: 10px;
 }
 
-#registrationMessage {
+#registrationMessage, #loginMessage {
 	font-weight: 700;
 }

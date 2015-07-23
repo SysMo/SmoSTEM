@@ -13,16 +13,6 @@ Stem.service('UserService', ['$cookies', 'StemResources',
 			return $cookies.username;
 		}
 		this.login = function() {
-			$('#LoginModal form').submit(function() {
-				StemResources.Users.login({
-						id: $('#LoginModal #inputEmail').val(), 
-						password: $('#LoginModal #inputPassword').val()
-						}, function () {
-							$('#LoginModal').modal("hide");
-						} 
-					);			
-			});
-			
 			$('#LoginModal').modal("show");
 		}
 		this.logout = function() {

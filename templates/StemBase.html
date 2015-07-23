@@ -76,8 +76,9 @@
 <body ng-app="Stem">
   {% include 'angular/CoreDirectiveTemplates.html' %}
   {% raw %}
-  <header class="navbar navbar-fixed-top navbar-inverse">
-    <div class="container" data-ng-controller="HeaderController">
+  <div data-ng-controller="HeaderController">
+    <header class="navbar navbar-fixed-top navbar-inverse">
+    <div class="container">
       <div class="navbar-header">
         <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#topbar">
           <span class="sr-only">Toggle navigation</span>
@@ -120,7 +121,38 @@
       </ul>
       </nav>
     </div>
-  </header>
+    </header>
+    <!-- Login modal dialog -->
+	<div class="modal fade" id="LoginModal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="color: #A94442;">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	        <h4 class="modal-title">Please sign in</h4>
+	      </div>
+	      <div class="modal-body" style="color: #A94442;">
+	        <form class="form-signin">
+	          <label for="inputEmail" class="sr-only">Email address</label>
+	          <input type="email" id="loginInputEmail" class="form-control" placeholder="Email address" required autofocus>
+	          <label for="inputPassword" class="sr-only">Password</label>
+	          <input type="password" id="loginInputPassword" class="form-control" placeholder="Password" required>
+	          <div class="checkbox">
+	            <label>
+	              <input type="checkbox" value="remember-me"> Remember me
+	            </label>
+	          </div>
+	          <button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
+	        </form>  
+	        <div id="loginMessage" style="color: red;"></div>        
+	      </div>
+	      <div class="modal-footer">
+	      </div>
+	    </div>
+	  </div>
+	</div>
+  </div>
   {% endraw %}
   <section class="content">
   {% block BodyContent %}
@@ -146,36 +178,6 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Login modal dialog -->
-    <div class="modal fade" id="LoginModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header" style="color: #A94442;">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title">Please sign in</h4>
-          </div>
-          <div class="modal-body" style="color: #A94442;">
-            <form class="form-signin">
-              <label for="inputEmail" class="sr-only">Email address</label>
-              <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-              <label for="inputPassword" class="sr-only">Password</label>
-              <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" value="remember-me"> Remember me
-                </label>
-              </div>
-              <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-            </form>          
-          </div>
-          <div class="modal-footer">
           </div>
         </div>
       </div>

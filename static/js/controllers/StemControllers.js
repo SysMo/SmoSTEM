@@ -145,8 +145,8 @@ Stem.controller('LibraryModuleEditorCtrl', function($scope, $timeout, PageSettin
 	Menus.addMenuItem('topbar', 'Save', $scope.save, 'action', 'glyphicon-floppy-disk');
 });
 
-Stem.controller('HeaderController', ['$scope', 'Menus', 'UserService',
-		 function($scope, Menus, UserService) {
+Stem.controller('HeaderController', ['$scope', 'Menus', 'UserService', 'StemResources',
+		 function($scope, Menus, UserService, StemResources) {
 	// Set top bar menu items
 	Menus.addMenuItem('topbar', 'Go To', 'GoTo', 'dropdown');
 	Menus.addSubMenuItem('topbar', 'GoTo', 'Models', '/Models');
@@ -166,6 +166,30 @@ Stem.controller('HeaderController', ['$scope', 'Menus', 'UserService',
 	// Activate tooltips
 	$('[data-toggle="tooltip"]').tooltip();
 	$scope.UserService = UserService;
+	
+	var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	$('#LoginModal form').submit(function() {
+		var errorFlag = false;
+		$('#loginMessage').empty();
+		if (!emailRegExp.test($('#loginInputEmail').val())) {
+			$('#loginMessage').append("<div>Email address must be valid</div>");
+			errorFlag = true;
+		}
+		if (errorFlag) {
+			return;
+		}
+		StemResources.Users.login({
+				id: $('#loginInputEmail').val(), 
+				password: $('#loginInputPassword').val()
+				}, function () {
+					$('#loginInputPassword').val("");
+					$('#LoginModal').modal("hide");
+				}, function(response) {
+					$('#loginMessage').append("<div>" + response.data.msg + "</div>");
+				}
+			);			
+	});
+	
 }]);
 
 //Register
