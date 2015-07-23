@@ -48,7 +48,7 @@
 
 <!-- Stem Grid Layout -->
 <script type="text/ng-template" id="stem-grid-layout.html">
-  <div id="{{stemLayout.id}}" style="overflow: auto; background: #EEE; padding: 10px; margin: 10px; float: left;">
+  <div id="{{stemLayout.id}}" class ="GridLayout" ng-style="dynamicStyle">
   	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemLayout.title}}</span>
   	<span id="{{stemLayout.id}}-list-item-actions" stem-list-item-actions style="float: right;" del="$parent.removeLayout(stemLayout)" 
   		duplicate="$parent.duplicateLayout(stemLayout)"
@@ -82,7 +82,7 @@
 
 <!-- Stem Free Layout -->
 <script type="text/ng-template" id="stem-free-layout.html">
-  <div id="{{stemLayout.id}}" style="width: 1060px; overflow: auto; background: #EEE; padding: 10px; margin: 10px; float: left;">
+  <div id="{{stemLayout.id}}" class="FreeLayout">
 	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemLayout.title}}</span>
 	<span stem-list-item-actions style="float: right;" del="$parent.removeLayout(stemLayout)" 
 		duplicate="$parent.duplicateLayout(stemLayout)"
@@ -125,6 +125,8 @@
 					<div></div>
 					<div>Image</div>
 					<input type="text" ng-model="stemLayout.image">
+					<div>Isolate variables</div>
+					<input type="checkbox" ng-model="stemLayout.hasScope">
 				</form>
 			</div>
 			<div class="modal-footer">

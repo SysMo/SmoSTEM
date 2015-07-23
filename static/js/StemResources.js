@@ -3,21 +3,23 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 	function ErrorHandler(response) {
 		var errorData = response.data;
 		var errorView;
+		var msg;
+		if ('msg' in errorData) {
+			msg = errorData.msg.replace(/(?:\r\n|\r|\n)/g, '<br />');			
+		} else {
+			msg = angular.toJson(errorData);
+		}
 		if (errorData.type == 'APIException') {
 			errorView = 
 			'<p>' + errorData.excType + '</p>' +
-			'<p>' + errorData.msg + '</p>';					
+			'<p>' + msg + '</p>';					
 		} else if (errorData.type == 'Exception') {
 			errorView = 
 			'<p>' + errorData.excType + '</p>' +
-			'<p>' + errorData.msg + '</p>' +
+			'<p>' + msg + '</p>' +
 			'<pre>' + errorData.traceback + '</pre>';		
 		} else {
-			if ('msg' in errorData) {
-				errorView = errorData.msg;
-			} else {
-				errorView = angular.toJson(errorData);
-			}
+			errorView = msg;
 		}
 		$('#ErrorModal .modal-body').html(errorView);
 		$('#ErrorModal').modal("show");

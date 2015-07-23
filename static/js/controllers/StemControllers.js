@@ -201,6 +201,9 @@ Stem.controller('RegisterCtrl', function($scope, StemResources){
 								window.location.href = "/";
 							}
 						);
+					},
+					function(err) {
+						console.log(err);
 					}
 				);			
 			}

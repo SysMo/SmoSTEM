@@ -9,18 +9,23 @@ from __future__ import division
 import ast
 from FunctionRegistry import FunctionRegistry
 import pystem.Exceptions as E
+from pystem.model.Scope import UndefinedSymbolError
 
 class ExpressionEvaluator(object):
-	def __init__(self, ctx, funcRegistry):	
-		self.ctx = ctx
-		self.funcRegistry = funcRegistry
-		
+	def __init__(self, scope):	
+		self.scope = scope
+	
+	def setFormulaBlock(self, formulaBlock):
+		self.formulaBlock = formulaBlock
+				
 	def eval(self, expr):
 		try:
 			result = self.evalExpr(expr)
 			return result
+		except E.FormulaError:
+			raise
 		except Exception, e:
-			raise E.EvaluationError(e, expr)
+			raise E.FormulaError(e, expr, self.formulaBlock)
 	
 	def evalExpr(self, expr):
 		if(isinstance(expr, ast.Num)):
@@ -43,7 +48,7 @@ class ExpressionEvaluator(object):
 		elif(isinstance(expr, ast.Call)):
 			result = self.evalFuncCall(expr)
 		else:
-			raise E.SemanticError("Illegal expression {}".format(ast.dump(expr)), expr)
+			raise E.SemanticError("Illegal expression {}".format(ast.dump(expr)), expr, self.formulaBlock)
 		return result
 	
 	binaryOps = {
@@ -65,7 +70,7 @@ class ExpressionEvaluator(object):
 		right = self.evalExpr(opNode.right)
 		opFunc = self.binaryOps.get(opNode.op.__class__)
 		if (opFunc is None):
-			raise E.SemanticError("Illegal binary operation", opNode)
+			raise E.SemanticError("Illegal binary operation", opNode, self.scope, self.formulaBlock)
 		return opFunc(left, right)
 	
 	unaryOps = {
@@ -84,7 +89,7 @@ class ExpressionEvaluator(object):
 		operand = self.evalExpr(opNode.operand)
 		opFunc = self.unaryOps.get(opNode.op.__class__)
 		if (opFunc is None):
-			raise E.SemanticError("Illegal unary operation", opNode)
+			raise E.SemanticError("Illegal unary operation", opNode, self.scope, self.formulaBlock)
 		return opFunc(operand)
 	
 	cmpOps = {
@@ -107,12 +112,12 @@ class ExpressionEvaluator(object):
 		# cmpop = Eq | NotEq | Lt | LtE | Gt | GtE | Is | IsNot | In | NotIn
 		"""
 		if len(cmpNode.ops) > 1:
-			raise E.SemanticError("Cannot use chained compare operators", cmpNode)
+			raise E.SemanticError("Cannot use chained compare operators", cmpNode, self.formulaBlock)
 		left = self.evalExpr(cmpNode.left)
 		right = self.evalExpr(cmpNode.comparators[0])
 		cmpFunc = self.cmpOps.get(cmpNode.ops[0].__class__)
 		if (cmpFunc is None):
-			raise E.SemanticError("Illegal comparison operation", cmpNode)
+			raise E.SemanticError("Illegal comparison operation", cmpNode, self.formulaBlock)
 		return cmpFunc(left, right)
 	
 	def evalVariable(self, varNode):
@@ -124,27 +129,27 @@ class ExpressionEvaluator(object):
 		Subscript(expr value, slice slice, expr_context ctx)
 		"""
 		if isinstance(varNode, ast.Name):
-			return self.ctx[varNode.id]
+			return self.scope.getSymbolValue(varNode.id, searchImports = True)
 		elif isinstance(varNode, ast.Attribute):
 			attrName = varNode.attr
 			if (attrName[0] == '_'):
-				raise E.SemanticError('Attribute names cannot start with _ (underscore)')
+				raise E.SemanticError('Attribute names cannot start with _ (underscore)', self.formulaBlock)
 			return getattr(self.evalVariable(varNode.value), attrName)
 		elif isinstance(varNode, ast.Subscript):
 			slice = varNode.slice
 			if (isinstance(slice, ast.Index) and isinstance(slice.value, ast.Num)):
 				index = slice.value.n
 			else:
-				raise E.SemanticError("Only integer indices are supported")
+				raise E.SemanticError("Only integer indices are supported", self.formulaBlock, self.formulaBlock)
 			return self.evalVariable(varNode.value)[index]
 		
 	def evalFuncCall(self, funcCallNode):
 		funcPNode = funcCallNode.func
 		if (isinstance(funcPNode, ast.Name)):
 			funcName = funcCallNode.func.id
-			if (funcName in self.funcRegistry.funcs):
-				func = self.funcRegistry.funcs[funcName]
-			else:
+			try:
+				func = self.scope.getSymbolValue(funcName, searchImports = True)
+			except UndefinedSymbolError, e:
 				raise E.SemanticError("No function {} defined".format(funcName), funcCallNode)
 		elif (isinstance(funcPNode, ast.Attribute)):
 			func = self.evalExpr(funcPNode)
@@ -154,24 +159,14 @@ class ExpressionEvaluator(object):
 		return funcResult
 	
 class FormulaBlockProcessor(object):
-	def __init__(self, fields, values):
-		self.fields = fields
-		self.ctx = values
-		self.blocks = []
-		self.funcRegistry = FunctionRegistry()
-		
-	def addBlock(self, name, content):
-		"""
-		Root node of ast.parse result:
-		Module(stmt* body)
-		"""
-		blockAST = ast.parse(content, filename = name)
-		self.blocks.append(blockAST)
+	def __init__(self, scope):
+		self.scope = scope
 		
 	def process(self):
-		ee = ExpressionEvaluator(self.ctx, self.funcRegistry)
-		for block in self.blocks:
-			for statement in block.body:
+		ee = ExpressionEvaluator(self.scope)
+		for block in self.scope.formulaBlocks:
+			ee.setFormulaBlock(block)
+			for statement in block.ast.body:
 				if isinstance(statement, ast.Assign):
 					# Assign(expr* targets, expr value)
 					value = ee.eval(statement.value)
@@ -179,21 +174,21 @@ class FormulaBlockProcessor(object):
 						for targetNode in statement.targets:
 							self.assignValue(value = value, targetNode = targetNode)
 					except Exception, e:
-						raise E.AssignmentError(e, statement)
+						raise E.AssignmentError(e, statement, block.blockName, block.sectionName)
 				else:
-					raise E.SemanticError("The statement is not an assignment", statement)
+					raise E.SemanticError("The statement is not an assignment", statement, self.formulaBlock, self.formulaBlock)
 	
 	def assignValue(self, value, targetNode, topLevel = True):
 		if (isinstance(targetNode, ast.Name)):
 			varName = targetNode.id
 			if (topLevel):
-				self.ctx[varName] = value
+				self.scope.setSymbolValue(varName, value)
 			else:
-				return self.ctx[varName]
+				return self.scope.getSymbolValue(varName, searchImports = False)
 		elif (isinstance(targetNode, ast.Attribute)):
 			attrName = targetNode.attr
 			if (attrName[0] == '_'):
-				raise E.SemanticError('Attribute names cannot start with _ (underscore)', targetNode)
+				raise E.SemanticError('Attribute names cannot start with _ (underscore)', targetNode, self.formulaBlock)
 			targetContainer = self.assignValue(value, targetNode.value, False)
 			if (topLevel):
 				setattr(targetContainer, attrName, value)
@@ -211,5 +206,5 @@ class FormulaBlockProcessor(object):
 			else:
 				return targetContainer[index]			
 		else:
-			raise E.SemanticError("Assignment target must be variable, variable attribute or variable index", targetNode) 
+			raise E.SemanticError("Assignment target must be variable, variable attribute or variable index", targetNode, self.formulaBlock) 
 	

@@ -36,6 +36,7 @@ from pystem.model.ModelCalculator import ModelCalculator
 # 	}
 
 class Layout(db.EmbeddedDocument):
+	id = F.StringField()
 	title = F.StringField()
 	width = F.StringField(choices = ('narrow', 'wide'))
 	type = F.StringField(choices = ('grid', 'free'))

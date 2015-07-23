@@ -205,6 +205,16 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 					$scope.stemLayout.fields.splice(index, 1);
 				}
 			};
+			// Determine dynamic style features
+			$scope.dynamicStyle = {border: ''};
+			$scope.$watch('stemLayout.hasScope', function (newValue, oldValue) {
+				if ($scope.stemLayout.hasScope) {
+					$scope.dynamicStyle.border = '2px solid #606060';
+				} else {
+					$scope.dynamicStyle.border = 'none';					
+				}
+			});
+			
 		},
 		link: function(scope, element, attributes) {
 			if (scope.stemLayout.width == 'narrow') {
