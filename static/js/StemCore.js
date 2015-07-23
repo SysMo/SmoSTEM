@@ -152,8 +152,8 @@ Stem.factory('stemClasses', function stemClasses(StemUtil) {
 			this.label = label || '';
 			this.name = name || ('c' + (classes.ChoiceField.instanceCounter + 1).toString());
 			classes.ChoiceField.instanceCounter++;
-			this.choices = choices || [];
-			this.value = value || this.choices[0] || null;
+			this.choices = choices || [""];
+			this.value = value || this.choices[0];
 		},
 	});
 	createInstanceCounter(classes.ChoiceField);

@@ -562,9 +562,18 @@ Stem.directive('stemChoice', function() {
 			layoutId: '='
 		},
 		controller: function($scope) {
-			console.log($scope.stemChoice);
 			$scope.edit = function() {
 				$( '#' + $scope.stemChoice.id +'-modal').modal( "show" );
+			};
+			// Add a new choice
+			$scope.addChoice = function(index) {
+				$scope.stemChoice.choices.splice(index, 0, "");
+			};
+			// Delete a choice
+			$scope.deleteChoice = function(index) {
+				if ($scope.stemChoice.choices.length > 1) {
+					$scope.stemChoice.choices.splice(index, 1);
+				}
 			};
 		}, 
 		link: function(scope, element, attrs) {

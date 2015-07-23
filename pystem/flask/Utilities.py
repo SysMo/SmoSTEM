@@ -8,7 +8,6 @@ import datetime
 from bson import ObjectId
 from bson.json_util import SON, string_types, default 
 from flask import Response
-from astropy.units import dct
 import math
 
 def _default(obj):

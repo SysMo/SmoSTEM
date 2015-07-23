@@ -284,6 +284,14 @@
 					<div></div>
 					<div>Label</div>
 					<input type="text" ng-model="stemChoice.label">
+					<div>Choices</div>
+					<table>
+					    <tr ng-repeat="choice in stemChoice.choices track by $index">
+					      <td><span stem-list-item-actions add="addChoice($index + 1)"></span></td>
+					      <td><span stem-list-item-actions del="deleteChoice($index)"></span></td>
+					      <td><input type="text" ng-model="stemChoice.choices[$index]"></td>
+					    </tr>
+				  	</table> 
 				</form>
 			</div>
 			<div class="modal-footer">
