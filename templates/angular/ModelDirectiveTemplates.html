@@ -179,11 +179,11 @@
 					<div>Label</div>
 					<input type="text" ng-model="stemScalar.label">
 					<div>Quantity</div>
-					<select ng-model="stemScalar.quantity" ng-options="key as key for (key, value) in quantities"></select>
+					<select ng-model="stemScalar.quantity" ng-options="key as key for (key, value) in quantities" ng-change="onQuantityChange()"></select>
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" id="{{stemField.id}}-OkButton" class="btn btn-default" data-dismiss="modal" ng-click="setDisplayUnit()">OK</button>
+				<button type="button" id="{{stemField.id}}-OkButton" class="btn btn-default" data-dismiss="modal" ng-click="applyChanges()">OK</button>
 			</div>
 		</div>
 	</div>

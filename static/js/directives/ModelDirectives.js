@@ -448,9 +448,19 @@ Stem.directive('stemScalarProperties', function() {
 	return {
 		restrict: 'A',
 		controller: function($scope, StemQuantities) {
-			$scope.setDisplayUnit = function() {
-				$scope.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
-				$scope.stemScalar.displayUnit = $scope.quantities[$scope.stemScalar.quantity].SIUnit;
+			$scope.reset = function() {
+				$scope.quantityPristine = true;
+			}
+			$scope.reset();	
+			$scope.onQuantityChange = function() {
+				$scope.quantityPristine = false;
+			};
+			$scope.applyChanges = function() {
+				if ($scope.quantityPristine == false) {
+					$scope.unitOptions = $scope.quantities[$scope.stemScalar.quantity].units;
+					$scope.stemScalar.displayUnit = $scope.quantities[$scope.stemScalar.quantity].SIUnit;
+				}
+				$scope.reset();
 			};
 		},
 		link: function(scope, element, attributes) {
