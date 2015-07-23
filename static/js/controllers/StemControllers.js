@@ -171,13 +171,22 @@ Stem.controller('HeaderController', ['$scope', 'Menus', 'UserService',
 //Register
 Stem.controller('RegisterCtrl', function($scope, StemResources){
 	$(document).ready(function () {
+		var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 		$('#RegisterForm').submit(
 			function() {
+				var errorFlag = false;
+				$('#registrationErrorMessage').empty();
+				if (!emailRegExp.test($('#RegisterForm #inputEmail').val())) {
+					$('#registrationErrorMessage').append("<div>Email address must be valid.</div>");
+					errorFlag = true;
+				}
 				if ($('#RegisterForm #inputPassword').val() != $('#RegisterForm #confirmPassword').val()) {
-					alert("Passwords don't match");
+					$('#registrationErrorMessage').append("<div>Passwords don't match.</div>");
+					errorFlag = true;
+				}
+				if (errorFlag) {
 					return;
 				}
-				
 				StemResources.Users.create({
 					    username: $('#RegisterForm #inputUserName').val(), 
 						email: $('#RegisterForm #inputEmail').val(), 

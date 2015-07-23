@@ -4,20 +4,27 @@
 {% raw %}
 <div ng-controller="RegisterCtrl" class="container-fluid" style="margin: 10px; padding-top: 50px">
   <div class="row">
-  <div class="col-sm-4"></div>
-  <div class="col-sm-4">
-  <form class="form-signin" id="RegisterForm">
-   <label for="inputUserName" class="sr-only">User name</label>
-    <input type="text" id="inputUserName" class="form-control" placeholder="User name" required autofocus>
-    <label for="inputEmail" class="sr-only">Email address</label>
-    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
-    <label for="inputPassword" class="sr-only">Password</label>
-    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-    <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm Password" required>
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
-  </form>
+	  <div class="col-sm-4"></div>
+	  <div class="col-sm-4">
+		  <form class="form-signin" id="RegisterForm">
+		   <label for="inputUserName">User name</label>
+		    <input type="text" id="inputUserName" class="form-control" placeholder="User name" required autofocus>
+		    <label for="inputEmail">Email address</label>
+		    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
+		    <label for="inputPassword">Password</label>
+		    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+		    <label for="confirmPassword">Confirm your password</label>
+		    <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm Password" required>
+		    <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+		  </form>
+	  </div>
+	  <div class="col-sm-4"></div>
   </div>
-  <div class="col-sm-4"></div>
+  <div class="row">
+  	<div class="col-sm-4"></div>
+  	<div class="col-sm-4" id="registrationErrorMessage">
+  	</div>
+  	<div class="col-sm-4"></div>
   </div>
 </div>
 {% endraw %}
