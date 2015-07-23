@@ -6,37 +6,17 @@ Created on Jul 14, 2015
 '''
 
 from flask import request, session, current_app
-from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
-from StemResource import StemResource
+from flask_mail import Message
 from flask_login import UserMixin
-from pystem.Exceptions import APIException
 from flask_login import login_user, logout_user, current_user
-from ServerObjects import bcrypt, db
+from flask_principal import Identity, AnonymousIdentity, identity_changed
+from ServerObjects import bcrypt, db, mail
+
+from StemResource import StemResource
+from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
+from pystem.Exceptions import APIException
 import mongoengine.fields as F
 from mongoengine.errors import DoesNotExist, NotUniqueError
-from flask_principal import Identity, AnonymousIdentity, identity_changed
-#from mongokit import Document
-# class User(Document, UserMixin):
-# 	__collection__ = "Users"
-# 	use_dot_notation = True
-# 	structure = {
-# 		'username': unicode,
-# 		'email': unicode,
-# 		'fullName': unicode,
-# 		'password': unicode,
-# 		'active': bool
-# 	}
-# 	indexes = [
-# 		{
-# 			'fields': 'email',  # note: this may be an array
-# 			'unique': True,	 	# only unique values are allowed 
-# 		},
-# 		{
-# 			'fields': 'username',  # note: this may be an array
-# 			'unique': True,	 	# only unique values are allowed 
-# 		},
-# 	]	#required_fields = ['username', 'email', 'fullName', 'password', 'active']
-# 	
 
 class Role(db.Document):
 	meta = {
@@ -64,6 +44,7 @@ class User(db.Document, UserMixin):
 	fullName = F.StringField(max_length = 50)
 	password = F.StringField(required = True)
 	active = F.BooleanField(default = True)
+	confirmed = F.BooleanField(default = False)
 	roles = F.ListField(F.ReferenceField(Role), default=[])
 	
 	def get_id(self):
@@ -73,24 +54,59 @@ class UserAPI(StemResource):
 	def initUsersDB(self):
 		Role(name = 'admin', description = 'administrators').save()
 		Role(name = 'user', description = 'users').save()
+	
+	def get(self):
+		action = request.args.get('action', None)
+		if (action == "confirm"):
+			username = request.args['username']
+			activationCode = request.args['activationCode']
+			user = User.objects.get(username = username)
+			if (user is not None and str(user.id) == activationCode):
+				user.confirmed = True
+				user.save()
+				return makeJsonResponse('User {} confirmed'.format(user.username))
+			else:
+				raise APIException('Confirmation failed')
+				
+			
+		else:
+			raise APIException("Unknown action {}".format(action))
+		
 	def post(self):
 		action = request.args.get('action', None)
 		if (action is None):
 			raise APIException("Parameter 'action' must be defined for POST method to Users resource")
 		if (action == 'create'):
+			userData = parseJsonResponse(request.data)
+			userRole = Role.objects.get(name='user')
+			user = User(
+				username = userData['username'],
+				email = userData['email'],
+				password = unicode(bcrypt.generate_password_hash(userData[u'password'])),
+				roles = [userRole]
+			)
+			# If no users exist, init the user DB
 			if (User.objects.count() == 0):
 				self.initUsersDB();
-			userData = parseJsonResponse(request.data)
-			userData[u'active'] = True
-			userData[u'password'] = unicode(bcrypt.generate_password_hash(userData[u'password']))
-			user = User(**userData)
-			userRole = Role.objects.get(name='user')
-			user.roles = [userRole]
+				user.roles.append(Role.objects.get(name='admin'))
+			if (User.objects(username = user.username).count() > 0):
+				raise APIException('User with this username already exists')
+			if (User.objects(email = user.email).count() > 0):
+				raise APIException('User with this email already exists')
 			try:
 				user.save()
-			except NotUniqueError, e:
-				# TODO
-				raise APIException('User with this name or email already exists')
+				# Send email to the user
+				msg = Message("Welcome to STEM", recipients = [user.email])
+				msg.body = """\
+Please click on the link to activate your profile
+http://stem.sysmoltd.com/stem/api/Users?action=confirm&username={}&activationCode={}""".format(user.username, str(user.id))
+				mail.send(msg)
+				# Send email to admin
+				msg = Message("New user registration", recipients = ["nasko.js@gmail.com"])
+				msg.body = "username: {}\n email: {}\n".format(user.username, user.email)
+				mail.send(msg)
+			except NotUniqueError:
+				raise APIException('Registration failed. Please contact the administrator stem@sysmoltd.com')
 			return makeJsonResponse({
 				'msg': 'Successfully created user {}'.format(user.username)
 			})
@@ -103,6 +119,10 @@ class UserAPI(StemResource):
 					user = User.objects.get(email = userData['id'])
 				except DoesNotExist:
 					raise APIException('User does not exist')
+				if (not user.active):
+					raise APIException('User has not been activated or has been deactivated. Please contact the administrator!')
+				if (not user.confirmed):
+					raise APIException('User has not been confirmed. Please confirm your user by clicking on the link found in yout email!')
 				passwordValid = bcrypt.check_password_hash(user.password, userData['password'])
 				if (passwordValid):
 					login_user(user)
