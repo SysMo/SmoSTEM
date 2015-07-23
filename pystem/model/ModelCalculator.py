@@ -84,7 +84,7 @@ class ModelCalculator(object):
 			formulaProcessor.process()
 			self.postProcessSection(section, scope)
 
-		print json.dumps(self.rootScope, cls = ScopeEncoder)
+		#print json.dumps(self.rootScope, cls = ScopeEncoder)
 					
 	def preProcessSection(self, section, scope):
 		""" Collects all the variables and formula blocks"""			
