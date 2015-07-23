@@ -169,7 +169,8 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 					method: 'POST',
 					params: {
 						action: 'login'
-					}
+					},
+					interceptor : {responseError : ErrorHandler}
 				},
 				logout: {
 					method: 'POST',
@@ -181,7 +182,8 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 					method: 'POST',
 					params: {
 						action: 'create'
-					}
+					},
+					interceptor : {responseError : ErrorHandler}
 				},
 			})
 	};

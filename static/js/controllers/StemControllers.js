@@ -167,3 +167,34 @@ Stem.controller('HeaderController', ['$scope', 'Menus', 'UserService',
 	$('[data-toggle="tooltip"]').tooltip();
 	$scope.UserService = UserService;
 }]);
+
+//Register
+Stem.controller('RegisterCtrl', function($scope, StemResources){
+	$(document).ready(function () {
+		$('#RegisterForm').submit(
+			function() {
+				if ($('#RegisterForm #inputPassword').val() != $('#RegisterForm #confirmPassword').val()) {
+					alert("Passwords don't match");
+					return;
+				}
+				
+				StemResources.Users.create({
+					    username: $('#RegisterForm #inputUserName').val(), 
+						email: $('#RegisterForm #inputEmail').val(), 
+						password: $('#RegisterForm #inputPassword').val()
+					}, 
+					function () {
+						StemResources.Users.login({
+								id: $('#RegisterForm #inputEmail').val(), 
+								password: $('#RegisterForm #inputPassword').val()
+							},
+							function () {
+								window.location.href = "/";
+							}
+						);
+					}
+				);			
+			}
+		);
+	});
+});
