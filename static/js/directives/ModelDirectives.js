@@ -177,7 +177,7 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 	}
 });
 
-Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
+Stem.directive('stemGridLayout', function(stemClasses, ClipboardService, $timeout) {
 	return {
 		restrict : 'A',
 		scope: {
@@ -195,6 +195,12 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 			}
 			$scope.edit = function() {
 				$( '#' + $scope.stemLayout.id +'-modal').modal( "show" );
+			};
+			$scope.paste = function() {
+				var pasteContent = ClipboardService.paste();
+				angular.forEach(pasteContent, function(field, index) {
+					$scope.addField(field);
+				});
 			};
 			$scope.addField = function(field) {
 				$scope.stemLayout.fields.push(field);
@@ -404,7 +410,7 @@ Stem.directive('stemLayoutProperties', [function() {
 }]);
 
 
-Stem.directive('stemScalar', function() {
+Stem.directive('stemScalar', function(ClipboardService) {
 	return {
 		restrict: 'A',
 		scope: {
@@ -416,6 +422,9 @@ Stem.directive('stemScalar', function() {
 			$scope.edit = function() {
 				$( '#' + $scope.stemScalar.id +'-modal').modal( "show" );
 			};
+			$scope.copy = function() {
+				ClipboardService.copy($scope.stemScalar);
+			}
 			$scope.quantities = StemQuantities.quantities;
 			var quantityName = $scope.stemScalar.quantity;
 			if (!(quantityName && quantityName in $scope.quantities)) {
@@ -433,7 +442,6 @@ Stem.directive('stemScalar', function() {
 						$scope.stemScalar.quantity, $scope.stemScalar.displayUnit, numValue
 					);
 				}
-				console.log($scope.displayValue, numValue);
 			};
 			$scope.onUnitChange = function() {
 				$scope.displayValue = StemUtil.formatNumber(StemQuantities.fromSIUnit(
@@ -507,7 +515,7 @@ Stem.directive('stemScalarProperties', function() {
 	}
 });
 
-Stem.directive('stemBool', function() {
+Stem.directive('stemBool', function(ClipboardService) {
 	return {
 		restrict: 'A',
 		scope: {
@@ -519,9 +527,12 @@ Stem.directive('stemBool', function() {
 			$scope.edit = function() {
 				$( '#' + $scope.stemBool.id +'-modal').modal( "show" );
 			};
+			$scope.copy = function() {
+				ClipboardService.copy($scope.stemBool);
+			}
 		}, 
 		link: function(scope, element, attrs) {
-			element.css("width", "270px");
+			element.css("width", "300px");
 		},
 		templateUrl: "stem-bool.html"
 	}
@@ -553,7 +564,7 @@ Stem.directive('stemBoolProperties', function() {
 	}
 });
 
-Stem.directive('stemChoice', function() {
+Stem.directive('stemChoice', function(ClipboardService) {
 	return {
 		restrict: 'A',
 		scope: {
@@ -565,6 +576,9 @@ Stem.directive('stemChoice', function() {
 			$scope.edit = function() {
 				$( '#' + $scope.stemChoice.id +'-modal').modal( "show" );
 			};
+			$scope.copy = function() {
+				ClipboardService.copy($scope.stemChoice);
+			}
 			// Add a new choice
 			$scope.addChoice = function(index) {
 				$scope.stemChoice.choices.splice(index, 0, "");
@@ -609,7 +623,7 @@ Stem.directive('stemChoiceProperties', function() {
 	}
 });
 
-Stem.directive('stemTable', function(StemHOT, StemQuantities, StemUtil, $compile) {
+Stem.directive('stemTable', function(StemHOT, StemQuantities, StemUtil, ClipboardService, $compile) {
 	return {
 		restrict: 'A',
 		scope: {
@@ -637,6 +651,9 @@ Stem.directive('stemTable', function(StemHOT, StemQuantities, StemUtil, $compile
 			$scope.edit = function() {
 				$( '#' + $scope.stemTable.id +'-modal').modal( "show" );
 			};
+			$scope.copy = function() {
+				ClipboardService.copy($scope.stemTable);
+			}
 		},
 		templateUrl: "stem-table.html",
 		link: function(scope, element, attributes) {
@@ -652,7 +669,7 @@ Stem.directive('stemTable', function(StemHOT, StemQuantities, StemUtil, $compile
 	}
 });
 
-Stem.directive('stemTableProperties', [function() {
+Stem.directive('stemTableProperties', function() {
 	return {
 		restrict : 'A',
 		link: function(scope, element, attributes) {
@@ -676,7 +693,7 @@ Stem.directive('stemTableProperties', [function() {
 		},
 		templateUrl: "stem-table-properties.html",
 	}
-}]);
+});
 
 Stem.directive('stemTableColumnProperties', function($timeout, StemQuantities, StemUtil) {
 	return {
@@ -726,7 +743,7 @@ Stem.directive('stemTableColumnProperties', function($timeout, StemQuantities, S
 	}
 });
 
-Stem.directive('stemTextArea', function() {
+Stem.directive('stemTextArea', function(ClipboardService) {
 	return {
 		restrict: 'A',
 		scope: {
@@ -738,6 +755,9 @@ Stem.directive('stemTextArea', function() {
 			$scope.edit = function() {
 				$('#' + $scope.stemTextArea.id +'-modal').modal( "show" );
 			};
+			$scope.copy = function() {
+				ClipboardService.copy($scope.stemTextArea);
+			}
 		},
 		templateUrl: "stem-text-area.html",
 		link: function(scope, element, attributes) {
@@ -803,7 +823,7 @@ Stem.directive('stemTextAreaProperties', [function() {
 	}
 }]);
 
-Stem.directive('stemFormulas', function() {
+Stem.directive('stemFormulas', function(ClipboardService) {
 	return {
 		restrict: 'A',
 		scope: {
@@ -813,10 +833,17 @@ Stem.directive('stemFormulas', function() {
 			$scope.edit = function() {
 				$( '#' + $scope.stemFormulas.id +'-modal').modal( "show" );
 			};
+			$scope.copy = function() {
+				ClipboardService.copy($scope.stemFormulas);
+			}
 		},
 		templateUrl: "stem-formulas.html",
 		link: function(scope, element, attributes) {
-			element.css("width", "450px");
+			if (scope.$parent.stemLayout.width == 'narrow') {
+				element.css('width', '450px');
+			} else {
+				element.css('width', '98%');
+			}
 			// Watching for the node to be created
 			scope.$watch(function() { return element[0].childNodes[1].childNodes[5]; }, function(newValue, oldValue) {
 				$(element[0].childNodes[1]).height(scope.stemFormulas.height);

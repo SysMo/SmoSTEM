@@ -51,6 +51,7 @@
   <div id="{{stemLayout.id}}" class ="GridLayout" ng-style="dynamicStyle">
   	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemLayout.title}}</span>
   	<span id="{{stemLayout.id}}-list-item-actions" stem-list-item-actions style="float: right;" del="$parent.removeLayout(stemLayout)" 
+  		paste="paste()"
   		duplicate="$parent.duplicateLayout(stemLayout)"
   		move-down="$parent.moveDown(stemLayout)"
   		move-up="$parent.moveUp(stemLayout)"
@@ -159,6 +160,7 @@
 	<span style="float: right;">
 		<span class="ui-icon ui-icon-arrowrefresh-1-e rotate-handle" ng-click="rotate()" ng-if="layout=='free'"></span>
 		<span class="ui-icon ui-icon-arrowthick-2-n-s drag-handle" ng-if="layout=='free'"></span>
+		<span id="{{stemScalar.id}}-list-item-actions" stem-list-item-actions duplicate="copy()"></span>
     	<button class="close" ng-click="$parent.removeField(stemScalar)">&times;</button>
 	</span>
   </div>
@@ -209,6 +211,7 @@
     <input style="display: inline-block; margin-right: 5px;" type="checkbox" 
     	ng-model= "stemBool.value">
 	<span style="float: right;">
+		<span id="{{stemBool.id}}-list-item-actions" stem-list-item-actions duplicate="copy()"></span>
     	<button class="close" ng-click="$parent.removeField(stemBool)">&times;</button>
 	</span>
   </div>
@@ -257,6 +260,7 @@
     <select style="height: 30px;" ng-model="stemChoice.value" ng-options="item as item for item in stemChoice.choices">
     </select>
 	<span style="float: right;">
+		<span id="{{stemChoice.id}}-list-item-actions" stem-list-item-actions duplicate="copy()"></span>
     	<button class="close" ng-click="$parent.removeField(stemChoice)">&times;</button>
 	</span>
   </div>
@@ -308,7 +312,10 @@
   <div style="margin-bottom: 3px;">
     <span class="ui-icon ui-icon-arrowthick-2-n-s drag-handle"></span>
   	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemTable.name}}</span>
-  	<button class="close" ng-click="$parent.removeField(stemTable)">&times;</button>
+  	<span style="float: right;">
+  		<span id="{{stemTable.id}}-list-item-actions" stem-list-item-actions duplicate="copy()"></span>
+  		<button class="close" ng-click="$parent.removeField(stemTable)">&times;</button>
+  	</span>
   </div>
   <div>{{stemTable.label}}</div>
   <div id="{{stemTable.id}}-table"></div>
@@ -386,7 +393,10 @@
     <span class="ui-icon ui-icon-arrowthick-2-n-s drag-handle"></span>
     <span class="ui-icon ui-icon-arrowrefresh-1-e rotate-handle" ng-click="rotate()" ng-if="layout=='free'"></span>
   	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemTextArea.name}}</span>
-  	<button class="close" ng-click="$parent.removeField(stemTextArea)">&times;</button>
+  	<span style="float: right;">
+	  	<span id="{{stemTextArea.id}}-list-item-actions" stem-list-item-actions duplicate="copy()"></span>
+	  	<button class="close" ng-click="$parent.removeField(stemTextArea)">&times;</button>
+	</span>
   </div>
   <div>{{stemTextArea.label}}</div>
   <textarea id="{{stemTextArea.id}}-textarea" ng-model="stemTextArea.value"></textarea>
@@ -429,7 +439,10 @@
   <div style="margin-bottom: 3px;">
   	<span class="ui-icon ui-icon-arrowthick-2-n-s drag-handle"></span>
   	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemFormulas.name}}</span>
-  	<button class="close" ng-click="$parent.removeField(stemFormulas)">&times;</button>
+  	<span style="float: right;">
+  		<span id="{{stemFormulas.id}}-list-item-actions" stem-list-item-actions duplicate="copy()"></span>
+  		<button class="close" ng-click="$parent.removeField(stemFormulas)">&times;</button>
+  	</span>
   </div>
   <div>{{stemFormulas.label}}</div>
   <div style="height: 87%; border: solid 1px #AAA;" id="{{stemFormulas.id}}-aceEditor"></div>
