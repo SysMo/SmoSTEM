@@ -20,9 +20,13 @@ class Field(object):
 			
 				
 	def parseValue(self, jValue):
-		#try:
 		if (self.type == 'stem.ScalarField'):
 			value = float(jValue)
+		elif (self.type == 'stem.BoolField'):
+			value = jValue
+			print value
+		elif (self.type == 'stem.ChoiceField'):
+			value = jValue
 		elif (self.type == 'stem.TableField'):
 			value = np.recarray(shape = len(jValue), dtype = self.dtype)
 			for i in range(len(jValue)):
@@ -30,20 +34,18 @@ class Field(object):
 		elif (self.type == 'stem.TextField'):
 			value = jValue
 		else:
-			raise E.FieldError('Unknown field type {} for field {}'.format(self.type, self.name))
+			raise E.FieldError("Unknown field type {}".format(self.type), self.section['title'], self.name)
 		return value
-		#except Exception, e:
-		#	raise Exception()
-	
+
 	def serializeValue(self, value):
-		if (self.type == 'stem.ScalarField'):
+		if (self.type in ['stem.ScalarField', 'stem.BoolField', 'stem.ChoiceField']):
 			jValue = value
 		elif (self.type == 'stem.TableField'):
 			jValue = [list(row) for row in value]
 		elif (self.type == 'stem.TextField'):
 			jValue = value
 		else:
-			raise E.FieldError("Unknown field type {}".format(self['type']), self.section['title'], self.name)
+			raise E.FieldError("Unknown field type {}".format(self.type), self.section['title'], self.name)
 		return jValue
 	
 	def __str__(self):
@@ -94,7 +96,7 @@ class ModelCalculator(object):
 				scope.addFormulaBlock(section['title'], field['name'], field['value'])
 			elif (field['type'] == 'stem.TextField'):
 				pass
-			elif (field['type'] == 'stem.ScalarField' or field['type'] == 'stem.TableField'):
+			elif (field['type'] in ['stem.ScalarField', 'stem.BoolField', 'stem.ChoiceField', 'stem.TableField']):
 				if (fieldName in scope.fields):
 					duplicateField = scope.fields[fieldName]
 					raise E.FieldError('Duplicate field (duplicate found in section {})'.format(duplicateField.section['title']),

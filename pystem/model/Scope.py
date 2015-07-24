@@ -65,7 +65,8 @@ class RootScope(Scope):
 		super(RootScope, self).__init__()
 		self.imports = {}
 		self.importModule('pystem.modules.Math', '', ['sin', 'cos', 'tan', 'pi', 'PI'])
-		
+		self.setSymbolValue('True', True)
+		self.setSymbolValue('False', False)
 		
 	def getSymbolValue(self, name, searchImports = False):
 		if (name in self.symbols.keys()):

@@ -14,24 +14,6 @@ from ServerObjects import db, AdminPermission
 import mongoengine.fields as F
 from mongoengine.errors import DoesNotExist
 
-#from mongokit import Document
-# class LibraryModule(Document):
-# 	__collection__ = "LibraryModules"
-# 	use_dot_notation = True
-# 	structure = {
-# 		'name': unicode,
-# 		'description': unicode,
-# 		'importPath': unicode,
-# 		'importName': unicode,
-# 		'functions': [{
-# 			'name': unicode,
-# 			'description': unicode,
-# 			'arguments': [{
-# 				'name': unicode,
-# 				'description': unicode,
-# 			}]
-# 		}]
-# 	}
 class FunctionArgument(db.EmbeddedDocument):
 	name = F.StringField(required=True, default = '')
 	description = F.StringField()	

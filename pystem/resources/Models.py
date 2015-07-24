@@ -7,6 +7,7 @@ Created on Jun 29, 2015
 
 import datetime
 from flask import request
+from flask_login import current_user
 from bson.objectid import ObjectId
 from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
 from StemResource import StemResource
@@ -76,6 +77,8 @@ class ModelAPI(StemResource):
 		"""
 		Create a new model or run an action on model
 		"""
+		if not current_user.is_authenticated():
+			raise APIException('You have to be logged in to perform this action')
 		action = request.args.get('action', 'create')
 #		try:
 		if (action == 'create'):
@@ -103,12 +106,17 @@ class ModelAPI(StemResource):
 
 	
 	def delete(self, modelID):
+		""" Delete a model"""
+		if not current_user.is_authenticated():
+			raise APIException('You have to be logged in to perform this action')
 		model = Model.objects.get(id = modelID)
 		model.delete()
 		return makeJsonResponse(None, 'Model deleted')
 
 	def put(self, modelID):
-		# update a model definition
+		"""Updates a model definition"""
+		if not current_user.is_authenticated():
+			raise APIException('You have to be logged in to perform this action')
 		modelData = parseJsonResponse(request.data)
 		model = Model.objects.get(id = modelID)
 		model.modify(

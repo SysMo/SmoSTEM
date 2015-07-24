@@ -211,7 +211,7 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 				if ($scope.stemLayout.hasScope) {
 					$scope.dynamicStyle.border = '2px solid #606060';
 				} else {
-					$scope.dynamicStyle.border = 'none';					
+					$scope.dynamicStyle.border = '2px solid #BBBBBB';					
 				}
 			});
 			
