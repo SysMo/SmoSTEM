@@ -839,7 +839,11 @@ Stem.directive('stemFormulas', function(ClipboardService) {
 		},
 		templateUrl: "stem-formulas.html",
 		link: function(scope, element, attributes) {
-			element.css("width", "450px");
+			if (scope.$parent.stemLayout.width == 'narrow') {
+				element.css('width', '450px');
+			} else {
+				element.css('width', '98%');
+			}
 			// Watching for the node to be created
 			scope.$watch(function() { return element[0].childNodes[1].childNodes[5]; }, function(newValue, oldValue) {
 				$(element[0].childNodes[1]).height(scope.stemFormulas.height);
