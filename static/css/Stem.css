@@ -41,8 +41,8 @@ h1 {
 
 .GridLayout {
 	overflow: auto; 
-/* 	background: #ABBFCF;  */
-	background-image: url("/static/img/GreyStripes.png");
+/* 	background: #EEE;  */
+ 	background-image: url("/static/img/GreyStripes.png");
 	padding: 10px; 
 	margin: 10px; 
 	float: left;
@@ -50,7 +50,7 @@ h1 {
 }
 
 .FreeLayout {
-	width: 1060px; 
+	width: 1060px;
 	overflow: auto; 
 	background: #EEE; 
 	padding: 10px; 

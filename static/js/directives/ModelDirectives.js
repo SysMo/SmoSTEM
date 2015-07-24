@@ -39,7 +39,7 @@ Stem.directive('stemModal', function($timeout) {
 		},
 		controller: function($scope) {
 			$scope.setImage = function() {
-				if ($scope.stemModel.background !== undefined) {
+				if ($scope.stemModel.background !== undefined && $scope.stemModel.background.length > 0) {
 					$("body").css("background-image", "url('" + $scope.stemModel.background + "')");
 				}
 			}
@@ -110,7 +110,7 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 			}
 		},
 		link: function (scope, element, attributes) {
-			$(scope.containerSelector).css('min-height', '520');
+			$(scope.containerSelector).css('min-height', '520px');
 			// Initialize droppable board
 			$(scope.containerSelector).droppable({
 				accept: scope.layoutsSelector,
@@ -190,7 +190,7 @@ Stem.directive('stemGridLayout', function(stemClasses, $timeout) {
 				var el = $('#' + $scope.stemLayout.id);
 				if (el[0].scrollHeight > el[0].clientHeight) {
 					el.height(el[0].scrollHeight);
-					$scope.stemLayout.height = el.height();
+					$scope.stemLayout.height = (el.height() + 5) + 'px';
 				}
 			}
 			$scope.edit = function() {
@@ -381,7 +381,7 @@ Stem.directive('stemLayoutProperties', [function() {
 		},
 		controller: function($scope) {
 			$scope.setImage = function() {
-				if ($scope.stemLayout.image !== undefined) {
+				if ($scope.stemLayout.image !== undefined && $scope.stemLayout.image.length > 0) {
 					$("#" + $scope.stemLayout.id).css("background", "url('" + $scope.stemLayout.image + "')");
 				}
 			}

@@ -41,11 +41,14 @@ class User(db.Document, UserMixin):
 	} 
 	username = F.StringField(max_length = 20, required = True)
 	email = F.EmailField(required = True)
-	fullName = F.StringField(max_length = 50)
+	firstName = F.StringField(max_length = 50)
+	lastName = F.StringField(max_length = 50)
+	country = F.StringField(max_length = 50)
+	organization = F.StringField(default = "")
 	password = F.StringField(required = True)
 	active = F.BooleanField(default = True)
 	confirmed = F.BooleanField(default = False)
-	roles = F.ListField(F.ReferenceField(Role), default=[])
+	roles = F.ListField(F.ReferenceField(Role), default=[])	
 	
 	def get_id(self):
 		return str(self.id)
@@ -62,11 +65,11 @@ class UserAPI(StemResource):
 			activationCode = request.args['activationCode']
 			user = User.objects.get(username = username)
 			if (user.confirmed):
-				return makeJsonResponse({'msg': 'You have already confirmed your email!'})
+				return "You have already confirmed your email"
 			if (user is not None and str(user.id) == activationCode):
 				user.confirmed = True
 				user.save()
-				return makeJsonResponse({'msg': 'User {} confirmed'.format(user.username)})
+				return "Thank you, you can now login."
 			else:
 				raise APIException('Confirmation failed')
 				
@@ -79,22 +82,30 @@ class UserAPI(StemResource):
 		if (action is None):
 			raise APIException("Parameter 'action' must be defined for POST method to Users resource")
 		if (action == 'create'):
-			userData = parseJsonResponse(request.data)
-			userRole = Role.objects.get(name='user')
-			user = User(
-				username = userData['username'],
-				email = userData['email'],
-				password = unicode(bcrypt.generate_password_hash(userData[u'password'])),
-				roles = [userRole]
-			)
 			# If no users exist, init the user DB
 			if (User.objects.count() == 0):
 				self.initUsersDB();
-				user.roles.append(Role.objects.get(name='admin'))
-			if (User.objects(username = user.username).count() > 0):
+			userData = parseJsonResponse(request.data)
+			if (len(userData[u'password']) < 6):
+				raise APIException('Your password has to be at least 6 characters long')
+			if (User.objects(username = userData['username']).count() > 0):
 				raise APIException('User with this username already exists')
-			if (User.objects(email = user.email).count() > 0):
+			if (User.objects(email = userData['email']).count() > 0):
 				raise APIException('User with this email already exists')
+			roleUser = Role.objects.get(name='user')
+			user = User(
+				username = userData['username'],
+				email = userData['email'],
+				firstName = userData['firstName'],
+				lastName = userData['lastName'],
+				country = userData['country'],
+				organization = userData.get('organization', ''),
+				password = unicode(bcrypt.generate_password_hash(userData[u'password'])),
+				roles = [roleUser]
+			)
+			# If no users exist, init the user DB
+			if (User.objects.count() == 0):
+				user.roles.append(Role.objects.get(name='admin'))
 			try:
 				user.save()
 				# Send email to the user
@@ -124,7 +135,7 @@ http://stem.sysmoltd.com/stem/api/Users?action=confirm&username={}&activationCod
 				if (not user.active):
 					raise APIException('User has not been activated or has been deactivated. Please contact the administrator!')
 				if (not user.confirmed):
-					raise APIException('User has not been confirmed. Please confirm your user by clicking on the link found in yout email!')
+					raise APIException('Your registration has not been confirmed. Please visit the link found in yout email!')
 				passwordValid = bcrypt.check_password_hash(user.password, userData['password'])
 				if (passwordValid):
 					login_user(user)
