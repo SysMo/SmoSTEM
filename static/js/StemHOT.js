@@ -11,6 +11,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		
 		// Setting display data
 		this.displayData = [];
+		var colWidths = [];
 		$.each(table.data, function(rowIndex, row) {
 			var displayRow = [];
 			$.each(table.columns, function(colIndex, column) {
@@ -24,11 +25,21 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 			table.displayData.push(displayRow);
 		});
 		
+		// Getting column widths
+		var colWidths = [];
+		$.each(table.columns, function(colIndex, column) {
+			if (column.width) {
+				colWidths.push(column.width);
+			} else {
+				colWidths.push(150);
+			}
+		});
+		
 		// Initializing hot table
 		this.hot = new Handsontable(this.node, {
 			data: this.displayData,
 		    contextMenu: true,
-			colWidths: 150,
+			colWidths: colWidths,
 		    colHeaders: function (col) {
 		    	var txt = '<span style="margin-right: 5px;">' + table.columns[col].name + ' [' + table.columns[col].displayUnit + ']</span>';
 		    	return txt;
@@ -71,6 +82,10 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		var table = this;
 		this.hot.updateSettings({
 			beforeDrawBorders: function() {
+				table.overrideInlineCss();
+			},
+			afterColumnResize: function(colIndex) {
+				table.columns[colIndex].width = this.getColWidth(colIndex);
 				table.overrideInlineCss();
 			},
 			afterScrollHorizontally: function() {
