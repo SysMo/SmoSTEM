@@ -451,7 +451,7 @@ Stem.directive('stemScalar', function(ClipboardService) {
 			$scope.onUnitChange();
 		}, 
 		link: function(scope, element, attrs) {
-			element.css("width", "450px");
+			element.css("width", "500px");
 			if (scope.layout == 'free') {
 				element.css({'position': 'absolute', 'left': scope.stemScalar.left, 'top': scope.stemScalar.top});
 				if (scope.stemScalar.angle === undefined) {
@@ -591,7 +591,7 @@ Stem.directive('stemChoice', function(ClipboardService) {
 			};
 		}, 
 		link: function(scope, element, attrs) {
-			element.css("width", "450px");
+			element.css("width", "500px");
 		},
 		templateUrl: "stem-choice.html"
 	}
@@ -762,7 +762,7 @@ Stem.directive('stemTextArea', function(ClipboardService) {
 		templateUrl: "stem-text-area.html",
 		link: function(scope, element, attributes) {
 			if (scope.$parent.stemLayout.width == 'narrow') {
-				element.css('width', '450px');
+				element.css('width', '500px');
 			} else if (scope.$parent.stemLayout.width == 'wide' && scope.$parent.stemLayout.type == 'grid') {
 				element.css('width', '98%');
 			} else if (scope.$parent.stemLayout.type == 'free') {
@@ -840,7 +840,7 @@ Stem.directive('stemFormulas', function(ClipboardService) {
 		templateUrl: "stem-formulas.html",
 		link: function(scope, element, attributes) {
 			if (scope.$parent.stemLayout.width == 'narrow') {
-				element.css('width', '450px');
+				element.css('width', '500px');
 			} else {
 				element.css('width', '98%');
 			}
