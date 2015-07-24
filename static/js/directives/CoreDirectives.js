@@ -5,6 +5,7 @@ Stem.directive('stemListItemActions', function() {
 			add: "&add",
 			del: "&del",
 			edit: "&edit",
+			paste: "&paste",
 			duplicate: "&duplicate",
 			moveUp: "&moveUp",
 			moveDown: "&moveDown",
@@ -26,6 +27,9 @@ Stem.directive('stemListItemActions', function() {
 			}
 			if (!("edit" in attributes)) {
 				scope.edit = false;
+			}
+			if (!("paste" in attributes)) {
+				scope.paste = false;
 			}
 			if (!("duplicate" in attributes)) {
 				scope.duplicate = false;
