@@ -190,7 +190,7 @@ Stem.directive('stemGridLayout', function(stemClasses, ClipboardService, $timeou
 				var el = $('#' + $scope.stemLayout.id);
 				if (el[0].scrollHeight > el[0].clientHeight) {
 					el.height(el[0].scrollHeight);
-					$scope.stemLayout.height = (el.height() + 5) + 'px';
+					$scope.stemLayout.height = (el.height() + 20) + 'px';
 				}
 			}
 			$scope.edit = function() {
@@ -658,7 +658,7 @@ Stem.directive('stemTable', function(StemHOT, StemQuantities, StemUtil, Clipboar
 		templateUrl: "stem-table.html",
 		link: function(scope, element, attributes) {
 			if (scope.$parent.stemLayout.width == 'narrow') {
-				element.css('width', '450px');
+				element.css('width', '500px');
 			} else {
 				element.css('width', '98%');
 			}
