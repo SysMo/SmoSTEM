@@ -41,19 +41,22 @@ h1 {
 
 .GridLayout {
 	overflow: auto; 
-	background: #EEE; 
+/* 	background: #EEE;  */
+ 	background-image: url("/static/img/GreyStripes.png");
 	padding: 10px; 
 	margin: 10px; 
 	float: left;
+	border-radius: 10px;
 }
 
 .FreeLayout {
-	width: 1060px; 
+	width: 1060px;
 	overflow: auto; 
 	background: #EEE; 
 	padding: 10px; 
 	margin: 10px; 
 	float: left;	
+	border-radius: 10px;
 }
 
 .ui-draggable:hover {

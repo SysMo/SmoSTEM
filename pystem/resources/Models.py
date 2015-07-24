@@ -7,10 +7,11 @@ Created on Jun 29, 2015
 
 import datetime
 from flask import request
+from flask_login import current_user
 from bson.objectid import ObjectId
 from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
 from StemResource import StemResource
-from pystem.Exceptions import APIException
+from pystem.Exceptions import APIException, LoginRequiredError
 from ServerObjects import db
 import mongoengine.fields as F
 from pystem.model.ModelCalculator import ModelCalculator
@@ -39,8 +40,9 @@ class Layout(db.EmbeddedDocument):
 	id = F.StringField()
 	title = F.StringField()
 	width = F.StringField(choices = ('narrow', 'wide'))
-	height = F.StringField()
+	height = F.StringField(default = '600px')
 	type = F.StringField(choices = ('grid', 'free'))
+	image = F.StringField(default = None)
 	fields = F.ListField()
 	hasScope = F.BooleanField(default = False) 
 
@@ -76,6 +78,8 @@ class ModelAPI(StemResource):
 		"""
 		Create a new model or run an action on model
 		"""
+		if not current_user.is_authenticated():
+			raise LoginRequiredError()
 		action = request.args.get('action', 'create')
 #		try:
 		if (action == 'create'):
@@ -103,12 +107,17 @@ class ModelAPI(StemResource):
 
 	
 	def delete(self, modelID):
+		""" Delete a model"""
+		if not current_user.is_authenticated():
+			raise LoginRequiredError()
 		model = Model.objects.get(id = modelID)
 		model.delete()
 		return makeJsonResponse(None, 'Model deleted')
 
 	def put(self, modelID):
-		# update a model definition
+		"""Updates a model definition"""
+		if not current_user.is_authenticated():
+			raise LoginRequiredError()
 		modelData = parseJsonResponse(request.data)
 		model = Model.objects.get(id = modelID)
 		model.modify(

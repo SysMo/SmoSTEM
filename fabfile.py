@@ -19,7 +19,8 @@ env.deploy_folderList = [
 env.deploy_pythonFiles = [
 	'StemServer.py',
 	'wsgi.py',
-	'Settings.py'
+	'Settings.py',
+	'ServerObjects.py'
 ]
 
 def deploy():

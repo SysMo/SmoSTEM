@@ -39,7 +39,7 @@ Stem.directive('stemModal', function($timeout) {
 		},
 		controller: function($scope) {
 			$scope.setImage = function() {
-				if ($scope.stemModel.background !== undefined) {
+				if ($scope.stemModel.background !== undefined && $scope.stemModel.background.length > 0) {
 					$("body").css("background-image", "url('" + $scope.stemModel.background + "')");
 				}
 			}
@@ -110,7 +110,7 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 			}
 		},
 		link: function (scope, element, attributes) {
-			$(scope.containerSelector).css('min-height', '520');
+			$(scope.containerSelector).css('min-height', '520px');
 			// Initialize droppable board
 			$(scope.containerSelector).droppable({
 				accept: scope.layoutsSelector,
@@ -190,7 +190,7 @@ Stem.directive('stemGridLayout', function(stemClasses, ClipboardService, $timeou
 				var el = $('#' + $scope.stemLayout.id);
 				if (el[0].scrollHeight > el[0].clientHeight) {
 					el.height(el[0].scrollHeight);
-					$scope.stemLayout.height = el.height();
+					$scope.stemLayout.height = (el.height() + 20) + 'px';
 				}
 			}
 			$scope.edit = function() {
@@ -217,7 +217,7 @@ Stem.directive('stemGridLayout', function(stemClasses, ClipboardService, $timeou
 				if ($scope.stemLayout.hasScope) {
 					$scope.dynamicStyle.border = '2px solid #606060';
 				} else {
-					$scope.dynamicStyle.border = 'none';					
+					$scope.dynamicStyle.border = '2px solid #BBBBBB';					
 				}
 			});
 			
@@ -387,7 +387,7 @@ Stem.directive('stemLayoutProperties', [function() {
 		},
 		controller: function($scope) {
 			$scope.setImage = function() {
-				if ($scope.stemLayout.image !== undefined) {
+				if ($scope.stemLayout.image !== undefined && $scope.stemLayout.image.length > 0) {
 					$("#" + $scope.stemLayout.id).css("background", "url('" + $scope.stemLayout.image + "')");
 				}
 			}
@@ -451,7 +451,7 @@ Stem.directive('stemScalar', function(ClipboardService) {
 			$scope.onUnitChange();
 		}, 
 		link: function(scope, element, attrs) {
-			element.css("width", "450px");
+			element.css("width", "500px");
 			if (scope.layout == 'free') {
 				element.css({'position': 'absolute', 'left': scope.stemScalar.left, 'top': scope.stemScalar.top});
 				if (scope.stemScalar.angle === undefined) {
@@ -591,7 +591,7 @@ Stem.directive('stemChoice', function(ClipboardService) {
 			};
 		}, 
 		link: function(scope, element, attrs) {
-			element.css("width", "450px");
+			element.css("width", "500px");
 		},
 		templateUrl: "stem-choice.html"
 	}
@@ -658,7 +658,7 @@ Stem.directive('stemTable', function(StemHOT, StemQuantities, StemUtil, Clipboar
 		templateUrl: "stem-table.html",
 		link: function(scope, element, attributes) {
 			if (scope.$parent.stemLayout.width == 'narrow') {
-				element.css('width', '450px');
+				element.css('width', '500px');
 			} else {
 				element.css('width', '98%');
 			}
@@ -762,7 +762,7 @@ Stem.directive('stemTextArea', function(ClipboardService) {
 		templateUrl: "stem-text-area.html",
 		link: function(scope, element, attributes) {
 			if (scope.$parent.stemLayout.width == 'narrow') {
-				element.css('width', '450px');
+				element.css('width', '500px');
 			} else if (scope.$parent.stemLayout.width == 'wide' && scope.$parent.stemLayout.type == 'grid') {
 				element.css('width', '98%');
 			} else if (scope.$parent.stemLayout.type == 'free') {
@@ -840,7 +840,7 @@ Stem.directive('stemFormulas', function(ClipboardService) {
 		templateUrl: "stem-formulas.html",
 		link: function(scope, element, attributes) {
 			if (scope.$parent.stemLayout.width == 'narrow') {
-				element.css('width', '450px');
+				element.css('width', '500px');
 			} else {
 				element.css('width', '98%');
 			}

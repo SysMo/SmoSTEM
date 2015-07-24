@@ -214,11 +214,16 @@ Stem.controller('RegisterCtrl', function($scope, StemResources){
 				StemResources.Users.create({
 					    username: $('#RegisterForm #inputUserName').val(), 
 						email: $('#RegisterForm #inputEmail').val(), 
+						firstName: $('#RegisterForm #inputFirstName').val(),
+						lastName: $('#RegisterForm #inputLastName').val(),
+						country: $('#RegisterForm #inputCountry').val(),
+						organization: $('#RegisterForm #inputOrganization').val(),
 						password: $('#RegisterForm #inputPassword').val()
 					}, 
 					function () {
 						$('#registrationMessage').css("color", "green")
-							.append('<div>You have successfully registered</div>')
+							.append('<div>You have successfully registered.</div>')
+							.append('<div>You will receive an email with a link to confirm your registration.</div>')
 							.append('<div style="color: black; margin-top: 5px;">Go to <a href="/Models">Models</a></div>');
 					},
 					function(response) {

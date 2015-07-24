@@ -1,6 +1,8 @@
-//Provides the API for querying and manipulating models on the server
-Stem.factory('StemResources', function($resource, ngToast, $timeout) {
-	function ErrorHandler(response) {
+(function(window, angular) {
+var interceptors = {
+	//Provides the API for querying and manipulating models on the server
+	'response': null,
+	'responseError': function (response) {
 		var errorData = response.data;
 		var errorView;
 		var msg;
@@ -24,7 +26,22 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 		$('#ErrorModal .modal-body').html(errorView);
 		$('#ErrorModal').modal("show");
 	}
-	function OnSuccess(response) {
+};
+
+
+
+Stem.config(['$resourceProvider', function($resourceProvider) {
+	$resourceProvider.defaults.actions.get.interceptor = interceptors;
+	$resourceProvider.defaults.actions.query.interceptor = interceptors;
+	$resourceProvider.defaults.actions.save.interceptor = interceptors;
+	$resourceProvider.defaults.actions.update = {
+		method: 'PUT',
+		interceptor : interceptors
+	};
+	$resourceProvider.defaults.actions.delete.interceptor = interceptors;
+}]);
+Stem.factory('StemResources', function($resource, ngToast, $timeout) {
+	function ResponseHandler(response) {
 		var msg = response.headers('X-status-msg') || 'Success';
 		$timeout(function() {
 			ngToast.success({
@@ -33,7 +50,9 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 		        timeout: 1500
 		     });  
 	    });
+		return response.resource;
 	}
+	interceptors.response = ResponseHandler;
 	function serializeMathJSON(data) {
 		var result = JSON.stringify(data, function(key, value) {
 			// Uses code from angular.toJsonReplacer
@@ -113,106 +132,54 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 		Models:
 			$resource('/stem/api/Models/:_id', { _id: '@_id' }, 
 			{	
-				query : {
-					isArray: true,
-					interceptor : {responseError : ErrorHandler}
-				},
 				get: {
-					method: 'GET',
 					transformResponse: parseMathJSON,
-					interceptor : {responseError : ErrorHandler}
 				},
-				save: {
-					method: 'POST',
-					interceptor : {responseError : ErrorHandler}
+				update: { 
+					method: 'PUT',
+					interceptor: interceptors,
+					transformRequest: serializeMathJSON,
 				},
 				clone: {
 					method: 'POST',
 					params: {
 						action: "clone" 
 					},
+					interceptor: interceptors,
 					transformRequest: serializeMathJSON,
 					transformResponse: parseMathJSON,
-					interceptor : {responseError : ErrorHandler}
-				},
-				update: { 
-					method:'PUT',
-					transformRequest: serializeMathJSON,
-					interceptor : {	
-						response: OnSuccess,
-						responseError : ErrorHandler
-					}
 				},
 				compute: { 
 					method: 'POST', 
 					params: {
 						action: "compute" 
 					},
+					interceptor: interceptors,
 					transformRequest: serializeMathJSON,
 					transformResponse: parseMathJSON,
-					interceptor : {	
-						response: OnSuccess,
-						responseError : ErrorHandler
-					}
 				},
 			}),
 		Quantities:
 			$resource('/stem/api/Quantities/:_id', { _id: '@_id' },
 			{
-				query : {
-					isArray: true,
-					interceptor : {responseError : ErrorHandler}
-				},
-				get: {
-					interceptor : {responseError : ErrorHandler}
-				},
 				load: {
 					method: 'GET',
 					params: {
 						full: true
 					},
 					isArray: true,
-					interceptor : {responseError : ErrorHandler}
+					interceptor : interceptors
 				},
-				save: {
-					method: 'POST',
-					interceptor : {
-						response: OnSuccess,
-						responseError : ErrorHandler
-					}
-				},
-				update: { 
-					method:'PUT', 
-					interceptor : {
-						response: OnSuccess,
-						responseError : ErrorHandler
-					}
-				}, 
 			}),
 		LibraryModules:
 			$resource('/stem/api/LibraryModules/:_id', { _id: '@_id' }, {
-				query : {
-					isArray: true,
-					interceptor : {responseError : ErrorHandler}
-				},
-				get: {
-					interceptor : {responseError : ErrorHandler}
-				},
 				load: {
 					method: 'GET',
 					params: {
 						full: true
 					},
 					isArray: true,
-					interceptor : {responseError : ErrorHandler}
-				},
-				save: {
-					method: 'POST',
-					interceptor : {responseError : ErrorHandler}
-				},
-				update: { 
-					method: 'PUT', 
-					interceptor : {responseError : ErrorHandler}
+					interceptor : interceptors
 				},
 			}),
 		Users:
@@ -239,3 +206,5 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 	};
 	return StemResources;
 });
+
+})(window, window.angular);

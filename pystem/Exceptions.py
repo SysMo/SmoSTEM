@@ -32,7 +32,7 @@ class AssignmentError(FormulaError):
 
 class LoginRequiredError(APIException):
 	def __init__(self, msg =''):
-		fullMsg = "Login required in order to complete this action.\n{}".format(msg)
+		fullMsg = "You have to be logged in order to perform this action.\n{}".format(msg)
 		super(LoginRequiredError, self).__init__(fullMsg)
 		
 class UnauthorizedError(APIException):

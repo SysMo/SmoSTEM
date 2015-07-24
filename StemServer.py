@@ -51,6 +51,7 @@ def on_identity_loaded(sender, identity):
 
 @loginManager.user_loader
 def loadUser(userID):
+	# TODO if the user does not exist, do something
 	return User.objects.get(id = ObjectId(userID))
 
 # Pages
@@ -84,7 +85,6 @@ def quantityEditor(quantityID):
 	
 
 @app.route("/LibraryModules")
-@flask_login.login_required
 def listLibraryModules():
 	return render_template('LibraryModules.html')
 

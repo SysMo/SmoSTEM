@@ -30,6 +30,8 @@ class ExpressionEvaluator(object):
 	def evalExpr(self, expr):
 		if(isinstance(expr, ast.Num)):
 			result = expr.n
+		elif(isinstance(expr, ast.Str)):
+			result = expr.s
 		elif (isinstance(expr, (ast.Name, ast.Attribute, ast.Subscript))):
 			result = self.evalVariable(expr)
 		elif (isinstance(expr, ast.BinOp)):
@@ -37,7 +39,7 @@ class ExpressionEvaluator(object):
 		elif(isinstance(expr, ast.UnaryOp)):
 			result = self.evalUnaryOp(expr)
 		elif(isinstance(expr, ast.IfExp)):
-			if self.evalCompare(expr.test):
+			if self.evalExpr(expr.test):
 				result = self.evalExpr(expr.body)
 			else:
 				result = self.evalExpr(expr.orelse)
