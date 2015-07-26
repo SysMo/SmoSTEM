@@ -9,32 +9,20 @@ import datetime
 from flask import request
 from flask_login import current_user
 from bson.objectid import ObjectId
+import mongoengine.fields as F
 from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
 from StemResource import StemResource
 from pystem.Exceptions import APIException, LoginRequiredError
 from ServerObjects import db
-import mongoengine.fields as F
 from pystem.model.ModelCalculator import ModelCalculator
+from Users import User 
 
-# from mongokit import Document
-# class Model(Document):
-# 	__collection__ = "Models"
-# 	use_dot_notation = True
-# 	structure = {
-# 			'name': unicode,
-# 			'description': unicode,
-# 			'created': datetime.datetime,
-# 			'board': {
-# 				'layouts': []
-# 			},
-# 			'background': unicode
-# 	}
-# 	required_fields = ['name']
-# 	default_values = {
-# 		'name': u'Untitled',
-# 		'description': u'',
-# 		'created': datetime.datetime.utcnow,
-# 	}
+class ModelAccessPermission(db.EmbeddedDocument):
+	list = F.BooleanField(default = False)
+	view = F.BooleanField(default = False)
+	edit = F.BooleanField(default = False)
+	copy = F.BooleanField(default = False)
+	delete = F.BooleanField(default = False)
 
 class Layout(db.EmbeddedDocument):
 	id = F.StringField()
@@ -57,6 +45,9 @@ class Model(db.Document):
 	name = F.StringField(max_length = 200, required=True, default = 'Untitled')
 	description = F.StringField(default = '')
 	created = F.DateTimeField(default = datetime.datetime.utcnow)
+	owner = F.ReferenceField(User)
+	publicAccess = F.EmbeddedDocumentField(ModelAccessPermission, default = ModelAccessPermission)
+	userAccess = F.MapField(F.EmbeddedDocumentField(ModelAccessPermission))
 	board = F.EmbeddedDocumentField(Board, default = Board)
 	background = F.StringField()
 	
