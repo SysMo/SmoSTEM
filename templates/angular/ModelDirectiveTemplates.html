@@ -343,10 +343,14 @@
 					<div></div>
 					<div>Label</div>
 					<input type="text" ng-model="stemTable.label">
+					<div>Number of rows</div>
+					<input type="number" ng-model="numRows" ng-change="onSizeChange()">
+					<div>Number of columns</div>
+					<input type="number" ng-model="numCols" ng-change="onSizeChange()">
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" id="{{stemTable.id}}-OkButton" class="btn btn-default" data-dismiss="modal">OK</button>
+				<button type="button" id="{{stemTable.id}}-OkButton" class="btn btn-default" data-dismiss="modal" ng-click="applyResize()">OK</button>
 			</div>
 		</div>
 	</div>

@@ -634,20 +634,16 @@ Stem.directive('stemTable', function(StemHOT, StemQuantities, StemUtil, Clipboar
 		},
 		controller: function($scope) {
 			$scope.quantities = StemQuantities.quantities;
-			$scope.columns = angular.copy($scope.stemTable.columns);
 			// Ensure that the tabale columns have a quantity and unit
 			for (var i=0; i<$scope.stemTable.columns.length; i++) {
 				var quantityName = $scope.stemTable.columns[i].quantity;
 				if (!(quantityName && quantityName in $scope.quantities)) {
 					$scope.stemTable.columns[i].quantity = 'Dimensionless';
-					$scope.columns.quantity = 'Dimensionless';
 				}
 				var unitOptions = $scope.quantities[$scope.stemTable.columns[i].quantity].units;
-				$scope.columns[i].unitOptions = angular.copy(unitOptions);
 				var displayUnit = $scope.stemTable.columns[i].displayUnit;
 				if (!(displayUnit && unitOptions.filter(function(el) {return el[0] == displayUnit}).length > 0 )) {
 					$scope.stemTable.columns[i].displayUnit = $scope.quantities[$scope.stemTable.columns[i].quantity].SIUnit;
-					$scope.columns[i].displayUnit = $scope.quantities[$scope.stemTable.columns[i].quantity].SIUnit;
 				}
 			}
 			
@@ -675,6 +671,26 @@ Stem.directive('stemTable', function(StemHOT, StemQuantities, StemUtil, Clipboar
 Stem.directive('stemTableProperties', function() {
 	return {
 		restrict : 'A',
+		controller: function ($scope) {
+			$scope.numRows = $scope.stemTable.value.length;
+			$scope.numCols = $scope.stemTable.columns.length;
+			
+			$scope.resetResizeFlag = function () {
+				$scope.sizeChanged = false;
+			}
+			$scope.resetResizeFlag();
+			
+			$scope.onSizeChange = function() {
+				$scope.sizeChanged = true;
+			}
+			
+			$scope.applyResize = function() {
+				if ($scope.sizeChanged) {
+					$scope.HOTobj.resize($scope.numRows, $scope.numCols);
+					$scope.resetResizeFlag();
+				}
+			}
+		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
