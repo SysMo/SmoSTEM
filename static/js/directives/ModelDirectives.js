@@ -676,6 +676,26 @@ Stem.directive('stemTable', function(StemHOT, StemQuantities, StemUtil, Clipboar
 Stem.directive('stemTableProperties', function() {
 	return {
 		restrict : 'A',
+		controller: function ($scope) {
+			$scope.numRows = $scope.stemTable.value.length;
+			$scope.numCols = $scope.stemTable.columns.length;
+			
+			$scope.resetResizeFlag = function () {
+				$scope.sizeChanged = false;
+			}
+			$scope.resetResizeFlag();
+			
+			$scope.onSizeChange = function() {
+				$scope.sizeChanged = true;
+			}
+			
+			$scope.applyResize = function() {
+				if ($scope.sizeChanged) {
+					$scope.HOTobj.resize($scope.numRows, $scope.numCols);
+					$scope.resetResizeFlag();
+				}
+			}
+		},
 		link: function(scope, element, attributes) {
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
