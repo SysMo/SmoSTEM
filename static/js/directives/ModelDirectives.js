@@ -39,7 +39,10 @@ Stem.directive('stemModal', function($timeout) {
 		},
 		controller: function($scope) {
 			$scope.setImage = function() {
-				if ($scope.stemModel.background !== undefined && $scope.stemModel.background.length > 0) {
+//				if ($scope.stemModel.background !== undefined && $scope.stemModel.background.length > 0) {
+//					$("body").css("background-image", "url('" + $scope.stemModel.background + "')");
+//				}
+				if (angular.isString($scope.stemModel.background) && $scope.stemModel.background.length > 0) {
 					$("body").css("background-image", "url('" + $scope.stemModel.background + "')");
 				}
 			}
@@ -186,6 +189,7 @@ Stem.directive('stemGridLayout', function(stemClasses, ClipboardService, $timeou
 		templateUrl: "stem-grid-layout.html",
 		replace: true,
 		controller: function($scope) {
+			console.log($scope.stemLayout);
 			$scope.resize = function() {
 				var el = $('#' + $scope.stemLayout.id);
 				if (el[0].scrollHeight > el[0].clientHeight) {

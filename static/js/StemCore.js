@@ -208,6 +208,7 @@ Stem.factory('stemClasses', function stemClasses(StemUtil) {
 			this.id = StemUtil.guid();
 			this.title =  title || "New layout";
 			this.image =  image;
+			this.hasScope = false;
 		}
 	});
 	
