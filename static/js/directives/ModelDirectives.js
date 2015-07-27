@@ -189,7 +189,6 @@ Stem.directive('stemGridLayout', function(stemClasses, ClipboardService, $timeou
 		templateUrl: "stem-grid-layout.html",
 		replace: true,
 		controller: function($scope) {
-			console.log($scope.stemLayout);
 			$scope.resize = function() {
 				var el = $('#' + $scope.stemLayout.id);
 				if (el[0].scrollHeight > el[0].clientHeight) {
