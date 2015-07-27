@@ -18,11 +18,13 @@ var interceptors = {
 		} else if (errorData.type == 'Exception') {
 			errorView = 
 			'<p>' + errorData.excType + '</p>' +
-			'<p>' + msg + '</p>' +
-			'<pre>' + errorData.traceback + '</pre>';		
+			'<p>' + msg + '</p>';
 		} else {
 			errorView = msg;
 		}
+		if (angular.isString(errorData.traceback) && errorData.traceback.length > 0) {
+			errorView += '<pre>' + errorData.traceback + '</pre>';
+		}		
 		$('#ErrorModal .modal-body').html(errorView);
 		$('#ErrorModal').modal("show");
 	}

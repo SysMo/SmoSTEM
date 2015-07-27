@@ -10,6 +10,8 @@ from flask_principal import PermissionDenied
 
 class APIException(Exception):
 	status_code = 500
+	def __init__(self, e):
+		super(APIException, self).__init__(str(e))
 
 class FieldError(APIException):
 	def __init__(self, msg, sectionName, fieldName):

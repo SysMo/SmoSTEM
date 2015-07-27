@@ -167,31 +167,60 @@ class FormulaBlockProcessor(object):
 	def process(self):
 		ee = ExpressionEvaluator(self.scope)
 		for block in self.scope.formulaBlocks:
-			ee.setFormulaBlock(block)
-			for statement in block.ast.body:
-				if isinstance(statement, ast.Assign):
-					# Assign(expr* targets, expr value)
-					value = ee.eval(statement.value)
-					try:
-						for targetNode in statement.targets:
-							self.assignValue(value = value, targetNode = targetNode)
-					except Exception, e:
-						raise E.AssignmentError(e, statement, block.blockName, block.sectionName)
-				else:
-					raise E.SemanticError("The statement is not an assignment", statement, self.formulaBlock, self.formulaBlock)
+			self.currentFormulaBlock = block
+			ee.setFormulaBlock(self.currentFormulaBlock)
+			self.processStatementBlock(block.ast.body, self.scope, ee)
 	
-	def assignValue(self, value, targetNode, topLevel = True):
+	def processStatementBlock(self, block, scope, ee):
+		for statement in block:
+			if isinstance(statement, ast.Assign):
+				# Assign(expr* targets, expr value)
+				value = ee.eval(statement.value)
+				try:
+					for targetNode in statement.targets:
+						self.assignValue(value = value, targetNode = targetNode, scope = scope)
+				except Exception, e:
+					raise E.AssignmentError(e, statement, self.currentFormulaBlock)
+			elif isinstance(statement, ast.For):
+				# For(expr target, expr iter, stmt* body, stmt* orelse)
+				if len(statement.orelse) > 0:
+					raise E.SemanticError("Else clauses in loops not supported", statement, self.currentFormulaBlock)
+				target, it, body = statement.target, statement.iter, statement.body
+				localScope = scope.createChildScope()
+				localEE = ExpressionEvaluator(localScope)
+				localEE.setFormulaBlock(self.currentFormulaBlock)
+				itValue = ee.eval(it)
+				for val in itValue:
+					localScope.setSymbolValue(target.id, val)
+					self.processStatementBlock(body, localScope, localEE)
+				localScope.release()
+			elif isinstance(statement, ast.While):
+				# While(expr test, stmt* body, stmt* orelse)
+				if len(statement.orelse) > 0:
+					raise E.SemanticError("Else clauses in loops not supported", statement, block)
+				test, body = statement.test, statement.body
+				localScope = scope.createChildScope()
+				localEE = ExpressionEvaluator(localScope)
+				localEE.setFormulaBlock(self.currentFormulaBlock)
+				while localEE.eval(test):
+					self.processStatementBlock(body, localScope, localEE)
+				localScope.release()
+				
+			else:
+				raise E.SemanticError("The statement is not an assignment or loop", statement, self.currentFormulaBlock)
+	
+	def assignValue(self, value, targetNode, scope, topLevel = True):
 		if (isinstance(targetNode, ast.Name)):
 			varName = targetNode.id
 			if (topLevel):
-				self.scope.setSymbolValue(varName, value)
+				scope.setSymbolValue(varName, value)
 			else:
-				return self.scope.getSymbolValue(varName, searchImports = False)
+				return scope.getSymbolValue(varName, searchImports = False)
 		elif (isinstance(targetNode, ast.Attribute)):
 			attrName = targetNode.attr
 			if (attrName[0] == '_'):
 				raise E.SemanticError('Attribute names cannot start with _ (underscore)', targetNode, self.formulaBlock)
-			targetContainer = self.assignValue(value, targetNode.value, False)
+			targetContainer = self.assignValue(value, targetNode.value, scope, False)
 			if (topLevel):
 				setattr(targetContainer, attrName, value)
 			else:
@@ -202,7 +231,7 @@ class FormulaBlockProcessor(object):
 				index = slice.value.n
 			else:
 				raise E.SemanticError("Only integer indices are supported", targetNode)
-			targetContainer = self.assignValue(value, targetNode.value, False)
+			targetContainer = self.assignValue(value, targetNode.value, scope, False)
 			if (topLevel):
 				targetContainer[index] = value
 			else:

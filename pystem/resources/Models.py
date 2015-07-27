@@ -47,7 +47,6 @@ class Model(db.Document):
 	created = F.DateTimeField(default = datetime.datetime.utcnow)
 	owner = F.ReferenceField(User)
 	publicAccess = F.EmbeddedDocumentField(ModelAccessPermission, default = ModelAccessPermission)
-	userAccess = F.MapField(F.EmbeddedDocumentField(ModelAccessPermission))
 	board = F.EmbeddedDocumentField(Board, default = Board)
 	background = F.StringField()
 	
