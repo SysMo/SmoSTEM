@@ -11,7 +11,6 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		
 		// Setting display data
 		this.displayData = [];
-		var colWidths = [];
 		$.each(table.data, function(rowIndex, row) {
 			var displayRow = [];
 			$.each(table.columns, function(colIndex, column) {
@@ -26,12 +25,12 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		});
 		
 		// Getting column widths
-		var colWidths = [];
+		this.colWidths = [];
 		$.each(table.columns, function(colIndex, column) {
 			if (column.width) {
-				colWidths.push(column.width);
+				table.colWidths.push(column.width);
 			} else {
-				colWidths.push(150);
+				table.colWidths.push(150);
 			}
 		});
 		
@@ -39,7 +38,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		this.hot = new Handsontable(this.node, {
 			data: this.displayData,
 		    contextMenu: true,
-			colWidths: colWidths,
+			colWidths: this.colWidths,
 		    colHeaders: function (col) {
 		    	var txt = '<span style="margin-right: 5px;">' + table.columns[col].name + ' [' + table.columns[col].displayUnit + ']</span>';
 		    	return txt;
@@ -112,6 +111,8 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		    },
 			afterCreateCol: function(index, amount) {
 				table.columns.splice(index, 0, {name: "c" + String(index+1), quantity: "Dimensionless", displayUnit: "-", unitOptions: ["-"]});
+				table.colWidths.splice(index, 0, 150);
+				
 				for (var i=0; i<table.data.length; i++) {
 					table.data[i].splice(index, 0, 0);
 					table.displayData[i][index] = 0;
@@ -280,5 +281,51 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		this.hot.render();
 		this.overrideInlineCss();
 	};
+	
+	StemHOT.Table.prototype.resize = function (numRows, numCols) {
+		var table = this;
+		var columnsLen = this.columns.length;
+		var rowsLen = this.data.length;
+		
+		if (numCols < columnsLen) {
+			this.columns.splice(numCols, columnsLen - numCols);
+			this.colWidths.splice(numCols, columnsLen - numCols);
+			
+			for (var i=0; i<table.data.length; i++) {
+				table.data[i].splice(numCols, columnsLen - numCols);
+				table.displayData[i].splice(numCols, columnsLen - numCols);
+			}
+		} else if (numCols > columnsLen) {
+			for (var j=1; j <= numCols - columnsLen; j++) {
+				table.columns.push({name: "c" + String(columnsLen + j), quantity: "Dimensionless", displayUnit: "-", unitOptions: ["-"]});
+				this.colWidths.push(150);
+				
+				for (var i=0; i<table.data.length; i++) {
+					table.data[i].push(0);
+					table.displayData[i].push(0);
+				}
+
+			}	
+		}
+		
+		if (numRows < rowsLen) {
+			this.data.splice(numRows, rowsLen - numRows);
+			this.displayData.splice(numRows, rowsLen - numRows);
+		} else if (numRows > rowsLen) {
+			var newRow = [];
+			for (var i=0; i<table.columns.length; i++) {
+				newRow.push(0);
+			}
+			
+			for (var i=1; i<= numRows - rowsLen; i++) {				
+				this.data.push(angular.copy(newRow));
+				this.displayData.push(angular.copy(newRow));
+			}
+		}
+		
+		this.hot.render();
+		this.overrideInlineCss();
+	}
+	
 	return StemHOT;
 });
