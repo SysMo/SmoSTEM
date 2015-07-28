@@ -6,5 +6,5 @@ Created on Jul 23, 2015
 '''
 
 
-from numpy import *
-PI = pi
+from __builtin__ import zip
+#PI = pi

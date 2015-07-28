@@ -210,7 +210,8 @@ class FormulaBlockProcessor(object):
 				localEE.setFormulaBlock(self.currentFormulaBlock)
 				itValue = ee.eval(it)
 				for val in itValue:
-					localScope.setSymbolValue(target.id, val)
+					self.assignValue(val, target, localScope)
+					#localScope.setSymbolValue(target.id, val)
 					self.processStatementBlock(body, localScope, localEE)
 				localScope.release()
 			elif isinstance(statement, ast.While):
@@ -260,6 +261,9 @@ class FormulaBlockProcessor(object):
 				targetContainer[index] = value
 			else:
 				return targetContainer[index]			
+		elif (isinstance(targetNode, ast.Tuple)):
+			for var, val in zip(targetNode.elts, value):
+				self.assignValue(val, var, scope)
 		else:
 			raise E.SemanticError("Assignment target must be variable, variable attribute or variable index", targetNode, self.formulaBlock) 
 	

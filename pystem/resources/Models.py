@@ -16,6 +16,7 @@ from pystem.Exceptions import APIException, LoginRequiredError
 from ServerObjects import db
 from pystem.model.ModelCalculator import ModelCalculator
 from Users import User 
+from bson.code import Code
 
 class ModelAccessPermission(db.EmbeddedDocument):
 	list = F.BooleanField(default = False)
@@ -45,7 +46,7 @@ class Model(db.Document):
 	name = F.StringField(max_length = 200, required=True, default = 'Untitled')
 	description = F.StringField(default = '')
 	created = F.DateTimeField(default = datetime.datetime.utcnow)
-	owner = F.ReferenceField(User)
+	owner = F.ReferenceField(User, required = True)
 	publicAccess = F.EmbeddedDocumentField(ModelAccessPermission, default = ModelAccessPermission)
 	board = F.EmbeddedDocumentField(Board, default = Board)
 	background = F.StringField()
@@ -56,8 +57,14 @@ class ModelAPI(StemResource):
 		Returns a model or a list of models
 		"""
 		if (modelID is None):
-			modelCursor = Model._get_collection().find({}, {'name': True, 'description': True, 'created': True}, sort = [('name', 1)])
-			return makeJsonResponse(list(modelCursor))
+			responseFields = {'name': True, 'description': True, 'created': True, 'owner': True}
+			if current_user.is_authenticated():
+				user = current_user._get_current_object()
+				searchFilter = {'owner': user} 
+			modelCursor = list(Model._get_collection().find({}, responseFields, sort = [('name', 1)]))
+			for model in modelCursor:
+				model['owner'] = User.objects.get(id = model['owner'])['username']
+			return makeJsonResponse(modelCursor)
 		else:
 			model = Model._get_collection().find_one({"_id": modelID})
 			if (model == None):
@@ -70,11 +77,12 @@ class ModelAPI(StemResource):
 		"""
 		if not current_user.is_authenticated():
 			raise LoginRequiredError()
+		user = current_user._get_current_object()
 		action = request.args.get('action', 'create')
 #		try:
 		if (action == 'create'):
 			# Create new model
-			model = Model()
+			model = Model(owner = user)
 			print model
 			print model.to_json()
 			model.save()
@@ -85,6 +93,7 @@ class ModelAPI(StemResource):
 			model.id = None
 			model.name = 'Copy of ' + model.name
 			model.created = datetime.datetime.utcnow()
+			model.owner = user
 			model.save()
 			return makeJsonResponse({'_id': model.id})
 		elif (action == 'compute'):

@@ -8,7 +8,7 @@
     <h2><a ng-click="Models.edit(model)">{{model.name}}</a></h2>
     <span stem-list-item-actions del="Models.del(model)" edit="Models.edit(model)" duplicate="Models.duplicate(model)"></span>
     <div>{{model.description}}</div>
-    <div>Created: {{model.created}}</div>
+    <div>Author: {{model.owner}}; Created: {{model.created}}</div>
     <br>
   </div>
 </div>
