@@ -2,7 +2,7 @@
 
 <!-- Stem Modal -->
 <script type="text/ng-template" id="stem-modal.html">
-<div class="modal fade" id="{{stemModel._id}}-modal">
+<div class="modal fade" id="{{stemModel._id}}-modal" data-backdrop="static" data-keyboard="false">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -16,6 +16,7 @@
 				<form>
 					<div>name</div>
 					<input type="text" ng-model="stemModel.name" required>
+					<div></div>
 					<div>description</div>
 					<input type="text" ng-model="stemModel.description">
 					<div>background image</div>
@@ -23,7 +24,7 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="setImage()">OK</button>
+				<button id="{{stemModel._id}}-OkButton" type="button" class="btn btn-default" data-dismiss="modal" ng-click="setImage()">OK</button>
 			</div>
 		</div>
 	</div>
@@ -171,7 +172,7 @@
 
 <!-- Stem Scalar Properties -->
 <script type="text/ng-template" id="stem-scalar-properties.html">
-<div class="modal fade" id="{{stemScalar.id}}-modal">
+<div class="modal fade" id="{{stemScalar.id}}-modal" data-backdrop="static" data-keyboard="false">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -193,7 +194,7 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" id="{{stemField.id}}-OkButton" class="btn btn-default" data-dismiss="modal" ng-click="applyChanges()">OK</button>
+				<button type="button" id="{{stemScalar.id}}-OkButton" class="btn btn-default" data-dismiss="modal" ng-click="applyChanges()">OK</button>
 			</div>
 		</div>
 	</div>
@@ -222,7 +223,7 @@
 
 <!-- Stem Bool Properties -->
 <script type="text/ng-template" id="stem-bool-properties.html">
-<div class="modal fade" id="{{stemBool.id}}-modal">
+<div class="modal fade" id="{{stemBool.id}}-modal" data-backdrop="static" data-keyboard="false">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -271,7 +272,7 @@
 
 <!-- Stem Choice Properties -->
 <script type="text/ng-template" id="stem-choice-properties.html">
-<div class="modal fade" id="{{stemChoice.id}}-modal">
+<div class="modal fade" id="{{stemChoice.id}}-modal" data-backdrop="static" data-keyboard="false">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -326,7 +327,7 @@
 
 <!-- Stem Table Properties -->
 <script type="text/ng-template" id="stem-table-properties.html">
-<div class="modal fade" id="{{stemTable.id}}-modal">
+<div class="modal fade" id="{{stemTable.id}}-modal" data-backdrop="static" data-keyboard="false">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -410,7 +411,7 @@
 
 <!-- Stem Text Area Properties -->
 <script type="text/ng-template" id="stem-text-area-properties.html">
-<div class="modal fade" id="{{stemTextArea.id}}-modal">
+<div class="modal fade" id="{{stemTextArea.id}}-modal" data-backdrop="static" data-keyboard="false">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -456,7 +457,7 @@
 
 <!-- Stem Formulas Properties -->
 <script type="text/ng-template" id="stem-formulas-properties.html">
-<div class="modal fade" id="{{stemFormulas.id}}-modal">
+<div class="modal fade" id="{{stemFormulas.id}}-modal" data-backdrop="static" data-keyboard="false">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
