@@ -2,6 +2,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 	var StemHOT = {};
 	
 	StemHOT.Table = function(idSelector, angularTableObj, angularScope) {
+		// Selector and corresponding node where the table is to be built
 		this.idSelector = idSelector;
 		this.node = $(idSelector)[0];
 		this.columns = angularTableObj.columns;
@@ -9,7 +10,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		this.scope = angularScope;
 		var table = this;
 		
-		// Setting display data
+		// Setting display data, i.e.the data used in the handsontable constructor
 		this.displayData = [];
 		$.each(table.data, function(rowIndex, row) {
 			var displayRow = [];
@@ -39,12 +40,14 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 			data: this.displayData,
 		    contextMenu: true,
 			colWidths: this.colWidths,
+			// Custom function to determine column headers
 		    colHeaders: function (col) {
 		    	var txt = '<span style="margin-right: 5px;">' + table.columns[col].name + ' [' + table.columns[col].displayUnit + ']</span>';
 		    	return txt;
 		    },
 		    manualColumnResize: true,
 		    manualRowResize: true,
+		    // Custom function to determine cell properties
 		    cells: function (rowIndex, colIndex, prop) {
                 var cellProperties = {};                
                 cellProperties = {
@@ -76,7 +79,8 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		});
 	};
 	
-	// Setting custom events
+	// Setting custom events (some of the event handlers are simply used to override handsontable inline css
+	// which appear on table manipulation)
 	StemHOT.Table.prototype.setEvents = function() {
 		var table = this;
 		this.hot.updateSettings({
@@ -94,8 +98,8 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 				table.overrideInlineCss();
 			},
  			afterChange: function(changes, source) {
- 				// Updating values on data change
 		    	if (source != 'loadData') {
+		    		// Updating the values in SI units after certain change events, e.g. cell input or copying of data 
 		    		$.each(changes, function(index, change) {
 		    			var rowIndex = change[0];
 		    			var colIndex = change[1];
@@ -137,7 +141,8 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 			afterRemoveRow: function(index, amount) {
 				table.data.splice(index, amount);
 			},
-			// Building customized column headers
+			// Adding the dropdown menu to the column headers (adapted from the code at http://docs.handsontable.com/0.16.0/demo-custom-renderers.html#page-header)
+			// The respective styles for the dropdown menus (also obtained from the example) are in StemHOT.css
 			afterGetColHeader: function(col, TH) {
 		        var instance = this,
 		          menu,
@@ -146,7 +151,8 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		        	button = table.buildUnitMenuButton();
 		        	menu = table.buildUnitMenu(StemQuantities.quantities[table.columns[col].quantity].units, table.columns[col].displayUnit);
 		        	table.addUnitButtonMenuEvent(button, menu);	
-			        Handsontable.Dom.addEvent(menu, 'click', function (event) {
+			       
+		        	Handsontable.Dom.addEvent(menu, 'click', function (event) {
 			          if (event.target.nodeName == 'LI') {
 			        	$(menu).find('li').each(function(index, el) {
 			        		if ($(el).hasClass('active')) {
@@ -154,10 +160,12 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 			        		}
 			        	});
 			        	$(event.target).addClass('active');
+			        	// Updating the displayUnit
 			        	table.columns[col].displayUnit = event.target.data.unit;
 			        	table.scope.stemTable.columns[col].displayUnit = event.target.data.unit;
 			        	table.onUnitChange(col);
 			          }
+			          // Updating also the column header on displayUnit change
 			          $(TH).find('.colHeader span').html(table.columns[col].name + ' [' + table.columns[col].displayUnit + ']');
 			        });
 			        if (TH.firstChild.lastChild.nodeName === 'BUTTON') {
@@ -239,7 +247,9 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		this.hot.updateSettings({
 			contextMenu: {
 				callback: function (key, options) {
+					// custom option added to the default ones
 				    if (key === 'edit_col') {
+				    	// if no more than one column was selected
 				    	if (options.start.col !== options.end.col) {
 				    		return;
 				    	}
@@ -271,6 +281,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		this.overrideInlineCss();
 	};
 	
+	// Method executed on unit change
 	StemHOT.Table.prototype.onUnitChange = function(colIndex) {
 		var table = this;
 		$.each(table.data, function(rowIndex, row) {

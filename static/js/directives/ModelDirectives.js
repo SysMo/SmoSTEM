@@ -49,6 +49,7 @@ Stem.directive('stemModal', function($timeout) {
 			scope.$watch(function() {return scope.stemModel.$resolved;}, function(newValue, oldValue){
 				scope.setImage();
 			});
+			// Hides the modal dialog on pressing Enter (key code 13)
 			element.find('input').on('keyup', function(event) {
 				if (event.which == 13) {
 					$('#' + scope.stemModel._id +'-modal').modal("hide");
@@ -144,6 +145,7 @@ Stem.directive('stemBoard', function(stemClasses, $timeout) {
 				$(element)
 				.draggable({
 					appendTo: "body",
+					// prevent automatic scroll of the content of the container down on item drop
 					scroll: false,
 					cursor: "pointer",
 					opacity: 0.5,
@@ -279,10 +281,13 @@ Stem.directive('stemGridLayout', function(stemClasses, ClipboardService, $timeou
 				}
 			});
 			element.find('.sortables_div').sortable({
+				// restricts movement of sortables within a container
 				containment: "#" + scope.stemLayout.id + ' > .sortables_div',
+				// restricts movement of sortables along the y axis
 				axis: "y",
 				handle: ".drag-handle",
 				start: function(event, ui) {
+					// getting index of sortable item being dragged
 					ui.item.startIndex = ui.item.index();
 				},
 				stop : function(event, ui) {
@@ -362,6 +367,7 @@ Stem.directive('stemFreeLayout', function(stemClasses, $timeout) {
 						var id = ui.draggable.children().first().attr('id');
 						field = scope.findField(id);
 					}
+					// remembering drop position (left, top coordinates) of an item 
 					field.left = ui.offset.left - $(this).offset().left;
 					field.top = ui.offset.top - $(this).offset().top;
 					$timeout(function(){
@@ -454,6 +460,7 @@ Stem.directive('stemScalar', function(ClipboardService) {
 			element.css("width", "500px");
 			if (scope.layout == 'free') {
 				element.css({'position': 'absolute', 'left': scope.stemScalar.left, 'top': scope.stemScalar.top});
+				// setting default rotation angle
 				if (scope.stemScalar.angle === undefined) {
 					scope.stemScalar.angle = 0;
 				}
@@ -481,6 +488,7 @@ Stem.directive('stemScalarProperties', function() {
 				$scope.quantityPristine = true;
 			}
 			$scope.reset();	
+			// Flag for quantity change
 			$scope.onQuantityChange = function() {
 				$scope.quantityPristine = false;
 			};
@@ -659,6 +667,7 @@ Stem.directive('stemTable', function(StemHOT, StemQuantities, StemUtil, Clipboar
 				element.css('width', '98%');
 			}
 	        scope.$watch(function () { return element[0].childNodes[1].childNodes[5]; }, function(newValue, oldValue) {
+	        	// watching for the div in which the table will be built to be created
 	        	scope.HOTobj = new StemHOT.Table("#" + scope.stemTable.id + "-table", scope.stemTable, scope);
 			});
 		}
@@ -677,6 +686,7 @@ Stem.directive('stemTableProperties', function() {
 			}
 			$scope.resetResizeFlag();
 			
+			// Setting resize flag
 			$scope.onSizeChange = function() {
 				$scope.sizeChanged = true;
 			}
@@ -720,9 +730,11 @@ Stem.directive('stemTableColumnProperties', function($timeout, StemQuantities, S
 				$scope.quantityPristine = true;
 			}
 			$scope.reset();
+			// Name or format change flag
 			$scope.onPropChange = function() {
 				$scope.propertiesPristine = false;
 			};
+			// Quantity change flag
 			$scope.onQuantityChange = function() {
 				$scope.quantityPristine = false;
 				$scope.activeColumn.displayUnit = $scope.quantities[$scope.activeColumn.quantity].SIUnit;
