@@ -36,7 +36,10 @@ class Scope(object):
 		self.symbols = symbols or {}
 		self.fields = {}
 		self.formulaBlocks = []
-		
+	
+	def release(self):
+		self.parent.children.remove(self)
+	
 	def createChildScope(self, symbols = None):
 		child = Scope(self, symbols)
 		self.children.append(child)
@@ -51,6 +54,7 @@ class Scope(object):
 			pass
 		
 	def setSymbolValue(self, name, value):
+		# TODO: perhaps first we have to check if the symbol exists in outer scopes
 		self.symbols[name] = value
 		
 	def addSymbols(self, dct):

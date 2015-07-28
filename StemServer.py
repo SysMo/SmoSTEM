@@ -1,4 +1,4 @@
-import sys
+import sys, traceback
 
 from flask import render_template
 from flask.json import jsonify
@@ -104,7 +104,8 @@ def handleAPIException(error):
 	errorInfo = {
 		'msg': str(error),
 		'type': 'APIException',
-		'excType': sys.exc_info()[0].__name__
+		'excType': sys.exc_info()[0].__name__,
+		'traceback': traceback.format_exc() if app.debug else None
 	}
 	response = jsonify(errorInfo)
 	response.status_code = error.status_code
