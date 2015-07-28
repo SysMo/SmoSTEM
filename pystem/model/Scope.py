@@ -3,6 +3,8 @@ import importlib
 import types
 import numpy as np
 import ast
+from pystem.Exceptions import SemanticError, APIException
+from pystem.resources.LibraryModules import LibraryModule
 
 class ScopeEncoder(json.JSONEncoder):
 	def default(self, obj):
@@ -25,9 +27,10 @@ class FormulaBlock(object):
 	def __init__(self, sectionName, blockName, formulas):
 		self.sectionName = sectionName
 		self.blockName = blockName
-		self.ast = ast.parse(formulas, filename = sectionName + '.' + blockName)
-		self.sectionName = sectionName
-		self.blockName = blockName
+		#try:
+		self.ast = ast.parse(formulas)		
+		#except Exception, e:
+		#	raise APIException(u"Failed to parse the formulas\nsection: {}, formula block: {}\n".format(sectionName, blockName) + unicode(e))
 
 class Scope(object):
 	def __init__(self, parent = None, symbols = None):
@@ -68,9 +71,15 @@ class RootScope(Scope):
 	def __init__(self):
 		super(RootScope, self).__init__()
 		self.imports = {}
-		self.importModule('pystem.modules.Math', '', ['sin', 'cos', 'tan', 'pi', 'PI'])
 		self.setSymbolValue('True', True)
 		self.setSymbolValue('False', False)
+		#self.importModule('pystem.modules.Math', '', ['sin', 'cos', 'tan', 'pi', 'PI'])
+		self.importLibraryModules()
+		
+	def importLibraryModules(self):
+		modules = LibraryModule.objects()
+		for module in modules:
+			self.importModule(module.importPath, module.importName, [function.name for function in module.functions])
 		
 	def getSymbolValue(self, name, searchImports = False):
 		if (name in self.symbols.keys()):

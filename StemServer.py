@@ -28,7 +28,6 @@ class ObjectIDConverter(BaseConverter):
 
 app.url_map.converters['ObjectID'] = ObjectIDConverter
 
-
 from flask_login import current_user
 from flask_principal import identity_loaded, RoleNeed, UserNeed,\
 	PermissionDenied
@@ -52,11 +51,16 @@ def on_identity_loaded(sender, identity):
 @loginManager.user_loader
 def loadUser(userID):
 	# TODO if the user does not exist, do something
-	return User.objects.get(id = ObjectId(userID))
+	users = User.objects(id = ObjectId(userID))
+	if (len(users) == 0):
+		return None
+	else:
+		return users.first()
 
 # Pages
 @app.route("/")
 def index():
+	import threading
 	return render_template('StemBase.html')
 
 @app.route("/checkLogin")
@@ -102,7 +106,7 @@ api.add_resource(UserAPI, '/stem/api/Users')
 @app.errorhandler(APIException)
 def handleAPIException(error):
 	errorInfo = {
-		'msg': str(error),
+		'msg': unicode(error),
 		'type': 'APIException',
 		'excType': sys.exc_info()[0].__name__,
 		'traceback': traceback.format_exc() if app.debug else None
@@ -114,7 +118,7 @@ def handleAPIException(error):
 @app.errorhandler(NonAPIException)
 def handleNonAPIException(error):
 	errorInfo = {
-		'msg': str(error),
+		'msg': unicode(error),
 		'type': 'Exception',
 		'excType': error.excType,
 		'traceback': error.traceback
