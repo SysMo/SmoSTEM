@@ -3,6 +3,7 @@ var Stem = angular.module('Stem',['ngResource', 'ui.bootstrap', 'ngAnimate',
 
 Stem.config(['ngToastProvider', function(ngToast) {
     ngToast.configure({
+    // Positioning of the toast; we use the default positioning (right, top)
       //verticalPosition: 'bottom',
       //horizontalPosition: 'center'
     });
@@ -33,6 +34,7 @@ Stem.factory('StemUtil', function StemUtil () {
 					sig - Math.floor(Math.log(Math.abs(n)) / Math.LN10) - 1);
 			return String(Math.round(n * mult) / mult);
 		},
+		// Method to format a value using numeral.js
 		numeralFormat: function(format, value) {
 			return format ? numeral(value).format(format) : numeral(value).value();
 		}

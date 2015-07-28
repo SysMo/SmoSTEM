@@ -39,9 +39,6 @@ Stem.directive('stemModal', function($timeout) {
 		},
 		controller: function($scope) {
 			$scope.setImage = function() {
-//				if ($scope.stemModel.background !== undefined && $scope.stemModel.background.length > 0) {
-//					$("body").css("background-image", "url('" + $scope.stemModel.background + "')");
-//				}
 				if (angular.isString($scope.stemModel.background) && $scope.stemModel.background.length > 0) {
 					$("body").css("background-image", "url('" + $scope.stemModel.background + "')");
 				}
