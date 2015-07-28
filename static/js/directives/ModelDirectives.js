@@ -48,15 +48,39 @@ Stem.directive('stemModal', function($timeout) {
 		link: function(scope, element, attrs) {
 			scope.$watch(function() {return scope.stemModel.$resolved;}, function(newValue, oldValue){
 				scope.setImage();
+				scope.currentName = scope.stemModel.name;
 			});
-			// Hides the modal dialog on pressing Enter (key code 13)
-			element.find('input').on('keyup', function(event) {
-				if (event.which == 13) {
-					$('#' + scope.stemModel._id +'-modal').modal("hide");
+			
+			// Attching input event handler to the model name input field:
+			// if the input is invalid, the OK button is disabled
+			element.find('input').first().on('input', function(event) {
+				if (!this.checkValidity()) {
+					$('#' + scope.stemModel._id + '-OkButton').prop('disabled', true);
+					$(this).next().css('color', 'red').html('Name is required.');
+				} else {
+					$('#' + scope.stemModel._id + '-OkButton').prop('disabled', false);
+					$(this).next().html('');
+					scope.currentName = scope.stemModel.name;
 				}
 			});
+			
+			// If model name is empty when clicking on the x button, it reverts to the previous name
+			element.find('button.close').on('click', function(event) {
+				if (scope.stemModel.name == undefined) {
+					scope.stemModel.name = scope.currentName;
+				}
+				$timeout(function(){
+					scope.$apply();
+				});
+			});
+			
+			// Event triggered when the modal is shown
 			element.on('shown.bs.modal', function () {
-				$(this).find('input').first().focus().select();
+				element.find('input').first().focus().select();
+			});
+			element.on('show.bs.modal', function () {
+				$('#' + scope.stemModel._id + '-OkButton').prop('disabled', false);
+				element.find('input').first().next().html('');
 			});
 		},
 		templateUrl: "stem-modal.html",
@@ -401,6 +425,7 @@ Stem.directive('stemLayoutProperties', [function() {
 		link: function(scope, element, attrs) {
 			scope.$watch(function() {return element[0];}, function(newValue, oldValue){
 				scope.setImage();
+				scope.currentName = scope.stemLayout.name;
 			});
 			element.find('input').on('keyup', function(event) {
 				if (event.which == 13) {
@@ -480,7 +505,7 @@ Stem.directive('stemScalar', function(ClipboardService) {
 	}
 });
 
-Stem.directive('stemScalarProperties', function() {
+Stem.directive('stemScalarProperties', function($timeout) {
 	return {
 		restrict: 'A',
 		controller: function($scope, StemQuantities) {
@@ -501,6 +526,7 @@ Stem.directive('stemScalarProperties', function() {
 			};
 		},
 		link: function(scope, element, attributes) {
+			scope.currentName = scope.stemScalar.name;
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
 					$('#' + scope.stemScalar.id + '-OkButton').prop('disabled', true);
@@ -508,15 +534,27 @@ Stem.directive('stemScalarProperties', function() {
 				} else {
 					$('#' + scope.stemScalar.id + '-OkButton').prop('disabled', false);
 					$(this).next().html('');
+					scope.currentName = scope.stemScalar.name;
 				}
 			});
-			element.find('input').on('keyup', function(event) {
-				if (event.which == 13) {
-					$('#' + scope.stemScalar.id +'-modal').modal("hide");
+			
+			// If model name is empty when clicking on the x button, it reverts to the previous name
+			element.find('button.close').on('click', function(event) {
+				if (scope.stemScalar.name == undefined) {
+					scope.stemScalar.name = scope.currentName;
 				}
+				$timeout(function(){
+					scope.$apply();
+				});
 			});
+			
+			// Event triggered when the modal is shown
 			element.on('shown.bs.modal', function () {
-				$(this).find('input').first().focus().select();
+				element.find('input').first().focus().select();
+			});
+			element.on('show.bs.modal', function () {
+				$('#' + scope.stemScalar.id + '-OkButton').prop('disabled', false);
+				element.find('input').first().next().html('');
 			});
 		},
 		templateUrl: "stem-scalar-properties.html",
@@ -546,10 +584,11 @@ Stem.directive('stemBool', function(ClipboardService) {
 	}
 });
 
-Stem.directive('stemBoolProperties', function() {
+Stem.directive('stemBoolProperties', function($timeout) {
 	return {
 		restrict: 'A',
 		link: function(scope, element, attributes) {
+			scope.currentName = scope.stemBool.name;
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
 					$('#' + scope.stemBool.id + '-OkButton').prop('disabled', true);
@@ -557,15 +596,27 @@ Stem.directive('stemBoolProperties', function() {
 				} else {
 					$('#' + scope.stemBool.id + '-OkButton').prop('disabled', false);
 					$(this).next().html('');
+					scope.currentName = scope.stemBool.name;
 				}
 			});
-			element.find('input').on('keyup', function(event) {
-				if (event.which == 13) {
-					$('#' + scope.stemBool.id +'-modal').modal("hide");
+			
+			// If model name is empty when clicking on the x button, it reverts to the previous name
+			element.find('button.close').on('click', function(event) {
+				if (scope.stemBool.name == undefined) {
+					scope.stemBool.name = scope.currentName;
 				}
+				$timeout(function(){
+					scope.$apply();
+				});
 			});
+			
+			// Event triggered when the modal is shown
 			element.on('shown.bs.modal', function () {
-				$(this).find('input').first().focus().select();
+				element.find('input').first().focus().select();
+			});
+			element.on('show.bs.modal', function () {
+				$('#' + scope.stemBool.id + '-OkButton').prop('disabled', false);
+				element.find('input').first().next().html('');
 			});
 		},
 		templateUrl: "stem-bool-properties.html",
@@ -605,10 +656,11 @@ Stem.directive('stemChoice', function(ClipboardService) {
 	}
 });
 
-Stem.directive('stemChoiceProperties', function() {
+Stem.directive('stemChoiceProperties', function($timeout) {
 	return {
 		restrict: 'A',
 		link: function(scope, element, attributes) {
+			scope.currentName = scope.stemChoice.name;
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
 					$('#' + scope.stemChoice.id + '-OkButton').prop('disabled', true);
@@ -616,15 +668,27 @@ Stem.directive('stemChoiceProperties', function() {
 				} else {
 					$('#' + scope.stemChoice.id + '-OkButton').prop('disabled', false);
 					$(this).next().html('');
+					scope.currentName = scope.stemChoice.name;
 				}
 			});
-			element.find('input').on('keyup', function(event) {
-				if (event.which == 13) {
-					$('#' + scope.stemChoice.id +'-modal').modal("hide");
+			
+			// If model name is empty when clicking on the x button, it reverts to the previous name
+			element.find('button.close').on('click', function(event) {
+				if (scope.stemChoice.name == undefined) {
+					scope.stemChoice.name = scope.currentName;
 				}
+				$timeout(function(){
+					scope.$apply();
+				});
 			});
+			
+			// Event triggered when the modal is shown
 			element.on('shown.bs.modal', function () {
-				$(this).find('input').first().focus().select();
+				element.find('input').first().focus().select();
+			});
+			element.on('show.bs.modal', function () {
+				$('#' + scope.stemChoice.id + '-OkButton').prop('disabled', false);
+				element.find('input').first().next().html('');
 			});
 		},
 		templateUrl: "stem-choice-properties.html",
@@ -674,7 +738,7 @@ Stem.directive('stemTable', function(StemHOT, StemQuantities, StemUtil, Clipboar
 	}
 });
 
-Stem.directive('stemTableProperties', function() {
+Stem.directive('stemTableProperties', function($timeout) {
 	return {
 		restrict : 'A',
 		controller: function ($scope) {
@@ -699,6 +763,7 @@ Stem.directive('stemTableProperties', function() {
 			}
 		},
 		link: function(scope, element, attributes) {
+			scope.currentName = scope.stemTable.name;
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
 					$('#' + scope.stemTable.id + '-OkButton').prop('disabled', true);
@@ -706,15 +771,27 @@ Stem.directive('stemTableProperties', function() {
 				} else {
 					$('#' + scope.stemTable.id + '-OkButton').prop('disabled', false);
 					$(this).next().html('');
+					scope.currentName = scope.stemTable.name;
 				}
 			});
-			element.find('input').on('keyup', function(event) {
-				if (event.which == 13) {
-					$('#' + scope.stemTable.id +'-modal').modal("hide");
+			
+			// If model name is empty when clicking on the x button, it reverts to the previous name
+			element.find('button.close').on('click', function(event) {
+				if (scope.stemTable.name == undefined) {
+					scope.stemTable.name = scope.currentName;
 				}
+				$timeout(function(){
+					scope.$apply();
+				});
 			});
+			
+			// Event triggered when the modal is shown
 			element.on('shown.bs.modal', function () {
-				$(this).find('input').first().focus().select();
+				element.find('input').first().focus().select();
+			});
+			element.on('show.bs.modal', function () {
+				$('#' + scope.stemTable.id + '-OkButton').prop('disabled', false);
+				element.find('input').first().next().html('');
 			});
 		},
 		templateUrl: "stem-table-properties.html",
@@ -826,9 +903,10 @@ Stem.directive('stemTextArea', function(ClipboardService) {
 	}
 });
 
-Stem.directive('stemTextAreaProperties', [function() {
+Stem.directive('stemTextAreaProperties', function($timeout) {
 	return {
 		link: function(scope, element, attributes) {
+			scope.currentName = scope.stemTextArea.name;
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
 					$('#' + scope.stemTextArea.id + '-OkButton').prop('disabled', true);
@@ -836,20 +914,32 @@ Stem.directive('stemTextAreaProperties', [function() {
 				} else {
 					$('#' + scope.stemTextArea.id + '-OkButton').prop('disabled', false);
 					$(this).next().html('');
+					scope.currentName = scope.stemTextArea.name;
 				}
 			});
-			element.find('input').on('keyup', function(event) {
-				if (event.which == 13) {
-					$('#' + scope.stemTextArea.id +'-modal').modal("hide");
+			
+			// If model name is empty when clicking on the x button, it reverts to the previous name
+			element.find('button.close').on('click', function(event) {
+				if (scope.stemTextArea.name == undefined) {
+					scope.stemTextArea.name = scope.currentName;
 				}
+				$timeout(function(){
+					scope.$apply();
+				});
 			});
+			
+			// Event triggered when the modal is shown
 			element.on('shown.bs.modal', function () {
-				$(this).find('input').first().focus().select();
+				element.find('input').first().focus().select();
+			});
+			element.on('show.bs.modal', function () {
+				$('#' + scope.stemTextArea.id + '-OkButton').prop('disabled', false);
+				element.find('input').first().next().html('');
 			});
 		},
 		templateUrl: "stem-text-area-properties.html",
 	}
-}]);
+});
 
 Stem.directive('stemFormulas', function(ClipboardService) {
 	return {
@@ -896,9 +986,10 @@ Stem.directive('stemFormulas', function(ClipboardService) {
 	}
 });
 
-Stem.directive('stemFormulasProperties', [function() {
+Stem.directive('stemFormulasProperties', function($timeout) {
 	return {
 		link: function(scope, element, attributes) {
+			scope.currentName = scope.stemFormulas.name;
 			element.find('input').first().on('input', function(event) {
 				if (!this.checkValidity()) {
 					$('#' + scope.stemFormulas.id + '-OkButton').prop('disabled', true);
@@ -906,20 +997,32 @@ Stem.directive('stemFormulasProperties', [function() {
 				} else {
 					$('#' + scope.stemFormulas.id + '-OkButton').prop('disabled', false);
 					$(this).next().html('');
+					scope.currentName = scope.stemFormulas.name;
 				}
 			});
-			element.find('input').on('keyup', function(event) {
-				if (event.which == 13) {
-					$('#' + scope.stemFormulas.id +'-modal').modal("hide");
+			
+			// If model name is empty when clicking on the x button, it reverts to the previous name
+			element.find('button.close').on('click', function(event) {
+				if (scope.stemFormulas.name == undefined) {
+					scope.stemFormulas.name = scope.currentName;
 				}
+				$timeout(function(){
+					scope.$apply();
+				});
 			});
+			
+			// Event triggered when the modal is shown
 			element.on('shown.bs.modal', function () {
-				$(this).find('input').first().focus().select();
+				element.find('input').first().focus().select();
+			});
+			element.on('show.bs.modal', function () {
+				$('#' + scope.stemFormulas.id + '-OkButton').prop('disabled', false);
+				element.find('input').first().next().html('');
 			});
 		},
 		templateUrl: "stem-formulas-properties.html",
 	}
-}]);
+});
 
 Stem.directive('tooltip', function(){
     return {

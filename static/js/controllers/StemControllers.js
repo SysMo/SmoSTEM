@@ -36,6 +36,7 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResour
 // Page with model editor
 Stem.controller('ModelEditorCtrl', function($scope, 
 		PageSettings, StemResources, StemQuantities, StemLibraryModules, Menus){
+	
 	// Add a link to the Models collection
 	Menus.addMenuItem('topbar', 'Models', '/Models');
 	// Get the model object from the server
