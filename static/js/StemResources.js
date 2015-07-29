@@ -83,7 +83,7 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 		function jsonParserReplacer(obj) {
 			angular.forEach(obj, function(value, key, obj) {
 				if (angular.isString(value)) {
-					if (value.startsWith('$float___')) {
+					if (value.indexOf('$float___') === 0) {
 						var valueStr = value.substr('$float___'.length);
 						if (valueStr == 'inf') {
 							obj[key] = Infinity;
@@ -136,6 +136,7 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 			{	
 				get: {
 					transformResponse: parseMathJSON,
+					interceptor: interceptors,
 				},
 				update: { 
 					method: 'PUT',

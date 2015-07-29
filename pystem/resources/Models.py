@@ -18,6 +18,8 @@ from ServerObjects import db
 from pystem.model.ModelCalculator import ModelCalculator
 from Users import User 
 from bson.code import Code
+from pystem.resources import ModelPermissions as MP
+from mongoengine.errors import DoesNotExist
 
 class ModelAccessPermission(db.EmbeddedDocument):
 	list = F.BooleanField(default = False)
@@ -67,10 +69,15 @@ class ModelAPI(StemResource):
 				model['owner'] = User.objects.get(id = model['owner'])['username']
 			return makeJsonResponse(modelCursor)
 		else:
-			model = Model._get_collection().find_one({"_id": modelID})
-			if (model == None):
+			try:
+				model = Model.objects.get(id = modelID)
+			except DoesNotExist:
 				raise APIException("No model exists with ID {}".format(modelID))
-			return makeJsonResponse(model)
+			permission = MP.ModelViewPermission(model)
+			if (permission.can()):
+				return makeJsonResponse(model.to_mongo())
+			else:
+				raise UnauthorizedError('You have no permissions to view this model')
 
 	def post(self, modelID = None):
 		"""
@@ -91,12 +98,16 @@ class ModelAPI(StemResource):
 		elif (action == 'clone'):
 			# Duplicate existing model
 			model = Model.objects.get(id = modelID)
-			model.id = None
-			model.name = 'Copy of ' + model.name
-			model.created = datetime.datetime.utcnow()
-			model.owner = user
-			model.save()
-			return makeJsonResponse({'_id': model.id})
+			permission = MP.ModelCopyPermission(model)
+			if (permission.can()):
+				model.id = None
+				model.name = 'Copy of ' + model.name
+				model.created = datetime.datetime.utcnow()
+				model.owner = user
+				model.save()
+				return makeJsonResponse({'_id': model.id})
+			else:
+				raise UnauthorizedError('You have no permissions to copy this model')
 		elif (action == 'compute'):
 			modelData = parseJsonResponse(request.data)
 			ex = ModelCalculator(modelData)
@@ -108,11 +119,9 @@ class ModelAPI(StemResource):
 	
 	def delete(self, modelID):
 		""" Delete a model"""
-		if not current_user.is_authenticated():
-			raise LoginRequiredError()
-		user = current_user._get_current_object() 
 		model = Model.objects.get(id = modelID)
-		if (user == model.owner):			
+		permission = MP.ModelDeletePermission(model)
+		if (permission.can()):			
 			model.delete()
 			return makeJsonResponse(None, 'Model deleted')
 		else:
@@ -120,11 +129,9 @@ class ModelAPI(StemResource):
 
 	def put(self, modelID):
 		"""Updates a model definition"""
-		if not current_user.is_authenticated():
-			raise LoginRequiredError()
-		user = current_user._get_current_object() 
 		model = Model.objects.get(id = modelID)
-		if (user == model.owner):			
+		permission = MP.ModelEditPermission(model)
+		if (permission.can()):			
 			modelData = parseJsonResponse(request.data)
 			model.modify(
 				name = modelData['name'],
