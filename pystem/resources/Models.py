@@ -12,7 +12,8 @@ from bson.objectid import ObjectId
 import mongoengine.fields as F
 from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
 from StemResource import StemResource
-from pystem.Exceptions import APIException, LoginRequiredError
+from pystem.Exceptions import APIException, LoginRequiredError,\
+	UnauthorizedError
 from ServerObjects import db
 from pystem.model.ModelCalculator import ModelCalculator
 from Users import User 
@@ -109,21 +110,30 @@ class ModelAPI(StemResource):
 		""" Delete a model"""
 		if not current_user.is_authenticated():
 			raise LoginRequiredError()
+		user = current_user._get_current_object() 
 		model = Model.objects.get(id = modelID)
-		model.delete()
-		return makeJsonResponse(None, 'Model deleted')
+		if (user == model.owner):			
+			model.delete()
+			return makeJsonResponse(None, 'Model deleted')
+		else:
+			raise UnauthorizedError('You have no permissions to delete this model')
 
 	def put(self, modelID):
 		"""Updates a model definition"""
 		if not current_user.is_authenticated():
 			raise LoginRequiredError()
-		modelData = parseJsonResponse(request.data)
+		user = current_user._get_current_object() 
 		model = Model.objects.get(id = modelID)
-		model.modify(
-			name = modelData['name'],
-			description = modelData['description'],
-			board = Board(**modelData['board']),
-			background = modelData.get('background')
-		)
-		model.save()
-		return makeJsonResponse(None, 'Model saved')
+		if (user == model.owner):			
+			modelData = parseJsonResponse(request.data)
+			model.modify(
+				name = modelData['name'],
+				description = modelData['description'],
+				board = Board(**modelData['board']),
+				background = modelData.get('background')
+			)
+			model.save()
+			return makeJsonResponse(None, 'Model saved')
+		else:
+			raise UnauthorizedError('You have no permissions to save changes to this model')
+			
