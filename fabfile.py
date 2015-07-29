@@ -36,7 +36,7 @@ def deploy():
 		local('cp ./{} {env.installDir}'.format(pyFile, env = env), shell='bash')
 	
 	for host in env.hosts:
-		local('unison-gtk -ignore "Name {*.pyc, *.sql*}" -ignore "Path Log/*" -ignore "Path Media/*" ' + 
+		local('unison -ignore "Name {*.pyc, *.sql*}" -ignore "Path Log/*" -ignore "Path Media/*" ' + 
 			' {env.installDir} ssh://{host}//{env.installDir}'.format(host = host, env = env))
 		sudo('chown -R www-data:www-data {env.installDir}'.format(env = env))
 		sudo('service apache2 restart')

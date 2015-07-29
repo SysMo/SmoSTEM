@@ -14,7 +14,7 @@ from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
 from StemResource import StemResource
 from pystem.Exceptions import APIException, LoginRequiredError,\
 	UnauthorizedError
-from ServerObjects import db
+from ServerObjects import db, AdminPermission
 from pystem.model.ModelCalculator import ModelCalculator
 from Users import User 
 from bson.code import Code
@@ -63,8 +63,13 @@ class ModelAPI(StemResource):
 			responseFields = {'name': True, 'description': True, 'created': True, 'owner': True}
 			if current_user.is_authenticated():
 				user = current_user._get_current_object()
-				searchFilter = {'owner': user} 
-			modelCursor = list(Model._get_collection().find({}, responseFields, sort = [('name', 1)]))
+				if (AdminPermission.can()):
+					searchFilter = {}
+				else:
+					searchFilter = {'owner': user.id}
+			else:
+				searchFilter = {} 
+			modelCursor = list(Model._get_collection().find(searchFilter, responseFields, sort = [('name', 1)]))
 			for model in modelCursor:
 				model['owner'] = User.objects.get(id = model['owner'])['username']
 			return makeJsonResponse(modelCursor)
@@ -91,8 +96,6 @@ class ModelAPI(StemResource):
 		if (action == 'create'):
 			# Create new model
 			model = Model(owner = user)
-			print model
-			print model.to_json()
 			model.save()
 			return makeJsonResponse({'_id': model.id})
 		elif (action == 'clone'):
