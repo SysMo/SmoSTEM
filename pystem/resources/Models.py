@@ -14,19 +14,11 @@ from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
 from StemResource import StemResource
 from pystem.Exceptions import APIException, LoginRequiredError,\
 	UnauthorizedError
-from ServerObjects import db, AdminPermission
+from pystem.flask import db, AdminPermission
 from pystem.model.ModelCalculator import ModelCalculator
 from Users import User 
-from bson.code import Code
 from pystem.resources import ModelPermissions as MP
 from mongoengine.errors import DoesNotExist
-
-class ModelAccessPermission(db.EmbeddedDocument):
-	list = F.BooleanField(default = False)
-	view = F.BooleanField(default = False)
-	edit = F.BooleanField(default = False)
-	copy = F.BooleanField(default = False)
-	delete = F.BooleanField(default = False)
 
 class Layout(db.EmbeddedDocument):
 	id = F.StringField()
@@ -50,7 +42,7 @@ class Model(db.Document):
 	description = F.StringField(default = '')
 	created = F.DateTimeField(default = datetime.datetime.utcnow)
 	owner = F.ReferenceField(User, required = True)
-	publicAccess = F.EmbeddedDocumentField(ModelAccessPermission, default = ModelAccessPermission)
+	publicAccess = F.EmbeddedDocumentField(MP.ModelPublicAccess, default = MP.ModelPublicAccess)
 	board = F.EmbeddedDocumentField(Board, default = Board)
 	background = F.StringField()
 	

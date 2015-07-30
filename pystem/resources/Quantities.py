@@ -10,7 +10,7 @@ from bson.objectid import ObjectId
 from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
 from StemResource import StemResource
 from pystem.Exceptions import APIException
-from ServerObjects import db
+from pystem.flask import db
 import mongoengine.fields as F
 
 #from mongokit import Document

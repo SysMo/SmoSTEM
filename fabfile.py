@@ -17,10 +17,8 @@ env.deploy_folderList = [
 	'static', 'pystem', 'templates'
 ]
 env.deploy_pythonFiles = [
-	'StemServer.py',
 	'wsgi.py',
-	'Settings.py',
-	'ServerObjects.py'
+	'config.py',
 ]
 
 def deploy():
@@ -51,7 +49,7 @@ def mongo_ensureIndexes():
 	Create indexes for all the registered_documents
 	"""
 	sys.path.append(os.path.dirname(__file__))
-	from StemServer import mongoConnection, app
+	from DevelopmentServer.py.DevelopmentServer import mongoConnection, app
 	conn = mongoConnection
 	db = mongoConnection[app.config['STEM_DATABASE']]
 	for doc, obj in conn._registered_documents.iteritems():
@@ -71,7 +69,7 @@ def mongo_listIndexes():
 	List indexes for all the registered_documents
 	"""
 	sys.path.append(os.path.dirname(__file__))
-	from StemServer import mongoConnection, app
+	from DevelopmentServer.py.DevelopmentServer import mongoConnection, app
 	conn = mongoConnection
 	db = mongoConnection[app.config['STEM_DATABASE']]
 	for doc, obj in conn._registered_documents.iteritems():

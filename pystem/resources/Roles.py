@@ -10,7 +10,7 @@ from flask_restful import Resource, abort
 from bson.objectid import ObjectId
 from mongokit import Document
 from pystem.flask.Utilities import makeJsonResponse
-from ServerObjects import db
+from pystem.flask import db
 
 class Role(Document):
 	__collection__ = "Roles"

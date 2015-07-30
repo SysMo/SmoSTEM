@@ -10,7 +10,7 @@ from flask_mail import Message
 from flask_login import UserMixin
 from flask_login import login_user, logout_user, current_user
 from flask_principal import Identity, AnonymousIdentity, identity_changed
-from ServerObjects import bcrypt, db, mail
+from pystem.flask import bcrypt, db, mail
 
 from StemResource import StemResource
 from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse

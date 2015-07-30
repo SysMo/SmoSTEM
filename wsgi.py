@@ -1,1 +1,1 @@
-from StemServer import app as application
+from pystem.flask import app as application
