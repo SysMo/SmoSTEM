@@ -124,7 +124,8 @@ Stem.factory('stemClasses', function stemClasses(StemUtil) {
 	classes.ScalarField = classes.Field.extend({
 		init: function(name, label, value) {
 			this._super();
-			this.type = 'stem.ScalarField'; 
+			this.type = 'stem.ScalarField';
+			this._cls = 'FloatField';
 			this.label = label || '';
 			this.name = name || ('v' + (classes.ScalarField.instanceCounter + 1).toString());
 			classes.ScalarField.instanceCounter++;
@@ -139,6 +140,7 @@ Stem.factory('stemClasses', function stemClasses(StemUtil) {
 		init: function(name, label, value) {
 			this._super();
 			this.type = 'stem.BoolField'; 
+			this._cls = 'BooleanField';
 			this.label = label || '';
 			this.name = name || ('b' + (classes.BoolField.instanceCounter + 1).toString());
 			classes.BoolField.instanceCounter++;
@@ -151,6 +153,7 @@ Stem.factory('stemClasses', function stemClasses(StemUtil) {
 		init: function(name, label, choices, value) {
 			this._super();
 			this.type = 'stem.ChoiceField'; 
+			this._cls = 'ChoicesField';
 			this.label = label || '';
 			this.name = name || ('c' + (classes.ChoiceField.instanceCounter + 1).toString());
 			classes.ChoiceField.instanceCounter++;
@@ -164,6 +167,7 @@ Stem.factory('stemClasses', function stemClasses(StemUtil) {
 		init: function(name, label, columns, value) {
 			this._super();
 			this.type = 'stem.TableField'; 
+			this._cls = 'TableField';
 			this.label = label || '';
 			this.name = name || ('T' + (classes.TableField.instanceCounter + 1).toString());
 			classes.TableField.instanceCounter++;
@@ -182,6 +186,7 @@ Stem.factory('stemClasses', function stemClasses(StemUtil) {
 		init: function(name, label, value) {
 			this._super();
 			this.type = 'stem.TextField'; 
+			this._cls = 'TextField';
 			this.label = label || '';
 			this.name = name || ('Text' + (classes.TextField.instanceCounter + 1).toString());
 			classes.TextField.instanceCounter++;
@@ -194,6 +199,7 @@ Stem.factory('stemClasses', function stemClasses(StemUtil) {
 		init: function(name, label, value) {
 			this._super();
 			this.type = 'stem.FormulasField';
+			this._cls = 'FormulasField';
 			this.label = label || '';
 			this.name = name || ('Formulas' + (classes.FormulasField.instanceCounter + 1).toString());
 			classes.FormulasField.instanceCounter++;

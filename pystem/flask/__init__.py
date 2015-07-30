@@ -6,8 +6,9 @@ Created on Jul 18, 2015
 '''
 import os
 import sys, traceback
+from collections import namedtuple
 
-from flask import render_template
+from flask import render_template, redirect
 from flask.json import jsonify
 
 from pystem.Exceptions import APIException, NonAPIException
@@ -47,11 +48,24 @@ from flask_mail import Mail
 mail = Mail(app)
 
 # Access control
-from flask_principal import Principal, Permission,RoleNeed, UserNeed,\
+from flask_principal import Principal, Permission, Need, RoleNeed, UserNeed,\
 	PermissionDenied, identity_loaded
 principals = Principal(app)
 # Create a permission with a single Need, in this case a RoleNeed.
 AdminPermission = Permission(RoleNeed('admin'))
+AnyUserNeed = Need('id', None)
+
+# Admin module
+import flask_admin
+from flask_admin.base import AdminIndexView, expose
+class StemAdminIndexView(AdminIndexView):
+	@expose('/')
+	def index(self):
+		if not AdminPermission.can():
+			return redirect('/')
+		else:
+			return super(StemAdminIndexView, self).index()
+admin = flask_admin.Admin(app, template_mode='bootstrap3', index_view = StemAdminIndexView())
 
 # Custom converters
 class ObjectIDConverter(BaseConverter):
@@ -69,7 +83,7 @@ app.url_map.converters['ObjectID'] = ObjectIDConverter
 def on_identity_loaded(sender, identity):
 	# Set the identity user object
 	identity.user = current_user
-
+	identity.provides.add(AnyUserNeed)
 	if (current_user.is_authenticated()):
 		# Add the UserNeed to the identity
 		identity.provides.add(UserNeed(current_user.get_id()))
@@ -79,11 +93,10 @@ def on_identity_loaded(sender, identity):
 		if hasattr(current_user, 'roles'):
 			for role in current_user.roles:
 				identity.provides.add(RoleNeed(role.name))
-
+		
 
 @loginManager.user_loader
 def loadUser(userID):
-	# TODO if the user does not exist, do something
 	users = User.objects(id = ObjectId(userID))
 	if (len(users) == 0):
 		return None
@@ -130,7 +143,7 @@ def libraryModuleEditor(moduleID):
 	return render_template('LibraryModuleEditor.html', moduleID = moduleID)
 
 # Register Restful API endpoints 
-from pystem.resources.Models import Model, ModelAPI 
+from pystem.resources.Models import Model, ModelUserAccess, ModelAPI 
 from pystem.resources.Quantities import Quantity, QuantityAPI
 from pystem.resources.LibraryModules import LibraryModule, LibraryModuleAPI 
 from pystem.resources.Users import User, UserAPI
@@ -138,6 +151,32 @@ api.add_resource(ModelAPI, '/stem/api/Models', '/stem/api/Models/<ObjectID:model
 api.add_resource(QuantityAPI, '/stem/api/Quantities', '/stem/api/Quantities/<ObjectID:quantityID>')
 api.add_resource(LibraryModuleAPI, '/stem/api/LibraryModules', '/stem/api/LibraryModules/<ObjectID:moduleID>')
 api.add_resource(UserAPI, '/stem/api/Users')
+
+# Admin views
+import flask_admin.contrib.mongoengine as AdmME
+import flask_admin.contrib.mongoengine.fields as AF
+import jinja2.utils
+class StemAdminView(AdmME.ModelView):
+	def is_accessible(self):
+		return AdminPermission.can()
+	def _handle_view(self, name, **kwargs):
+		if not self.is_accessible():
+			return redirect('/')
+			
+admin.add_view(StemAdminView(User))
+admin.add_view(StemAdminView(Model))
+
+class ModelUserAccessView(StemAdminView):
+	@jinja2.utils.contextfunction
+	def get_list_value(self, context, model, name):
+		if (name == 'model'):
+			return model.model.name
+		if (name == 'user'):
+			return model.user.username
+		return StemAdminView.get_list_value(self, context, model, name)
+	
+admin.add_view(ModelUserAccessView(ModelUserAccess))
+
 
 #Exception handling
 @app.errorhandler(APIException)
