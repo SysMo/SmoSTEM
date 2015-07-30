@@ -28,9 +28,17 @@ Stem.controller('QuantityEditorCtrl', function($scope, PageSettings, StemResourc
 
 //Page with model list
 Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResources, Menus){
-	$scope.Models = new StemResources.StandardResource('Models', 'ModelEditor');
-	$scope.Models.query();
-	Menus.addMenuItem('topbar', 'New', $scope.Models.create, 'action', 'glyphicon-plus');
+	$scope.myModels = new StemResources.StandardResource('Models', 'ModelEditor');
+	$scope.sharedModels = new StemResources.StandardResource('Models', 'ModelEditor');
+	$scope.publicModels = new StemResources.StandardResource('Models', 'ModelEditor');
+	$scope.allModels = new StemResources.StandardResource('Models', 'ModelEditor');
+	
+	$scope.myModels.query({modelUserRelation: 'own'});
+	$scope.sharedModels.query({modelUserRelation: 'shared'});
+	$scope.publicModels.query({modelUserRelation: 'public'});
+	$scope.allModels.query({modelUserRelation: 'all'});
+	
+	Menus.addMenuItem('topbar', 'New', $scope.myModels.create, 'action', 'glyphicon-plus');
 });
 
 // Page with model editor

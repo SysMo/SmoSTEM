@@ -104,8 +104,8 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 	var StemResources = {
 		StandardResource: function(resourceName, editorPath) {
 			this.editorPath = editorPath
-			this.query = function() {
-				this.collection = StemResources[resourceName].query();
+			this.query = function(params) {
+				this.collection = StemResources[resourceName].query(params);
 				return this.collection;
 			} 
 			// Open entity editor
