@@ -146,7 +146,8 @@ http://stem.sysmoltd.com/stem/api/Users?action=confirm&username={}&activationCod
 					identity_changed.send(current_app._get_current_object(),
 								  identity = Identity(user.get_id()))
 					response = makeJsonResponse({'msg': 'You have sucessfully logged in'})
-					response.set_cookie('username', user.username)
+					response.set_cookie('user.username', user.username)
+					response.set_cookie('user.roles', '-'.join([role.name for role in user.roles]))
 					return response
 				else:
 					raise APIException('Incorrect password')
@@ -156,7 +157,8 @@ http://stem.sysmoltd.com/stem/api/Users?action=confirm&username={}&activationCod
 			identity_changed.send(current_app._get_current_object(),
 						  identity = AnonymousIdentity())
 			response = makeJsonResponse({'msg': 'You have sucessfully logged out'})
-			response.set_cookie('username', '')
+			response.set_cookie('user.username', '')
+			response.set_cookie('user.roles', '')
 			return response
 #			else:
 #				raise APIException('You are not logged in')
