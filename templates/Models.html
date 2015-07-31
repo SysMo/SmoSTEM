@@ -5,45 +5,15 @@
   <h1>Models</h1>
   
   <tabset>
-    <tab heading="My models">
-      <div ng-repeat="model in myModels.collection">
-        <h2><a class="clickable-title" ng-click="myModels.edit(model)">{{model.name}}</a></h2>
-        <span stem-list-item-actions del="myModels.del(model)" edit="myModels.edit(model)" duplicate="myModels.duplicate(model)"></span>
+    <tab ng-repeat="listedModelsTab in listedModelsTabs" heading="{{listedModelsTab.title}}" active="listedModelsTab.active">
+      <div ng-repeat="model in listedModelsTab.models.collection">
+        <h2><a class="clickable-title" ng-click="listedModelsTab.models.edit(model)">{{model.name}}</a></h2>
+        <span stem-list-item-actions del="listedModelsTab.models.del(model)" edit="listedModelsTab.models.edit(model)" duplicate="listedModelsTab.models.duplicate(model)"></span>
         <div>{{model.description}}</div>
         <div>Author: {{model.owner}}; Created: {{model.created}}</div>
         <br>
       </div>
-    </tab>
-    
-    <tab heading="Models shared with me">
-      <div ng-repeat="model in sharedModels.collection">
-        <h2><a class="clickable-title" ng-click="sharedModels.edit(model)">{{model.name}}</a></h2>
-        <span stem-list-item-actions del="sharedModels.del(model)" edit="sharedModels.edit(model)" duplicate="sharedModels.duplicate(model)"></span>
-        <div>{{model.description}}</div>
-        <div>Author: {{model.owner}}; Created: {{model.created}}</div>
-        <br>
-      </div>
-    </tab>
-    
-    <tab heading="Public models">
-      <div ng-repeat="model in publicModels.collection">
-        <h2><a class="clickable-title" ng-click="publicModels.edit(model)">{{model.name}}</a></h2>
-        <span stem-list-item-actions del="publicModels.del(model)" edit="publicModels.edit(model)" duplicate="publicModels.duplicate(model)"></span>
-        <div>{{model.description}}</div>
-        <div>Author: {{model.owner}}; Created: {{model.created}}</div>
-        <br>
-      </div>
-    </tab>
-    
-    <tab heading="All models">
-      <div ng-repeat="model in allModels.collection">
-        <h2><a class="clickable-title" ng-click="allModels.edit(model)">{{model.name}}</a></h2>
-        <span stem-list-item-actions del="allModels.del(model)" edit="allModels.edit(model)" duplicate="allModels.duplicate(model)"></span>
-        <div>{{model.description}}</div>
-        <div>Author: {{model.owner}}; Created: {{model.created}}</div>
-        <br>
-      </div>
-    </tab>
+    </tab>  
   </tabset>
   
 </div>

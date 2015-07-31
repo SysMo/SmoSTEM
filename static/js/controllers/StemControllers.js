@@ -27,18 +27,44 @@ Stem.controller('QuantityEditorCtrl', function($scope, PageSettings, StemResourc
 });
 
 //Page with model list
-Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResources, Menus){
-	$scope.myModels = new StemResources.StandardResource('Models', 'ModelEditor');
-	$scope.sharedModels = new StemResources.StandardResource('Models', 'ModelEditor');
+Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResources, Menus, UserService){	
+	var userIsAdmin = UserService.isAdmin();
+	var userIsAuthenticated = UserService.isAuthenticated();
+	
+	// Load models - "Public models"
 	$scope.publicModels = new StemResources.StandardResource('Models', 'ModelEditor');
-	$scope.allModels = new StemResources.StandardResource('Models', 'ModelEditor');
-	
-	$scope.myModels.query({modelUserRelation: 'own'});
-	$scope.sharedModels.query({modelUserRelation: 'shared'});
 	$scope.publicModels.query({modelUserRelation: 'public'});
-	$scope.allModels.query({modelUserRelation: 'all'});
 	
-	Menus.addMenuItem('topbar', 'New', $scope.myModels.create, 'action', 'glyphicon-plus');
+	$scope.listedModelsTabs = [
+       { title:'Public models', models:$scope.publicModels, active:true }
+	];
+	
+	// Load models - "My models" and "Models shared with me"
+	if (userIsAuthenticated) {
+		$scope.myModels = new StemResources.StandardResource('Models', 'ModelEditor');
+		$scope.myModels.query({modelUserRelation: 'own'});
+		
+		$scope.sharedModels = new StemResources.StandardResource('Models', 'ModelEditor');
+		$scope.sharedModels.query({modelUserRelation: 'shared'});
+		
+		$scope.listedModelsTabs.push(
+			{ title:'My models', models:$scope.myModels, active:true},
+			{ title:'Models shared with me', models:$scope.sharedModels, active:false}
+		);
+		
+		$scope.listedModelsTabs[0].active = false; //Public models
+		Menus.addMenuItem('topbar', 'New', $scope.myModels.create, 'action', 'glyphicon-plus');
+	}
+	
+	// Load models - "All models"
+	if (userIsAdmin) {
+		$scope.allModels = new StemResources.StandardResource('Models', 'ModelEditor');
+		$scope.allModels.query({modelUserRelation: 'all'});
+		
+		$scope.listedModelsTabs.push(
+			{ title:'All models', models:$scope.allModels, active:false }
+		);
+	}
 });
 
 // Page with model editor
