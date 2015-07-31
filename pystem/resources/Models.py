@@ -17,8 +17,9 @@ from pystem.Exceptions import APIException, LoginRequiredError,\
 from pystem.flask import db, AdminPermission
 from pystem.model.ModelCalculator import ModelCalculator
 from Users import User 
-from pystem.resources import ModelPermissions as MP
+import pystem.resources.ModelPermissions as MP
 from mongoengine.errors import DoesNotExist
+from pystem.flask.Utilities import makeInvDict
 
 class ModelField(db.EmbeddedDocument):
 	meta = {'allow_inheritance': True}
@@ -73,6 +74,13 @@ class Board(db.EmbeddedDocument):
 	layouts = F.ListField(F.EmbeddedDocumentField(Layout), default = [])
 
 class Model(db.Document):
+	PUBLIC_ACCESS = (
+		(0, 'none'),
+		(100, 'list'),
+		(200, 'view'),
+		(300, 'edit')
+	)
+	PUBLIC_ACCESS_DCT = makeInvDict(PUBLIC_ACCESS)
 	meta = {
 		'collection': 'Models',
 		'indexes': ['name']
@@ -81,7 +89,7 @@ class Model(db.Document):
 	description = F.StringField(default = '')
 	created = F.DateTimeField(default = datetime.datetime.utcnow)
 	owner = F.ReferenceField(User, required = True)
-	publicAccess = F.EmbeddedDocumentField(MP.ModelPublicAccess, default = MP.ModelPublicAccess)
+	publicAccess = F.IntField(choices = PUBLIC_ACCESS, default = 0)
 	board = F.EmbeddedDocumentField(Board, default = Board)
 	background = F.StringField()
 
@@ -90,15 +98,18 @@ class ModelUserAccess(db.Document):
 		'collection': 'ModelUserAccess',
 		'indexes': ['user', 'model']
 	}	
+	ACCESS = (
+		(0, 'none'),
+		(100, 'list'),
+		(200, 'view'),
+		(300, 'edit'),
+		(400, 'full')
+	)
+	ACCESS_DCT = makeInvDict(ACCESS)
 	user = F.ReferenceField(User, required = True)
 	model = F.ReferenceField(Model, required = True)
-	list = F.BooleanField(default = False)
-	view = F.BooleanField(default = False)
-	edit = F.BooleanField(default = False)
-	copy = F.BooleanField(default = False)
-	remove = F.BooleanField(default = False)
-
-
+	access = F.IntField(choices = ACCESS, default = 0)
+	
 def migrate():
 	t2c = {
 		'stem.ScalarField': 'FloatField', 
@@ -124,115 +135,95 @@ class ModelAPI(StemResource):
 		Returns a model or a list of models
 		"""
 		if (modelID is None):
-			# Query all the models
-			responseFields = {'name': True, 'description': True, 'created': True, 'owner': True}
-			modelCollection = Model._get_collection()
-			userCollection = User._get_collection()
-			models = None
-			if current_user.is_authenticated():
-				user = current_user._get_current_object()
-				#modelUserRelation = [own, shared, public, all]
-				modelUserRelation = request.args.get('modelUserRelation', 'own')
-				if (modelUserRelation == 'own'):
-					searchFilter = {'owner': user.id}
-				elif (modelUserRelation == 'shared'):
-					models = []
-					sharedModelAccess = ModelUserAccess.objects(user = user, list = True)
-					for modelAccess in sharedModelAccess:
-						model = modelAccess.model
-						models.append({									
-							'name': model.name,
-							'description': model.description,
-							'created': model.created,
-							'owner': model.owner.username,
-							'access': {'view': modelAccess.view, 'copy': modelAccess.copy, 
-									'edit': modelAccess.edit, 'remove': modelAccess.remove}
-						})					
-				elif (modelUserRelation == 'public'):
-					searchFilter = {'publicAccess.list': True}
-					responseFields['publicAccess'] = True
-				elif (modelUserRelation == 'all'):
-					if (AdminPermission.can()):
-						searchFilter = {}
-					else:
-						raise UnauthorizedError('Only administrators can list all models in the database')
-				else:
-					raise APIException('Invalid value for modelUserRelation, must be one of [own, shared, public, all]')
-			else:
-				searchFilter = {'publicAccess.list': True}
-				responseFields['publicAccess'] = True
-			if (models is None):
-				models = list(Model._get_collection().find(searchFilter, responseFields, sort = [('name', 1)]))
-				for model in models:
-					model['owner'] = userCollection.find_one({'_id': model['owner']})['username']
-			return makeJsonResponse(models)
+			return self.listModels()
 		else:
-			# Get a single model
-			try:
-				model = Model.objects.get(id = modelID)
-			except DoesNotExist:
-				raise APIException("No model exists with ID {}".format(modelID))
-			permission = MP.ModelViewPermission(model)
-			if (permission.can()):
-				sharedModelAccess = ModelUserAccess.objects(model = model)
-				accessList = []
-				for modelAccess in sharedModelAccess:
-					modelAccessDict = modelAccess.to_mongo()
-					modelAccessDict['user'] = modelAccess.user.username
-					del modelAccessDict['model']
-					accessList.append(modelAccessDict)
-				model = model.to_mongo()
-				model['userAccess'] = accessList
-				return makeJsonResponse(model)
-			else:
-				raise UnauthorizedError('You have no permissions to view this model')
+			return self.loadModel(modelID)
 
-	def post(self, modelID = None):
+	def post(self, modelID = None, action = None):
 		"""
 		Create a new model or run an action on model
 		"""
 		if not current_user.is_authenticated():
 			raise LoginRequiredError()
 		user = current_user._get_current_object()
-		action = request.args.get('action', 'create')
-#		try:
-		if (action == 'create'):
-			# Create new model
-			model = Model(owner = user)
-			model.save()
-			return makeJsonResponse({'_id': model.id})
-		elif (action == 'clone'):
-			# Duplicate existing model
-			model = Model.objects.get(id = modelID)
-			permission = MP.ModelCopyPermission(model)
-			if (permission.can()):
-				model.id = None
-				model.name = 'Copy of ' + model.name
-				model.created = datetime.datetime.utcnow()
-				model.owner = user
-				model.save()
-				return makeJsonResponse({'_id': model.id})
+		if (action is None):
+			if (modelID is None):
+				return self.create(user)
 			else:
-				raise UnauthorizedError('You have no permissions to copy this model')
+				return self.copy(modelID, user)
 		elif (action == 'compute'):
-			modelData = parseJsonResponse(request.data)
-			ex = ModelCalculator(modelData)
-			ex.compute()
-			return makeJsonResponse(modelData, 'Model computed')
+			return self.compute()
 		else:
 			raise APIException('Unknown POST action {} for ModelAPI'.format(action))
-
-	
-	def delete(self, modelID):
-		""" Delete a model"""
-		model = Model.objects.get(id = modelID)
-		permission = MP.ModelDeletePermission(model)
-		if (permission.can()):			
-			model.delete()
-			return makeJsonResponse(None, 'Model deleted')
+			
+	def listModels(self):
+		responseFields = {'name': True, 'description': True, 'created': True, 'owner': True}
+		userCollection = User._get_collection()
+		models = None
+		if current_user.is_authenticated():
+			user = current_user._get_current_object()
+			#modelUserRelation = [own, shared, public, all]
+			modelUserRelation = request.args.get('modelUserRelation', 'own')
+			if (modelUserRelation == 'own'):
+				searchFilter = {'owner': user.id}
+			elif (modelUserRelation == 'shared'):
+				models = []
+				sharedModelAccess = ModelUserAccess.objects(user = user, access__gte = ModelUserAccess.ACCESS_DCT['list'])
+				for modelAccess in sharedModelAccess:
+					model = modelAccess.model
+					models.append({									
+						'name': model.name,
+						'description': model.description,
+						'created': model.created,
+						'owner': model.owner.username,
+						'access': modelAccess.acces
+					})					
+			elif (modelUserRelation == 'public'):
+				searchFilter = {'publicAccess': {"$gte": Model.PUBLIC_ACCESS_DCT['list']}}
+				responseFields['publicAccess'] = True
+			elif (modelUserRelation == 'all'):
+				if (AdminPermission.can()):
+					searchFilter = {}
+				else:
+					raise UnauthorizedError('Only administrators can list all models in the database')
+			else:
+				raise APIException('Invalid value for modelUserRelation, must be one of [own, shared, public, all]')
 		else:
-			raise UnauthorizedError('You have no permissions to delete this model')
+			searchFilter = {'publicAccess.list': True}
+			responseFields['publicAccess'] = True
+		if (models is None):
+			models = list(Model._get_collection().find(searchFilter, responseFields, sort = [('name', 1)]))
+			for model in models:
+				model['owner'] = userCollection.find_one({'_id': model['owner']})['username']
+		return makeJsonResponse(models)
+		
+	def loadModel(self, modelID):
+		# Get a single model
+		try:
+			model = Model.objects.get(id = modelID)
+		except DoesNotExist:
+			raise APIException("No model exists with ID {}".format(modelID))
+		permission = MP.ModelViewPermission(model)
+		if (permission.can()):
+# 			sharedModelAccess = MP.ModelUserAccess.objects(model = model)
+# 			accessList = []
+# 			for modelAccess in sharedModelAccess:
+# 				modelAccessDict = modelAccess.to_mongo()
+# 				modelAccessDict['user'] = modelAccess.user.username
+# 				del modelAccessDict['model']
+# 				accessList.append(modelAccessDict)
+			model = model.to_mongo()
+#			model['userAccess'] = accessList
+			return makeJsonResponse(model)
+		else:
+			raise UnauthorizedError('You have no permissions to view this model')
 
+	def create(self, user):
+		# Create new model
+		model = Model(owner = user)
+		model.save()
+		return makeJsonResponse({'_id': model.id})
+	
 	def put(self, modelID):
 		"""Updates a model definition"""
 		model = Model.objects.get(id = modelID)
@@ -249,4 +240,35 @@ class ModelAPI(StemResource):
 			return makeJsonResponse(None, 'Model saved')
 		else:
 			raise UnauthorizedError('You have no permissions to save changes to this model')
+
+	def copy(self, modelID, user):	
+		# Duplicate existing model
+		model = Model.objects.get(id = modelID)
+		permission = MP.ModelCopyPermission(model)
+		if (permission.can()):
+			model.id = None
+			model.name = 'Copy of ' + model.name
+			model.created = datetime.datetime.utcnow()
+			model.owner = user
+			model.save()
+			return makeJsonResponse({'_id': model.id})
+		else:
+			raise UnauthorizedError('You have no permissions to copy this model')
+
+	def delete(self, modelID):
+		""" Delete a model"""
+		model = Model.objects.get(id = modelID)
+		permission = MP.ModelDeletePermission(model)
+		if (permission.can()):			
+			model.delete()
+			return makeJsonResponse(None, 'Model deleted')
+		else:
+			raise UnauthorizedError('You have no permissions to delete this model')
+
+	def compute(self):
+		modelData = parseJsonResponse(request.data)
+		ex = ModelCalculator(modelData)
+		ex.compute()
+		return makeJsonResponse(modelData, 'Model computed')
+		
 			

@@ -132,7 +132,7 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 			}
 		},
 		Models:
-			$resource('/stem/api/Models/:_id', { _id: '@_id' }, 
+			$resource('/stem/api/Models/:_id/:action', { _id: '@_id' }, 
 			{	
 				get: {
 					transformResponse: parseMathJSON,
@@ -145,9 +145,6 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 				},
 				clone: {
 					method: 'POST',
-					params: {
-						action: "clone" 
-					},
 					interceptor: interceptors,
 					transformRequest: serializeMathJSON,
 					transformResponse: parseMathJSON,
@@ -186,7 +183,7 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 				},
 			}),
 		Users:
-			$resource('/stem/api/Users', {}, {
+			$resource('/stem/api/Users/:action', {}, {
 				login: {
 					method: 'POST',
 					params: {

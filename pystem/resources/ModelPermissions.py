@@ -14,19 +14,13 @@ from pystem.flask import db, AnyUserNeed
 import mongoengine.fields as F
 import Users
 import Models
+from pystem.flask.Utilities import makeInvDict
 
-
-
-class ModelPublicAccess(db.EmbeddedDocument):
-	list = F.BooleanField(default = False)
-	view = F.BooleanField(default = False)
-	edit = F.BooleanField(default = False)
-	copy = F.BooleanField(default = False)
 
 class ModelViewPermission(Permission):
 	def __init__(self, model):
 		needs = [UserNeed(model.owner.get_id()), RoleNeed('admin')]
-		if (model.publicAccess.view):
+		if (model.publicAccess >= Models.Model.PUBLIC_ACCESS_DCT['view']):
 			needs.append(AnyUserNeed)
 		super(ModelViewPermission, self).__init__(*needs)
 

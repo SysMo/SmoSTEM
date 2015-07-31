@@ -143,14 +143,14 @@ def libraryModuleEditor(moduleID):
 	return render_template('LibraryModuleEditor.html', moduleID = moduleID)
 
 # Register Restful API endpoints 
-from pystem.resources.Models import Model, ModelUserAccess, ModelAPI 
+from pystem.resources.Models import Model, ModelAPI, ModelUserAccess
 from pystem.resources.Quantities import Quantity, QuantityAPI
 from pystem.resources.LibraryModules import LibraryModule, LibraryModuleAPI 
 from pystem.resources.Users import User, UserAPI
-api.add_resource(ModelAPI, '/stem/api/Models', '/stem/api/Models/<ObjectID:modelID>')
+api.add_resource(ModelAPI, '/stem/api/Models', '/stem/api/Models/<ObjectID:modelID>', '/stem/api/Models/<ObjectID:modelID>/<string:action>')
 api.add_resource(QuantityAPI, '/stem/api/Quantities', '/stem/api/Quantities/<ObjectID:quantityID>')
 api.add_resource(LibraryModuleAPI, '/stem/api/LibraryModules', '/stem/api/LibraryModules/<ObjectID:moduleID>')
-api.add_resource(UserAPI, '/stem/api/Users')
+api.add_resource(UserAPI, '/stem/api/Users/<string:action>')
 
 # Admin views
 import flask_admin.contrib.mongoengine as AdmME
