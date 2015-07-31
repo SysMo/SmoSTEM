@@ -219,12 +219,12 @@ Stem.controller('HeaderController', ['$scope', 'Menus', 'UserService', 'StemReso
 				}, function () {
 					$('#loginInputPassword').val("");
 					$('#LoginModal').modal("hide");
+					location.reload();
 				}, function(response) {
 					$('#loginMessage').append("<div>" + response.data.msg + "</div>");
 				}
 			);			
-	});
-	
+	});	
 }]);
 
 //Register

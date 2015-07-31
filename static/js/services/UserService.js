@@ -9,7 +9,7 @@ Stem.service('UserService', ['$cookies', 'StemResources',
 		
 		this.roles = function() {
 			if ($cookies['user.roles'] === undefined) {
-				return [""];
+				return [];
 			} else {
 				return $cookies['user.roles'].split('-');
 			}
@@ -33,7 +33,9 @@ Stem.service('UserService', ['$cookies', 'StemResources',
 		}
 		
 		this.logout = function() {
-			StemResources.Users.logout();
+			StemResources.Users.logout(function () {
+				location.reload();
+			});
 		}
 		
 		this.register = function() {
