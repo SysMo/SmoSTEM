@@ -79,11 +79,14 @@ h1 {
 	margin-top: 50px;
 }
 
-
-
 .glyphicon {
 	cursor: pointer;
 }
+
+.clickable-title {
+	cursor: pointer;
+}
+
 
 .panel-title {
 	font-size: 100%;
@@ -109,9 +112,11 @@ h1 {
 .collapsing {
 	transition-duration: 0s;
 }
+
 .form-control {
 	margin-bottom: 10px;
 }
+
 
 #registrationMessage, #loginMessage {
 	font-weight: 700;

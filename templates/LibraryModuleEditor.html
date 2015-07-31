@@ -29,7 +29,7 @@ moduleID: '{{moduleID}}',
   </form>
   <h2>Module functions</h2>
   <div ng-repeat="function in module.functions track by $index">
-      <h2><a ng-click="editFunction($index)">{{function.name}}</a></h2>
+      <h2><a  class="clickable-title" ng-click="editFunction($index)">{{function.name}}</a></h2>
       <span stem-list-item-actions del="deleteFunction($index)" edit="editFunction($index)"></span>
       <div>{{function.description}}</div>
       <div>
