@@ -3,15 +3,9 @@
 {% raw %}
 <div style="margin: 10px;" ng-controller="ModelCollectionCtrl">
   <h1>Models</h1>
-  <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#myModels">My models</a></li>
-    <li><a data-toggle="tab" href="#sharedModels">Models shared with me</a></li>
-    <li><a data-toggle="tab" href="#publicModels">Public models</a></li>
-    <li><a data-toggle="tab" href="#allModels">All models</a></li>
-  </ul>
-    
-  <div class="tab-content">
-    <div id="myModels" class="tab-pane fade in active">
+  
+  <tabset>
+    <tab heading="My models">
       <div ng-repeat="model in myModels.collection">
         <h2><a class="clickable-title" ng-click="myModels.edit(model)">{{model.name}}</a></h2>
         <span stem-list-item-actions del="myModels.del(model)" edit="myModels.edit(model)" duplicate="myModels.duplicate(model)"></span>
@@ -19,8 +13,9 @@
         <div>Author: {{model.owner}}; Created: {{model.created}}</div>
         <br>
       </div>
-    </div>
-    <div id="sharedModels" class="tab-pane fade">
+    </tab>
+    
+    <tab heading="Models shared with me">
       <div ng-repeat="model in sharedModels.collection">
         <h2><a class="clickable-title" ng-click="sharedModels.edit(model)">{{model.name}}</a></h2>
         <span stem-list-item-actions del="sharedModels.del(model)" edit="sharedModels.edit(model)" duplicate="sharedModels.duplicate(model)"></span>
@@ -28,8 +23,9 @@
         <div>Author: {{model.owner}}; Created: {{model.created}}</div>
         <br>
       </div>
-    </div>
-    <div id="publicModels" class="tab-pane fade">
+    </tab>
+    
+    <tab heading="Public models">
       <div ng-repeat="model in publicModels.collection">
         <h2><a class="clickable-title" ng-click="publicModels.edit(model)">{{model.name}}</a></h2>
         <span stem-list-item-actions del="publicModels.del(model)" edit="publicModels.edit(model)" duplicate="publicModels.duplicate(model)"></span>
@@ -37,8 +33,9 @@
         <div>Author: {{model.owner}}; Created: {{model.created}}</div>
         <br>
       </div>
-    </div>
-    <div id="allModels" class="tab-pane fade">
+    </tab>
+    
+    <tab heading="All models">
       <div ng-repeat="model in allModels.collection">
         <h2><a class="clickable-title" ng-click="allModels.edit(model)">{{model.name}}</a></h2>
         <span stem-list-item-actions del="allModels.del(model)" edit="allModels.edit(model)" duplicate="allModels.duplicate(model)"></span>
@@ -46,10 +43,9 @@
         <div>Author: {{model.owner}}; Created: {{model.created}}</div>
         <br>
       </div>
-    </div>
-  </div>
-
-
+    </tab>
+  </tabset>
+  
 </div>
 {% endraw %}
 {% endblock %}
