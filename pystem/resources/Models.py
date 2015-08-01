@@ -8,18 +8,13 @@ Created on Jun 29, 2015
 import datetime
 from flask import request
 from flask_login import current_user
-from bson.objectid import ObjectId
 import mongoengine.fields as F
-from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
-from StemResource import StemResource
-from pystem.Exceptions import APIException, LoginRequiredError,\
-	UnauthorizedError
+from mongoengine.errors import DoesNotExist
+from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse, makeInvDict
+from pystem.Exceptions import APIException, LoginRequiredError, UnauthorizedError
 from pystem.flask import db, AdminPermission
 from pystem.model.ModelCalculator import ModelCalculator
 from Users import User 
-import pystem.resources.ModelPermissions as MP
-from mongoengine.errors import DoesNotExist
-from pystem.flask.Utilities import makeInvDict
 
 class ModelField(db.EmbeddedDocument):
 	meta = {'allow_inheritance': True}
@@ -93,22 +88,6 @@ class Model(db.Document):
 	board = F.EmbeddedDocumentField(Board, default = Board)
 	background = F.StringField()
 
-class ModelUserAccess(db.Document):
-	meta = {
-		'collection': 'ModelUserAccess',
-		'indexes': ['user', 'model']
-	}	
-	ACCESS = (
-		(0, 'none'),
-		(100, 'list'),
-		(200, 'view'),
-		(300, 'edit'),
-		(400, 'full')
-	)
-	ACCESS_DCT = makeInvDict(ACCESS)
-	user = F.ReferenceField(User, required = True)
-	model = F.ReferenceField(Model, required = True)
-	access = F.IntField(choices = ACCESS, default = 0)
 	
 def migrate():
 	t2c = {
@@ -128,7 +107,10 @@ def migrate():
 		Model._get_collection().update({'_id': model['_id']}, model)
 	print("Finished migration")
 #migrate()
-		
+
+import pystem.resources.ModelPermissions as MP
+from StemResource import StemResource
+	
 class ModelAPI(StemResource):
 	def get(self, modelID = None):
 		"""
@@ -168,15 +150,16 @@ class ModelAPI(StemResource):
 				searchFilter = {'owner': user.id}
 			elif (modelUserRelation == 'shared'):
 				models = []
-				sharedModelAccess = ModelUserAccess.objects(user = user, access__gte = ModelUserAccess.ACCESS_DCT['list'])
+				sharedModelAccess = MP.ModelUserAccess.objects(user = user, access__gte = MP.ModelUserAccess.ACCESS_DCT['list'])
 				for modelAccess in sharedModelAccess:
 					model = modelAccess.model
-					models.append({									
+					models.append({
+						'_id': model.id,						
 						'name': model.name,
 						'description': model.description,
 						'created': model.created,
 						'owner': model.owner.username,
-						'access': modelAccess.acces
+						'access': modelAccess.access
 					})					
 			elif (modelUserRelation == 'public'):
 				searchFilter = {'publicAccess': {"$gte": Model.PUBLIC_ACCESS_DCT['list']}}
@@ -189,7 +172,7 @@ class ModelAPI(StemResource):
 			else:
 				raise APIException('Invalid value for modelUserRelation, must be one of [own, shared, public, all]')
 		else:
-			searchFilter = {'publicAccess.list': True}
+			searchFilter = {'publicAccess': {"$gte": Model.PUBLIC_ACCESS_DCT['list']}}
 			responseFields['publicAccess'] = True
 		if (models is None):
 			models = list(Model._get_collection().find(searchFilter, responseFields, sort = [('name', 1)]))
@@ -204,22 +187,13 @@ class ModelAPI(StemResource):
 		except DoesNotExist:
 			raise APIException("No model exists with ID {}".format(modelID))
 		permission = MP.ModelViewPermission(model)
-		if (permission.can()):
-# 			sharedModelAccess = MP.ModelUserAccess.objects(model = model)
-# 			accessList = []
-# 			for modelAccess in sharedModelAccess:
-# 				modelAccessDict = modelAccess.to_mongo()
-# 				modelAccessDict['user'] = modelAccess.user.username
-# 				del modelAccessDict['model']
-# 				accessList.append(modelAccessDict)
-			model = model.to_mongo()
-#			model['userAccess'] = accessList
-			return makeJsonResponse(model)
-		else:
+		if (not permission.can()):
 			raise UnauthorizedError('You have no permissions to view this model')
+		model = model.to_mongo()
+		return makeJsonResponse(model)
 
 	def create(self, user):
-		# Create new model
+		""""Create new model"""
 		model = Model(owner = user)
 		model.save()
 		return makeJsonResponse({'_id': model.id})
@@ -244,7 +218,7 @@ class ModelAPI(StemResource):
 	def copy(self, modelID, user):	
 		# Duplicate existing model
 		model = Model.objects.get(id = modelID)
-		permission = MP.ModelCopyPermission(model)
+		permission = MP.ModelViewPermission(model)
 		if (permission.can()):
 			model.id = None
 			model.name = 'Copy of ' + model.name
@@ -258,7 +232,7 @@ class ModelAPI(StemResource):
 	def delete(self, modelID):
 		""" Delete a model"""
 		model = Model.objects.get(id = modelID)
-		permission = MP.ModelDeletePermission(model)
+		permission = MP.ModelFullPermission(model)
 		if (permission.can()):			
 			model.delete()
 			return makeJsonResponse(None, 'Model deleted')

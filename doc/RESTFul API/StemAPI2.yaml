@@ -1,0 +1,194 @@
+# this is an example of the Uber API
+# as a demonstration of an API spec in YAML
+swagger: '2.0'
+info:
+  title: Stem
+  description: Stem
+  version: "1.0.0"
+# the domain of the service
+#host: stem.sysmoltd.com
+host: localhost:5000
+# array of all schemes that your API supports
+schemes:
+  - http #s
+# will be prefixed to all paths
+basePath: /stem/api
+produces:
+  - application/json
+paths:
+  /Models:
+    get:
+      description: List of models
+      tags: 
+        - Models
+      parameters:
+        -
+          name: modelUserRelation
+          in: query
+          description: modelUserRelation = [own, shared, public, all]
+          default: public
+          type: string
+          required: True
+      responses:
+        200:
+          description: An array of models
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Model'
+
+    post:
+      description: Create a new model
+      tags: 
+        - Models
+      responses:
+        200:
+          description: Success
+
+  /Models/{modelID}:
+    get:
+      description: Load a model
+      tags: 
+        - Models
+      parameters:
+        -
+          name: modelID
+          in: path
+          description: database ID of the model
+          type: string
+          required: True
+      responses:
+        200:
+          description: Model definition
+          schema:
+            $ref: '#/definitions/Model'
+    put:
+      description: Update a model
+      tags: 
+        - Models
+      parameters:
+        -
+          name: modelID
+          in: path
+          description: database ID of the model
+          type: string
+          required: True
+        -
+          name: modelData
+          in: body
+          description: model data
+          schema:
+            $ref: '#/definitions/Model'
+          required: True
+          
+      responses:
+        200:
+          description: Success
+    delete:
+      description: Delete a model
+      tags: 
+        - Models
+      parameters:
+        -
+          name: modelID
+          in: path
+          description: database ID of the model
+          type: string
+          required: True
+      responses:
+        200:
+          description: Success
+    post:
+      description: Copy an existing model
+      tags: 
+        - Models
+      parameters:
+        -
+          name: modelID
+          in: path
+          description: database ID of the model
+          type: string
+          required: True
+      responses:
+        200:
+          description: success, id of the model
+  /Models/{modelID}/compute:
+    post:
+      description: Computes the model
+      tags: 
+        - Models
+      parameters:
+        -
+          name: modelID
+          in: path
+          description: database ID of the model
+          type: string
+          required: True
+      responses:
+        200:
+          description: An array of models
+
+
+  /ModelUserAccess/{modelID}:
+    get:
+      description: List user access entries for a model
+      tags: 
+        - ModelUserAccess
+      parameters:
+        -
+          name: modelID
+          in: path
+          description: modelID
+          type: string
+          required: True
+          default: 55bbe1207350c80a54c28f2d
+      responses:
+        200:
+          description: An array of models
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelUserAccess'
+
+  /ModelUserAccess/{modelID}/{username}:
+    post:
+      description: Create or update user access entry for a model
+      tags: 
+        - ModelUserAccess
+      parameters:
+        -
+          name: modelID
+          in: path
+          description: modelID
+          type: string
+          required: True
+          default: 55bbe1207350c80a54c28f2d
+        -
+          name: username
+          in: path
+          description: username
+          type: string
+          required: True
+          default: atanas.pavlov
+      responses:
+        200:
+          description: An array of models access entries
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelUserAccess'
+
+
+definitions:
+  Model:
+    properties:
+      _id:
+        type: string
+        description: Unique database ID
+  ModelUserAccess:
+    properties:
+      username: 
+        type: string
+      access: 
+        type: string
+        
