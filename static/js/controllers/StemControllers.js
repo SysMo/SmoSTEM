@@ -189,16 +189,7 @@ Stem.controller('HeaderCtrl', ['$scope', 'Menus', 'UserService', 'StemResources'
 	Menus.addSubMenuItem('topbar', 'GoTo', 'Quantities', '/Quantities');
 	Menus.addSubMenuItem('topbar', 'GoTo', 'Library Modules', '/LibraryModules');
 
-	$scope.isCollapsed = false;
 	$scope.menu = Menus.getMenu('topbar');
-	
-	$scope.toggleCollapsibleMenu = function() {
-		$scope.isCollapsed = !$scope.isCollapsed;
-	};
-	// Collapsing the menu after navigation
-	$scope.$on('$stateChangeSuccess', function() {
-   			$scope.isCollapsed = false;
-   	});
 	
 	// Login form - show
 	$scope.UserService = UserService;
