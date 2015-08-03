@@ -79,7 +79,7 @@
 <body ng-app="Stem">
   {% include 'angular/CoreDirectiveTemplates.html' %}
   {% raw %}
-  <div data-ng-controller="HeaderController">
+  <div data-ng-controller="HeaderCtrl">
     <header class="navbar navbar-fixed-top navbar-inverse">
     <div class="container">
       <div class="navbar-header">
@@ -91,6 +91,7 @@
         </button>
         <a href="/" class="navbar-brand">STEM</a>
       </div>
+      
       <nav id="topbar" class="collapse navbar-collapse" role="navigation">
       <ul class="nav navbar-nav navbar-left">
         <li data-ng-repeat="item in menu.items | orderBy: 'position'" 
@@ -125,6 +126,7 @@
       </nav>
     </div>
     </header>
+    
     <!-- Login modal dialog -->
 	<div class="modal fade" id="LoginModal">
 	  <div class="modal-dialog">
@@ -150,6 +152,7 @@
 	    </div>
 	  </div>
 	</div>
+  
   </div>
   {% endraw %}
   <section class="content">

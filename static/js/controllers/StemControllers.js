@@ -180,7 +180,7 @@ Stem.controller('LibraryModuleEditorCtrl', function($scope, $timeout, PageSettin
 	Menus.addMenuItem('topbar', 'Save', $scope.save, 'action', 'glyphicon-floppy-disk');
 });
 
-Stem.controller('HeaderController', ['$scope', 'Menus', 'UserService', 'StemResources',
+Stem.controller('HeaderCtrl', ['$scope', 'Menus', 'UserService', 'StemResources',
 		 function($scope, Menus, UserService, StemResources) {
 	// Set top bar menu items
 	Menus.addMenuItem('topbar', 'Go To', 'GoTo', 'dropdown');
@@ -201,6 +201,7 @@ Stem.controller('HeaderController', ['$scope', 'Menus', 'UserService', 'StemReso
 	
 	$scope.UserService = UserService;
 	
+	// Login form - show
 	var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	$('#LoginModal form').submit(function() {
 		var errorFlag = false;
