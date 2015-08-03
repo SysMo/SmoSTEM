@@ -57,7 +57,7 @@ paths:
           in: body
           schema:
             properties:
-              username:
+              id:
                 type: string
               password:
                 type: string
@@ -238,6 +238,27 @@ paths:
           in: query
           description: 
             "access level:<br>[one, list, view, edit]"
+          type: string
+          required: True
+      responses:
+        200:
+          description: Success
+
+    delete:
+      description: Delete user access entry for a model
+      tags: 
+        - ModelUserAccess
+      parameters:
+        -
+          name: modelID
+          in: path
+          description: modelID
+          type: string
+          required: True
+        -
+          name: username
+          in: path
+          description: username
           type: string
           required: True
       responses:
