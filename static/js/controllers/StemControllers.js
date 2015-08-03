@@ -214,16 +214,16 @@ Stem.controller('HeaderController', ['$scope', 'Menus', 'UserService', 'StemReso
 			return;
 		}
 		StemResources.Users.login({
-				id: $('#loginInputEmail').val(), 
-				password: $('#loginInputPassword').val()
-				}, function () {
-					$('#loginInputPassword').val("");
-					$('#LoginModal').modal("hide");
-					location.reload();
-				}, function(response) {
-					$('#loginMessage').append("<div>" + response.data.msg + "</div>");
-				}
-			);			
+			id: $('#loginInputEmail').val(), 
+			password: $('#loginInputPassword').val()
+			}, function () {
+				$('#loginInputPassword').val("");
+				$('#LoginModal').modal("hide");
+				location.reload();
+			}, function(response) {
+				$('#loginMessage').append("<div>" + response.data.msg + "</div>");
+			}
+		);			
 	});	
 }]);
 
