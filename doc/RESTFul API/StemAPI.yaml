@@ -207,7 +207,6 @@ paths:
           description: modelID
           type: string
           required: True
-          default: 55bbe1207350c80a54c28f2d
       responses:
         200:
           description: An array of models
@@ -228,22 +227,22 @@ paths:
           description: modelID
           type: string
           required: True
-          default: 55bbe1207350c80a54c28f2d
         -
           name: username
           in: path
           description: username
           type: string
           required: True
-          default: atanas.pavlov
+        -
+          name: access
+          in: query
+          description: 
+            "access level:<br>[one, list, view, edit]"
+          type: string
+          required: True
       responses:
         200:
-          description: An array of models access entries
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/ModelUserAccess'
-
+          description: Success
 
 definitions:
   Model:
