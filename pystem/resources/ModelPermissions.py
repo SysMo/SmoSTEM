@@ -22,6 +22,7 @@ from pystem.flask import db
 from StemResource import StemResource
 from pystem.flask.Utilities import makeInvDict, makeJsonResponse
 from pystem.Exceptions import APIException, UnauthorizedError
+from mongoengine.errors import DoesNotExist
 #### Database objects
 
 class ModelUserAccess(db.Document):
@@ -64,22 +65,14 @@ class ModelUserAccessAPI(StemResource):
 		model = Models.Model.objects.get(id = modelID)
 		self.checkPermissions(model)
 		user = Users.User.objects.get(username = username)
-		access = request.args.get('access', 'none')
+		access = request.args['access']
 		access = ModelUserAccess.ACCESS_DCT[access]
-		accessEntry = ModelUserAccess(model = model, user = user, access = access)
-		accessEntry.save()
-		return makeJsonResponse(None, 'Success')
-		#accessEntryQS = ModelUserAccess.objects(model = model, user = user)
-		#if (accessEntryQS.count() > 0):
-			
-	def put(self, modelID, username):
-		model = Models.Model.objects.get(id = modelID)
-		self.checkPermissions(model)
-		user = Users.User.objects.get(username = username)
-		access = request.args.get('access', 'none')
-		access = ModelUserAccess.ACCESS_DCT[access]
-		accessEntry = ModelUserAccess.objects.get(model = model, user = user)
-		accessEntry.modify(access = access)
+		try:
+			accessEntry = ModelUserAccess.objects.get(model = model, user = user)
+			accessEntry.modify(access = access)
+		except DoesNotExist:
+			accessEntry = ModelUserAccess(model = model, user = user, access = access)
+			accessEntry.save()
 		return makeJsonResponse(None, 'Success')
 	
 	def delete(self, modelID, username):
