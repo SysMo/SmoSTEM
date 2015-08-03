@@ -124,3 +124,8 @@ h1 {
 #registrationMessage, #loginMessage {
 	font-weight: 700;
 }
+
+/* ACE Editor */
+.ace_bracket {
+	background: #9999ff;
+}

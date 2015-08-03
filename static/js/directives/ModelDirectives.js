@@ -480,6 +480,18 @@ Stem.directive('stemScalar', function(ClipboardService) {
 				));
 			};
 			$scope.onUnitChange();
+			
+			$scope.displayName = function(name) {
+				symbols = {
+					'alpha': 'α',
+					'beta': 'β',
+					'gamma': 'γ',
+				}
+				if (name.indexOf('\\') == 0) {
+					return symbols[name.substring(1)];
+				}
+				return name;
+			}
 		}, 
 		link: function(scope, element, attrs) {
 			element.css("width", "500px");
