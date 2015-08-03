@@ -153,6 +153,7 @@ Stem.controller('LibraryModuleEditorCtrl', function($scope, $timeout, PageSettin
 		
 	};
 	Menus.addMenuItem('topbar', 'New function', $scope.addFunction, 'action', 'glyphicon glyphicon-plus');
+	
 	// Delete function
 	$scope.deleteFunction = function(index) {
 		$scope.module.functions.splice(index, 1);
@@ -199,9 +200,9 @@ Stem.controller('HeaderCtrl', ['$scope', 'Menus', 'UserService', 'StemResources'
    			$scope.isCollapsed = false;
    	});
 	
+	// Login form - show
 	$scope.UserService = UserService;
 	
-	// Login form - show
 	var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	$('#LoginModal form').submit(function() {
 		var errorFlag = false;
