@@ -14,7 +14,7 @@ from pystem.flask import bcrypt, db, mail
 
 from StemResource import StemResource
 from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
-from pystem.Exceptions import APIException
+from pystem.Exceptions import APIException, NotFoundError
 import mongoengine.fields as F
 from mongoengine.errors import DoesNotExist, NotUniqueError
 
@@ -62,6 +62,8 @@ class UserAPI(StemResource):
 	def get(self, action):
 		if (action == "confirm"):
 			return self.confirm()
+		elif (action == "find"):
+			return self.find()
 		else:
 			raise APIException("Unknown GET action {}".format(action))
 
@@ -88,7 +90,23 @@ class UserAPI(StemResource):
 			return "Thank you, you can now login."
 		else:
 			raise APIException('Confirmation failed')		
-		
+	
+	def find(self):
+		""""Finds a user"""		
+		identifier = request.args.get('identifier')
+		try:
+			if (identifier is not None):
+				if ('@' in identifier):
+					user = User.objects.get(email = identifier)
+				else:
+					user = User.objects.get(username = identifier)
+			else:
+				raise APIException("Parameter 'identifier' must be given")
+		except DoesNotExist:
+			raise NotFoundError("User not found")
+		result = dict(username = user.username)
+		return makeJsonResponse(result)
+
 	def create(self):
 		# If no users exist, init the user DB
 		if (User.objects.count() == 0):
