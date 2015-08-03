@@ -76,3 +76,6 @@ def parseJsonResponse(data):
 	if ('_id' in dct):
 		dct['_id'] = ObjectId(dct['_id'])
 	return dct
+
+def makeInvDict(items):
+	return dict(((item[1], item[0]) for item in items)) 
