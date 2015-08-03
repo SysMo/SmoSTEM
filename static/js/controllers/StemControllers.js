@@ -143,7 +143,7 @@ Stem.controller('ModelEditorCtrl', function($scope,
 	$scope.compute = function() {
 		$scope.model.$compute();
 	};
-	Menus.addMenuItem('topbar', 'Compute', $scope.compute, 'action', 'glyphicon glyphicon-play-circle');
+	Menus.addMenuItem('topbar', 'Compute', $scope.compute, 'action', 'glyphicon-play-circle');
 	// Save model
 	$scope.save = function() {
 		$scope.model.$update();
@@ -153,14 +153,14 @@ Stem.controller('ModelEditorCtrl', function($scope,
 	$scope.editProps = function() {
 		$("#" + $scope.model._id + "-modal").modal();
 	}
-	Menus.addMenuItem('topbar', 'Properties', $scope.editProps, 'action', 'glyphicon glyphicon-cog');
+	Menus.addMenuItem('topbar', 'Properties', $scope.editProps, 'action', 'glyphicon-cog');
 });
 
 //Page with library modules
 Stem.controller('LibraryModuleCollectionCtrl', function($scope, PageSettings, StemResources, Menus){
 	$scope.LibraryModules = new StemResources.StandardResource('LibraryModules', 'LibraryModuleEditor');
 	$scope.LibraryModules.query();
-	Menus.addMenuItem('topbar', 'New', $scope.LibraryModules.create, 'action', 'glyphicon glyphicon-plus');
+	Menus.addMenuItem('topbar', 'New', $scope.LibraryModules.create, 'action', 'glyphicon-plus');
 });
 
 //Editor for an individual quantity
@@ -181,7 +181,7 @@ Stem.controller('LibraryModuleEditorCtrl', function($scope, $timeout, PageSettin
 		//$timeout($scope.editFunction();
 		
 	};
-	Menus.addMenuItem('topbar', 'New function', $scope.addFunction, 'action', 'glyphicon glyphicon-plus');
+	Menus.addMenuItem('topbar', 'New function', $scope.addFunction, 'action', 'glyphicon-plus');
 	
 	// Delete function
 	$scope.deleteFunction = function(index) {
@@ -210,13 +210,22 @@ Stem.controller('LibraryModuleEditorCtrl', function($scope, $timeout, PageSettin
 	Menus.addMenuItem('topbar', 'Save', $scope.save, 'action', 'glyphicon-floppy-disk');
 });
 
-Stem.controller('HeaderCtrl', ['$scope', 'Menus', 'UserService', 'StemResources',
-		 function($scope, Menus, UserService, StemResources) {
+Stem.controller('HeaderCtrl', ['$scope', 'Menus', 'UserService', 'StemResources', function($scope, Menus, UserService, StemResources) {
 	// Set top bar menu items
 	Menus.addMenuItem('topbar', 'Go To', 'GoTo', 'dropdown');
 	Menus.addSubMenuItem('topbar', 'GoTo', 'Models', '/Models');
 	Menus.addSubMenuItem('topbar', 'GoTo', 'Quantities', '/Quantities');
-	Menus.addSubMenuItem('topbar', 'GoTo', 'Library Modules', '/LibraryModules');
+	//Menus.addSubMenuItem('topbar', 'GoTo', 'Library Modules', '/LibraryModules');
+	Menus.addSubMenuItem(
+		'topbar', //menuId 
+		'GoTo', //rootMenuItemURL 
+		'Library Modules', //menuItemTitle 
+		'/LibraryModules', //menuItemURL 
+		undefined, //menuItemUIRoute 
+		false, //isPublic 
+		['admin'], //roles 
+		undefined //position
+	);
 
 	$scope.menu = Menus.getMenu('topbar');
 	

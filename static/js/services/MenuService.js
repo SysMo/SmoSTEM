@@ -1,7 +1,6 @@
 //Menu service used for managing  menus
-Stem.service('Menus', [
-
-	function() {
+Stem.service('Menus', ['UserService', 
+	function(UserService) {
 		// Define a set of default roles
 		this.defaultRoles = ['*'];
 
@@ -9,14 +8,15 @@ Stem.service('Menus', [
 		this.menus = {};
 
 		// A private function for rendering decision 
-		var shouldRender = function(user) {
-			if (user) {
-				if (!!~this.roles.indexOf('*')) {
+		var shouldRender = function() {
+			if (UserService.isAuthenticated()) {
+				if (this.roles.indexOf('*') >= 0) {
 					return true;
 				} else {
-					for (var userRoleIndex in user.roles) {
+					var userRoles = UserService.roles();
+					for (var userRoleIndex in userRoles) {
 						for (var roleIndex in this.roles) {
-							if (this.roles[roleIndex] === user.roles[userRoleIndex]) {
+							if (this.roles[roleIndex] === userRoles[userRoleIndex]) {
 								return true;
 							}
 						}
@@ -29,8 +29,8 @@ Stem.service('Menus', [
 			return false;
 		};
 
-		// Validate menu existance
-		this.validateMenuExistance = function(menuId) {
+		// Validate menu existence
+		this.validateMenuExistence = function(menuId) {
 			if (menuId && menuId.length) {
 				if (this.menus[menuId]) {
 					return true;
@@ -47,7 +47,7 @@ Stem.service('Menus', [
 		// Get the menu object by menu id
 		this.getMenu = function(menuId) {
 			// Validate that the menu exists
-			this.validateMenuExistance(menuId);
+			this.validateMenuExistence(menuId);
 
 			// Return the menu object
 			return this.menus[menuId];
@@ -70,16 +70,16 @@ Stem.service('Menus', [
 		// Remove existing menu object by menu id
 		this.removeMenu = function(menuId) {
 			// Validate that the menu exists
-			this.validateMenuExistance(menuId);
+			this.validateMenuExistence(menuId);
 
 			// Return the menu object
 			delete this.menus[menuId];
 		};
 
 		// Add menu item object
-		this.addMenuItem = function(menuId, menuItemTitle, menuItemURL, menuItemType, menuItemUIRoute, isPublic, roles, position) {
+		this.addMenuItem = function(menuId, menuItemTitle, menuItemURL, menuItemType, menuItemGlyphicon, isPublic, roles, position) {
 			// Validate that the menu exists
-			this.validateMenuExistance(menuId);
+			this.validateMenuExistence(menuId);
 
 			// Push new menu item
 			this.menus[menuId].items.push({
@@ -87,7 +87,7 @@ Stem.service('Menus', [
 				link: menuItemURL,
 				menuItemType: menuItemType || 'item',
 				menuItemClass: menuItemType,
-				uiRoute: menuItemUIRoute, // || ('/' + menuItemURL),
+				glyphicon: menuItemGlyphicon,
 				isPublic: ((isPublic === null || typeof isPublic === 'undefined') ? this.menus[menuId].isPublic : isPublic),
 				roles: ((roles === null || typeof roles === 'undefined') ? this.menus[menuId].roles : roles),
 				position: position || 0,
@@ -100,9 +100,9 @@ Stem.service('Menus', [
 		};
 
 		// Add submenu item object
-		this.addSubMenuItem = function(menuId, rootMenuItemURL, menuItemTitle, menuItemURL, menuItemUIRoute, isPublic, roles, position) {
+		this.addSubMenuItem = function(menuId, rootMenuItemURL, menuItemTitle, menuItemURL, menuItemGlyphicon, isPublic, roles, position) {
 			// Validate that the menu exists
-			this.validateMenuExistance(menuId);
+			this.validateMenuExistence(menuId);
 
 			// Search for menu item
 			for (var itemIndex in this.menus[menuId].items) {
@@ -111,7 +111,7 @@ Stem.service('Menus', [
 					this.menus[menuId].items[itemIndex].items.push({
 						title: menuItemTitle,
 						link: menuItemURL,
-						uiRoute: menuItemUIRoute || ('/' + menuItemURL),
+						glyphicon: menuItemGlyphicon,
 						isPublic: ((isPublic === null || typeof isPublic === 'undefined') ? this.menus[menuId].items[itemIndex].isPublic : isPublic),
 						roles: ((roles === null || typeof roles === 'undefined') ? this.menus[menuId].items[itemIndex].roles : roles),
 						position: position || 0,
@@ -127,7 +127,7 @@ Stem.service('Menus', [
 		// Remove existing menu object by menu id
 		this.removeMenuItem = function(menuId, menuItemURL) {
 			// Validate that the menu exists
-			this.validateMenuExistance(menuId);
+			this.validateMenuExistence(menuId);
 
 			// Search for menu item to remove
 			for (var itemIndex in this.menus[menuId].items) {
@@ -143,7 +143,7 @@ Stem.service('Menus', [
 		// Remove existing menu object by menu id
 		this.removeSubMenuItem = function(menuId, submenuItemURL) {
 			// Validate that the menu exists
-			this.validateMenuExistance(menuId);
+			this.validateMenuExistence(menuId);
 
 			// Search for menu item to remove
 			for (var itemIndex in this.menus[menuId].items) {
@@ -159,6 +159,6 @@ Stem.service('Menus', [
 		};
 
 		//Adding the topbar menu
-		this.addMenu('topbar');
+		this.addMenu('topbar', true, this.defaultRoles);
 	}
 ]);
