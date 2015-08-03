@@ -6,9 +6,9 @@
   
   <tabset>
     <tab ng-repeat="listedModelsTab in listedModelsTabs" heading="{{listedModelsTab.title}}" active="listedModelsTab.active">
-      <div ng-repeat="model in listedModelsTab.models.collection">
-        <h2><a class="clickable-title" ng-click="listedModelsTab.models.edit(model)">{{model.name}}</a></h2>
-        <span stem-list-item-actions del="listedModelsTab.models.del(model)" edit="listedModelsTab.models.edit(model)" duplicate="listedModelsTab.models.duplicate(model)"></span>
+      <div ng-repeat="model in listedModelsTab.models">
+        <h2><a class="clickable-title" ng-click="edit(model)">{{model.name}}</a></h2>
+        <span stem-list-item-actions del="del(model)" edit="edit(model)" duplicate="duplicate(model)"></span>
         <div>{{model.description}}</div>
         <div>Author: {{model.owner}}; Created: {{model.created}}</div>
         <br>

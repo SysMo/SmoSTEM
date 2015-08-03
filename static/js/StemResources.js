@@ -134,8 +134,18 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 		Models:
 			$resource('/stem/api/Models/:_id/:action', { _id: '@_id' }, 
 			{	
+				query: {
+					method: 'GET',
+					isArray: true,
+					interceptor: interceptors,
+				},
 				get: {
+					method: 'GET',
 					transformResponse: parseMathJSON,
+					interceptor: interceptors,
+				},
+				create : {
+					method: 'POST',
 					interceptor: interceptors,
 				},
 				update: { 
@@ -148,6 +158,10 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 					interceptor: interceptors,
 					transformRequest: serializeMathJSON,
 					transformResponse: parseMathJSON,
+				},
+				delete: {
+					method: 'DELETE',
+					interceptor: interceptors,
 				},
 				compute: { 
 					method: 'POST', 

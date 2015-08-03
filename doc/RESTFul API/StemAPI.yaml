@@ -80,6 +80,25 @@ paths:
       responses:
         200:
           description: Successful response
+  /Users/changePassword:
+    post:
+      description: Change user password
+      tags: 
+        - Users
+      parameters:
+        -
+          name: credentials
+          in: body
+          required: true
+          schema:
+            properties:
+              oldPassword:
+                type: string
+              newPassword:
+                type: string
+      responses:
+        200:
+          description: Successful response
 
 
   /Models:

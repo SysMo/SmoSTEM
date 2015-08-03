@@ -27,43 +27,66 @@ Stem.controller('QuantityEditorCtrl', function($scope, PageSettings, StemResourc
 });
 
 //Page with model list
-Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResources, Menus, UserService){	
-	var userIsAdmin = UserService.isAdmin();
-	var userIsAuthenticated = UserService.isAuthenticated();
-	
-	// Load models - "Public models"
-	$scope.publicModels = new StemResources.StandardResource('Models', 'ModelEditor');
-	$scope.publicModels.query({modelUserRelation: 'public'});
-	
-	$scope.listedModelsTabs = [
-       { title:'Public models', models:$scope.publicModels, active:true }
-	];
-	
-	// Load models - "My models" and "Models shared with me"
-	if (userIsAuthenticated) {
-		$scope.myModels = new StemResources.StandardResource('Models', 'ModelEditor');
-		$scope.myModels.query({modelUserRelation: 'own'});
-		
-		$scope.sharedModels = new StemResources.StandardResource('Models', 'ModelEditor');
-		$scope.sharedModels.query({modelUserRelation: 'shared'});
-		
-		$scope.listedModelsTabs.push(
-			{ title:'My models', models:$scope.myModels, active:true},
-			{ title:'Models shared with me', models:$scope.sharedModels, active:false}
-		);
-		
-		$scope.listedModelsTabs[0].active = false; //Public models
-		Menus.addMenuItem('topbar', 'New', $scope.myModels.create, 'action', 'glyphicon-plus');
+Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResources, Menus, UserService){		
+	$scope.create = function() {
+		StemResources.Models.create(function() {
+			window.location.href = editorPath + "/" + entity._id;
+		});
 	}
 	
-	// Load models - "All models"
-	if (userIsAdmin) {
-		$scope.allModels = new StemResources.StandardResource('Models', 'ModelEditor');
-		$scope.allModels.query({modelUserRelation: 'all'});
+	$scope.del = function(model) {
+		model.$delete();
+		loadModels();		
+	}
+	
+	$scope.edit = function(model) {
+		window.location.href = editorPath + "/" + entity._id;
+	}
+	
+	$scope.duplicate = function(model) {
+		entity.$clone(function() {
+			window.location.href = editorPath + "/" + entity._id;
+		});
+	}
+	
+	function loadModels() {
+		var userIsAdmin = UserService.isAdmin();
+		var userIsAuthenticated = UserService.isAuthenticated();
 		
-		$scope.listedModelsTabs.push(
-			{ title:'All models', models:$scope.allModels, active:false }
-		);
+		// Load models - "Public models"
+		$scope.publicModels = StemResources.Models.query({modelUserRelation: 'public'});
+		
+		$scope.listedModelsTabs = [
+	       { title:'Public models', models:$scope.publicModels, active:true }
+		];
+		
+		// Load models - "My models" and "Models shared with me"
+		if (userIsAuthenticated) {
+			$scope.myModels = StemResources.Models.query({modelUserRelation: 'own'});
+			$scope.sharedModels = StemResources.Models.query({modelUserRelation: 'shared'});
+			
+			$scope.listedModelsTabs.push(
+				{ title:'My models', models:$scope.myModels, active:true},
+				{ title:'Models shared with me', models:$scope.sharedModels, active:false}
+			);
+			
+			$scope.listedModelsTabs[0].active = false; //Public models
+		}
+		
+		// Load models - "All models"
+		if (userIsAdmin) {
+			$scope.allModels = StemResources.Models.query({modelUserRelation: 'all'});
+			
+			$scope.listedModelsTabs.push(
+				{ title:'All models', models:$scope.allModels, active:false }
+			);
+		}
+	}
+	
+	loadModels();
+	
+	if (UserService.isAuthenticated()) {
+		Menus.addMenuItem('topbar', 'New', $scope.create, 'action', 'glyphicon-plus');
 	}
 });
 

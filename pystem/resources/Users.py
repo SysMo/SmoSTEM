@@ -10,7 +10,8 @@ from flask_mail import Message
 from flask_login import UserMixin
 from flask_login import login_user, logout_user, current_user
 from flask_principal import Identity, AnonymousIdentity, identity_changed
-from pystem.flask import bcrypt, db, mail
+from pystem.flask import bcrypt, db, mail, AnyUserNeed
+from flask_principal import Permission, RoleNeed, UserNeed
 
 from StemResource import StemResource
 from pystem.flask.Utilities import makeJsonResponse, parseJsonResponse
@@ -74,6 +75,8 @@ class UserAPI(StemResource):
 			return self.login()
 		elif (action == 'logout'):
 			return self.logout()
+		elif (action == 'changePassword'):
+			return self.changePassword()
 		else:
 			raise APIException("Unknown POST action {}".format(action))
 	
@@ -187,3 +190,34 @@ http://stem.sysmoltd.com/stem/api/Users/confirm&username={}&activationCode={}"""
 		response.set_cookie('user.username', '')
 		response.set_cookie('user.roles', '')
 		return response
+	
+	def changePassword(self):
+		requestData = parseJsonResponse(request.data)
+		username = requestData['username']
+		oldPassword = requestData['oldPassword']
+		newPassword = requestData['newPassword']
+		
+		try:
+			user = User.objects.get(username = username)
+		except DoesNotExist:
+			raise NotFoundError("User not found")
+		
+		permission = UserAdminPermission(user)
+		if not permission.can():
+			raise APIException('You have no permission to change the user password')
+		
+		passwordValid = bcrypt.check_password_hash(user.password, oldPassword)
+		if (not passwordValid):
+			raise APIException('Invalid old password')
+		
+		if (len(newPassword) < 6):
+			raise APIException('Your new password has to be at least 6 characters long')
+		
+		user.modify(password = unicode(bcrypt.generate_password_hash(newPassword)))
+		
+		return makeJsonResponse(None, 'Password changed')
+		
+class UserAdminPermission(Permission):
+	def __init__(self, user):
+		needs = [UserNeed(user.get_id()), RoleNeed('admin')]
+		super(UserAdminPermission, self).__init__(*needs)
