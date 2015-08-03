@@ -10,12 +10,78 @@ info:
 host: localhost:5000
 # array of all schemes that your API supports
 schemes:
-  - http #s
+  # http for localhost, https for the server
+  - http
 # will be prefixed to all paths
 basePath: /stem/api
 produces:
   - application/json
+
 paths:
+  /Users/find:
+    get:
+      description: Find user in the database
+      tags:
+        - Users
+      parameters:
+        -
+          name: identifier
+          in: query
+          required: true
+          description: username or email
+          type: string
+      responses:
+        200:
+          description: Returns username
+          schema:
+            properties:
+              username:
+                type: string
+
+  /Users/confirm:
+    get:
+      description: Confirms a new user
+      tags: 
+        - Users
+      responses:
+        200:
+          description: Successful response
+  /Users/login:
+    post:
+      description: Login user
+      tags: 
+        - Users
+      parameters:
+        -
+          name: credentials
+          in: body
+          schema:
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+      responses:
+        200:
+          description: Successful response
+  /Users/logout:
+    post:
+      description: Logout current user
+      tags: 
+        - Users
+      responses:
+        200:
+          description: Successful response
+  /Users/create:
+    post:
+      description: Login user
+      tags: 
+        - Users
+      responses:
+        200:
+          description: Successful response
+
+
   /Models:
     get:
       description: List of models

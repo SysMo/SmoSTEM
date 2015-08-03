@@ -42,6 +42,9 @@ class UnauthorizedError(APIException):
 		fullMsg = u"You are not authorized to perform this action.\n{}".format(msg)
 		super(UnauthorizedError, self).__init__(fullMsg)
 
+class NotFoundError(APIException):
+	pass
+
 class NonAPIException(Exception):
 	status_code = 500
 	def __init__(self, e):
