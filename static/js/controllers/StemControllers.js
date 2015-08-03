@@ -27,10 +27,13 @@ Stem.controller('QuantityEditorCtrl', function($scope, PageSettings, StemResourc
 });
 
 //Page with model list
-Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResources, Menus, UserService){		
+Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResources, Menus, UserService){
+	// Define - Models actions
+	$scope.editorPath = "ModelEditor"
 	$scope.create = function() {
-		StemResources.Models.create(function() {
-			window.location.href = editorPath + "/" + entity._id;
+		var model = new StemResources.Models();
+		model.$create(function() {
+			window.location.href = $scope.editorPath + "/" + model._id;
 		});
 	}
 	
@@ -39,16 +42,17 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResour
 		loadModels();		
 	}
 	
-	$scope.edit = function(model) {
-		window.location.href = editorPath + "/" + entity._id;
-	}
-	
 	$scope.duplicate = function(model) {
 		entity.$clone(function() {
-			window.location.href = editorPath + "/" + entity._id;
+			window.location.href = $scope.editorPath + "/" + model._id;
 		});
 	}
 	
+	$scope.edit = function(model) {
+		window.location.href = $scope.editorPath + "/" + model._id;
+	}
+	
+	// Define - Models functions
 	function loadModels() {
 		var userIsAdmin = UserService.isAdmin();
 		var userIsAuthenticated = UserService.isAuthenticated();
@@ -83,8 +87,10 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResour
 		}
 	}
 	
+	// Load models
 	loadModels();
 	
+	// Add a menu item for a new model
 	if (UserService.isAuthenticated()) {
 		Menus.addMenuItem('topbar', 'New', $scope.create, 'action', 'glyphicon-plus');
 	}
