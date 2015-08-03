@@ -58,8 +58,8 @@ class ModelUserAccessAPI(StemResource):
 		acl = ModelUserAccess.objects(model = model)
 		accessList = []
 		for accessEntry in acl:
-			accessList.append({'username': accessEntry.user.username, 'access': accessEntry.access})
-		return makeJsonResponse({'accessList': accessList, 'accesLevels': ModelUserAccess.ACCESS})
+			accessList.append({'username': accessEntry.user.username, 'access': dict(ModelUserAccess.ACCESS)[accessEntry.access]})
+		return makeJsonResponse(accessList)
 	
 	def post(self, modelID, username):
 		model = Models.Model.objects.get(id = modelID)
