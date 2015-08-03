@@ -198,8 +198,7 @@ Stem.controller('HeaderController', ['$scope', 'Menus', 'UserService', 'StemReso
 	$scope.$on('$stateChangeSuccess', function() {
    			$scope.isCollapsed = false;
    	});
-	// Activate tooltips
-	$('[data-toggle="tooltip"]').tooltip();
+	
 	$scope.UserService = UserService;
 	
 	var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

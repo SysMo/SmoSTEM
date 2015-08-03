@@ -1023,26 +1023,3 @@ Stem.directive('stemFormulasProperties', function($timeout) {
 		templateUrl: "stem-formulas-properties.html",
 	}
 });
-
-Stem.directive('tooltip', function(){
-    return {
-        restrict: 'A',
-        link: function(scope, element, attrs){
-            var mouseIn;
-        	$(element).hover(function(){
-                // on mouseenter
-        		mouseIn = true;
-                $(element).tooltip('show');
-            }, function(){
-                // on mouseleave
-            	mouseIn = false;
-                $(element).tooltip('hide');
-            });
-            $(element).keyup(function(){
-            	if (mouseIn) {
-            		$(element).tooltip('show');
-            	}
-            });
-        }
-    };
-});
