@@ -152,7 +152,7 @@
     <div style="display: inline-block; width: 200px;">
     	<span class="ui-icon ui-icon-arrowthick-2-n-s drag-handle"></span>
     	<span class="ui-icon ui-icon-arrowrefresh-1-e rotate-handle" ng-click="rotate()" ng-if="layout=='free'"></span>
-    	<span style="color: blue; cursor: pointer;" ng-click="edit()">{{stemScalar.name}}</span>
+    	<span style="color: blue; cursor: pointer;" ng-click="edit()" ng-bind="displayName(stemScalar.name)"></span>
     </div>
     <input style="display: inline-block; height: 30px; width: 100px; margin-right: 5px;" type="text" 
     	ng-model= "displayValue" ng-change="onInputValueChange()" ng-blur="onUnitChange()">
@@ -170,7 +170,7 @@
 </div>
 </script>
 
-<!-- Stem Scalar Properties -->
+<!-- Stem Scalar Properties pattern="[a-zA-Z_][a-zA-Z0-9_]*" -->
 <script type="text/ng-template" id="stem-scalar-properties.html">
 <div class="modal fade" id="{{stemScalar.id}}-modal" data-backdrop="static" data-keyboard="false">
 	<div class="modal-dialog">
@@ -185,7 +185,7 @@
 			<div class="modal-body">
 				<form>
 					<div>Name</div>
-					<input type="text" ng-model="stemScalar.name" pattern="[a-zA-Z_][a-zA-Z0-9_]*" required>
+					<input type="text" ng-model="stemScalar.name" required>
 					<div></div>
 					<div>Label</div>
 					<input type="text" ng-model="stemScalar.label">
