@@ -39,52 +39,23 @@ def deploy():
 		sudo('chown -R www-data:www-data {env.installDir}'.format(env = env))
 		sudo('service apache2 restart')
 	#sudo('/etc/init.d/celeryd restart')
-
-def mongo_update(collection):
-	put('backup/mongo/{collection}.json'.format(collection = collection), '/tmp/')
-	run('mongoimport --db stem --collection {collection} < /tmp/{collection}.json'.format(collection = collection))
-	
-def mongo_ensureIndexes():
-	"""
-	Create indexes for all the registered_documents
-	"""
-	sys.path.append(os.path.dirname(__file__))
-	from DevelopmentServer.py.DevelopmentServer import mongoConnection, app
-	conn = mongoConnection
-	db = mongoConnection[app.config['STEM_DATABASE']]
-	for doc, obj in conn._registered_documents.iteritems():
-		collection = db[obj.__collection__]
-		print('--------------------------------------------')
-		print("Generating indices for collection {}".format(obj.__collection__))
-		if (hasattr(obj, 'indexes')):
-			for index in obj.indexes:
-				print("\tGenerating index on fields {}".format(index['fields']))
-				unique = index.get('unique', False)
-				collection.ensure_index(index['fields'], unique = unique)
-		else:
-			print("No indexes defined for collection {}".format(obj.__collection__))
-		
-def mongo_listIndexes():
-	"""
-	List indexes for all the registered_documents
-	"""
-	sys.path.append(os.path.dirname(__file__))
-	from DevelopmentServer.py.DevelopmentServer import mongoConnection, app
-	conn = mongoConnection
-	db = mongoConnection[app.config['STEM_DATABASE']]
-	for doc, obj in conn._registered_documents.iteritems():
-		collection = db[obj.__collection__]
-		print('--------------------------------------------')
-		print("Indices for collection {}".format(collection))
-		print collection.index_information()
 		
 def backupMongoStem():
 	"""
 	Export the database content to JSON files
 	"""
-	collections = ['Quantities', 'LibraryModules']
-	for collection in collections:
-		run('mongoexport --db stem --collection {collection} > backup/mongo/{collection}.json'.format(collection = collection))
+	import datetime
+	sys.path.append(os.path.dirname(__file__))
+	from config import MONGODB_SETTINGS
+	with cd('/data/StemBackup/Mongo/'):
+		folderName = datetime.datetime.utcnow().strftime('%Y%m%d_%H%M%S')
+		run('mkdir {}'.format(folderName))
+		collections = ['Users', 'Roles', 'Quantities', 'LibraryModules', 'Models', 'ModelUserAccess']
+		for collection in collections:
+			run('mongoexport --db stem --collection {collection} -ssl -u {MS[username]} -p {MS[password]} > {folderName}/{collection}.json'.format(
+					collection = collection, folderName = folderName, MS = MONGODB_SETTINGS))
+		run('tar -zcvf {name}.tar.gz {name}'.format(name = folderName))
+		run('rm -rf {name}'.format(name = folderName))
 	
 def testTask():
 	print "Hosts: {}".format(env.hosts)
