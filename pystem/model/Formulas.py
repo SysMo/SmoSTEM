@@ -6,7 +6,7 @@ Created on Jul 2, 2015
 @licence: See License.txt in the main folder
 '''
 from __future__ import division
-import ast
+import ast, sys
 from FunctionRegistry import FunctionRegistry
 import pystem.Exceptions as E
 from pystem.model.Scope import UndefinedSymbolError
@@ -38,18 +38,20 @@ class ExpressionEvaluator(object):
 			result = self.evalVariable(expr)
 		elif (isinstance(expr, ast.BinOp)):
 			result = self.evalBinarOp(expr)
-		elif(isinstance(expr, ast.UnaryOp)):
+		elif (isinstance(expr, ast.UnaryOp)):
 			result = self.evalUnaryOp(expr)
-		elif(isinstance(expr, ast.IfExp)):
+		elif (isinstance(expr, ast.BoolOp)):
+			result = self.evalBoolOp(expr)
+		elif (isinstance(expr, ast.IfExp)):
 			if self.evalExpr(expr.test):
 				result = self.evalExpr(expr.body)
 			else:
 				result = self.evalExpr(expr.orelse)
-		elif(isinstance(expr, ast.Compare)):
+		elif (isinstance(expr, ast.Compare)):
 			result = self.evalCompare(expr)
-		elif(isinstance(expr, ast.List)):
+		elif (isinstance(expr, ast.List)):
 			result =  [self.evalExpr(el) for el in expr.elts]
-		elif(isinstance(expr, ast.Call)):
+		elif (isinstance(expr, ast.Call)):
 			result = self.evalFuncCall(expr)
 		else:
 			raise E.SemanticError("Illegal expression {}".format(ast.dump(expr)), expr, self.formulaBlock)
@@ -95,7 +97,21 @@ class ExpressionEvaluator(object):
 		if (opFunc is None):
 			raise E.SemanticError("Illegal unary operation", opNode, self.formulaBlock)
 		return opFunc(operand)
-	
+
+	boolOps = {
+		ast.And: lambda a, b : a and b,
+		ast.Or: lambda a, b : a or b
+	}
+	def evalBoolOp(self, opNode):
+		"""
+		Evaluates boolean operation
+		"""
+		opFunc = self.boolOps.get(opNode.op.__class__)
+		operands = opNode.values
+		if (opFunc is None):
+			raise E.SemanticError("Illegal boolean operation", opNode, self.formulaBlock)
+		return reduce(opFunc, map(self.evalExpr, operands))
+		
 	cmpOps = {
 		ast.Eq: lambda a, b: a == b,
 		ast.NotEq: lambda a, b: a != b,
@@ -133,7 +149,11 @@ class ExpressionEvaluator(object):
 		Subscript(expr value, slice slice, expr_context ctx)
 		"""
 		if isinstance(varNode, ast.Name):
-			return self.scope.getSymbolValue(varNode.id, searchImports = True)
+			try:
+				return self.scope.getSymbolValue(varNode.id, searchImports = True)
+			except UndefinedSymbolError, e: 
+				raise E.SemanticError('Undefined variable {}'.format(e.symbolName), varNode, self.formulaBlock)
+
 		elif isinstance(varNode, ast.Attribute):
 			attrName = varNode.attr
 			if (attrName[0] == '_'):
@@ -153,8 +173,8 @@ class ExpressionEvaluator(object):
 			funcName = funcCallNode.func.id
 			try:
 				func = self.scope.getSymbolValue(funcName, searchImports = True)
-			except UndefinedSymbolError, e:
-				raise E.SemanticError("No function {} defined".format(funcName), funcCallNode, self.formulaBlock)
+			except UndefinedSymbolError, e: 
+				raise E.SemanticError('Undefined function {}'.format(e.symbolName), funcPNode, self.formulaBlock)
 		elif (isinstance(funcPNode, ast.Attribute)):
 			func = self.evalExpr(funcPNode)
 		fArgs = [self.evalExpr(argExpr) for argExpr in funcCallNode.args]
@@ -181,8 +201,12 @@ class FormulaBlockProcessor(object):
 				try:
 					for targetNode in statement.targets:
 						self.assignValue(value = value, targetNode = targetNode, scope = scope)
+				except E.AssignmentError:
+					ttype, value, traceback = sys.exc_info()
+					raise ttype, value, traceback				
 				except Exception, e:
-					raise E.AssignmentError(e, statement, self.currentFormulaBlock)
+					ttype, value, traceback = sys.exc_info()
+					raise E.AssignmentError, E.AssignmentError(e, statement, self.currentFormulaBlock), traceback
 			elif isinstance(statement, ast.AugAssign):
 				# AugAssign(expr target, operator op, expr value)
 				targetNode = statement.target
@@ -231,8 +255,10 @@ class FormulaBlockProcessor(object):
 						loopCounter += 1
 					self.processStatementBlock(body, localScope, localEE)
 				localScope.release()
+			elif isinstance(statement, ast.Expr):
+				ee.eval(statement.value)
 			else:
-				raise E.SemanticError("The statement is not an assignment or loop", statement, self.currentFormulaBlock)
+				raise E.SemanticError("The statement is not an assignment or loop, but of type {}".format(statement.__class__.__name__), statement, self.currentFormulaBlock)
 	
 	def assignValue(self, value, targetNode, scope, topLevel = True):
 		if (isinstance(targetNode, ast.Name)):
@@ -240,11 +266,14 @@ class FormulaBlockProcessor(object):
 			if (topLevel):
 				scope.setSymbolValue(varName, value)
 			else:
-				return scope.getSymbolValue(varName, searchImports = False)
+				try:
+					return scope.getSymbolValue(varName, searchImports = False)
+				except UndefinedSymbolError, e: 
+					raise E.SemanticError('Undefined variable {}'.format(e.symbolName), targetNode, self.currentFormulaBlock)
 		elif (isinstance(targetNode, ast.Attribute)):
 			attrName = targetNode.attr
 			if (attrName[0] == '_'):
-				raise E.SemanticError('Attribute names cannot start with _ (underscore)', targetNode, self.formulaBlock)
+				raise E.SemanticError('Attribute names cannot start with _ (underscore)', targetNode, self.currentFormulaBlock)
 			targetContainer = self.assignValue(value, targetNode.value, scope, False)
 			if (topLevel):
 				setattr(targetContainer, attrName, value)
@@ -252,10 +281,15 @@ class FormulaBlockProcessor(object):
 				return getattr(targetContainer, attrName)
 		elif (isinstance(targetNode, ast.Subscript)):
 			slice = targetNode.slice
-			if (isinstance(slice, ast.Index) and isinstance(slice.value, ast.Num)):
-				index = slice.value.n
+			if isinstance(slice, ast.Index):
+				if isinstance(slice.value, ast.Num):
+					index = slice.value.n
+				else:
+					ee = ExpressionEvaluator(scope)
+					ee.setFormulaBlock(self.currentFormulaBlock)
+					index = ee.eval(slice.value)
 			else:
-				raise E.SemanticError("Only integer indices are supported", targetNode, self.formulaBlock)
+				raise E.SemanticError("Only single indices are supported", targetNode, self.currentFormulaBlock)
 			targetContainer = self.assignValue(value, targetNode.value, scope, False)
 			if (topLevel):
 				targetContainer[index] = value
@@ -265,5 +299,5 @@ class FormulaBlockProcessor(object):
 			for var, val in zip(targetNode.elts, value):
 				self.assignValue(val, var, scope)
 		else:
-			raise E.SemanticError("Assignment target must be variable, variable attribute or variable index", targetNode, self.formulaBlock) 
+			raise E.SemanticError("Assignment target must be variable, variable attribute or variable index", targetNode, self.currentFormulaBlock) 
 	

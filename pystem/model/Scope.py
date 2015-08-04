@@ -19,7 +19,11 @@ class ScopeEncoder(json.JSONEncoder):
 			return json.JSONEncoder.default(self, obj)
 
 class UndefinedSymbolError(Exception):
-	pass
+	def __init__(self, symbolName):
+		self.symbolName = symbolName
+		fullMsg = u"Undefined symbol name {}".format(symbolName)
+		super(UndefinedSymbolError, self).__init__(fullMsg)
+
 class SymbolCollisionError(Exception):
 	pass
 
@@ -32,6 +36,9 @@ class FormulaBlock(object):
 		#except Exception, e:
 		#	raise APIException(u"Failed to parse the formulas\nsection: {}, formula block: {}\n".format(sectionName, blockName) + unicode(e))
 
+class Module(object):
+	pass
+	
 class Scope(object):
 	def __init__(self, parent = None, symbols = None):
 		self.children = []
@@ -47,18 +54,31 @@ class Scope(object):
 		child = Scope(self, symbols)
 		self.children.append(child)
 		return child
+	
+	def findSymbolContainer(self, name, searchImports = False):
+		""" Searches for a symbol in the current scope, and parent scopes"""
+		if (name in self.symbols.keys()):
+			return self.symbols
+		elif (self.parent is not None):
+			return self.parent.findSymbolContainer(name, searchImports)
+		else:
+			return None
 		
 	def getSymbolValue(self, name, searchImports = False):
-		if (name in self.symbols.keys()):
-			return self.symbols[name]
-		elif (self.parent is not None):
-			return self.parent.getSymbolValue(name, searchImports)
+		symbolScope = self.findSymbolContainer(name, searchImports)
+		if (symbolScope is None):
+			raise UndefinedSymbolError(name)
 		else:
-			pass
+			return symbolScope[name]
 		
 	def setSymbolValue(self, name, value):
-		# TODO: perhaps first we have to check if the symbol exists in outer scopes
-		self.symbols[name] = value
+		symbolScope = self.findSymbolContainer(name)
+		if (symbolScope is None):
+			self.symbols[name] = value
+		else:
+			symbolScope[name] = value
+			
+		
 		
 	def addSymbols(self, dct):
 		self.symbols.update(dct)
@@ -81,13 +101,13 @@ class RootScope(Scope):
 		for module in modules:
 			self.importModule(module.importPath, module.importName, [function.name for function in module.functions])
 		
-	def getSymbolValue(self, name, searchImports = False):
+	def findSymbolContainer(self, name, searchImports = False):
 		if (name in self.symbols.keys()):
-			return self.symbols[name]
+			return self.symbols
 		elif (searchImports and name in self.imports.keys()):
-			return self.imports[name]
+			return self.imports
 		else:
-			raise UndefinedSymbolError("Symbol {} not found".format(name))
+			return None
 
 	def setSymbolValue(self, name, value):
 		if (name in self.imports.keys()):
@@ -100,7 +120,9 @@ class RootScope(Scope):
 			for symbol in symbols:
 				self.imports[symbol] = getattr(module, symbol)   
 		else:
-			self.imports[importName] = {}
+			md = Module()
+			self.imports[importName] = md 
 			for symbol in symbols:
-				self.imports[importName][symbol] = getattr(module, symbol)
+				setattr(md, symbol, getattr(module, symbol))
+			
 				
