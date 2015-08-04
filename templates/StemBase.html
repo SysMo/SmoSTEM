@@ -1,195 +1,95 @@
 <html>
 <head>
-    <title>STEM - The web computational platform from SysMo</title>
-    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
-    <!-- jQuery -->
-	<script src="/static/ext/jquery/jquery.min.js"></script>
-	<!-- jQuery Class (not official) -->
-	<script src="/static/ext/jquery/jquery.class.js"></script>
-    <!-- jQuery UI -->
-	<script src="/static/ext/jquery/jquery-ui.js"></script>
-	<link rel="stylesheet" href="/static/ext/jquery/jquery-ui.css">
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="/static/ext/bootstrap/css/bootstrap.min.css"> 
-    <script src="/static/ext/bootstrap/js/bootstrap.min.js"></script>
-	<!-- Angular -->
-	<script src="/static/ext/angular/angular.js"></script>
-	<script src="/static/ext/angular/angular-animate.min.js"></script>
-	<script src="/static/ext/angular/angular-sanitize.min.js"></script>
-	<script src="/static/ext/angular/angular-resource.js"></script>
-	<script src="/static/ext/angular/angular-cookies.js"></script>
-    <!-- Angular Bootstrap -->
-    <script src="/static/ext/angular-bootstrap/ui-bootstrap-tpls-0.13.0.min.js"></script>
-    <!-- ngToast -->
-    <link rel="stylesheet" href="/static/ext/ngToast/ngToast.min.css"> 
-    <script src="/static/ext/ngToast/ngToast.min.js"></script>
-	<!-- Ace -->	
-	<script src="/static/ext/ace/ace.js"></script>
-	<script src="/static/ext/ace/ext-static_highlight.js"></script>
-	<!-- ContextMenu -->
-	<link rel="stylesheet" href="/static/ext/contextMenu/jquery.contextMenu.css">
-	<script src="/static/ext/contextMenu/jquery.ui.position.js"></script>
-	<script src="/static/ext/contextMenu/jquery.contextMenu.js"></script>
-	<!-- Numeral.js -->
-	<script src="/static/ext/numeral/numeral.min.js"></script>
-	<!-- Marked -->
-	<script src="/static/ext/marked/marked.min.js"></script>
-    <!-- Bootstrap-markdown -->
-    <link rel="stylesheet" href="/static/ext/bootstrap-markdown/bootstrap-markdown.min.css">
-    <script src="/static/ext/bootstrap-markdown/bootstrap-markdown.js"></script>
-	<!-- Stem -->
-	<link rel="stylesheet" href="/static/css/Stem.css">
-	<script src="/static/js/StemCore.js"></script>
-    <!-- Stem Resources -->
-    <script src="/static/js/StemResources.js"></script>
-    <!-- Stem Directives -->
-	<script src="/static/js/directives/CoreDirectives.js"></script>
-    <!-- Stem Services -->
-    <script type="text/javascript" src="/static/js/services/MenuService.js"></script>
-    <script type="text/javascript" src="/static/js/services/UserService.js"></script>
-    <script type="text/javascript" src="/static/js/services/ClipboardService.js"></script>
-	<!-- Stem Controllers -->
-    <script src="/static/js/controllers/StemControllers.js"></script>
-    
-    <!-- ZeroClipboard -->
-    <script src="/static/ext/handsontable/zeroclipboard/ZeroClipboard.js"></script>
-    
-    <!-- Handsontable -->
-    <link rel="stylesheet" media="screen"  href="/static/ext/handsontable/handsontable.full.min.css">
-    <script src="/static/ext/handsontable/handsontable.full.min.js"></script>
-    
-    <!-- StemHOT -->
-    <link rel="stylesheet" media="screen"  href="/static/css/StemHOT.css">
-    <script src="/static/js/StemHOT.js"></script>
-    {% block Scripts %}
-		    
-    {% endblock %}
-
+  <title>STEM - The web computational platform from SysMo</title>
+  <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
+  <!-- jQuery -->
+  <script src="/static/ext/jquery/jquery.min.js"></script>
+  <!-- jQuery Class (not official) -->
+  <script src="/static/ext/jquery/jquery.class.js"></script>
+  <!-- jQuery UI -->
+  <script src="/static/ext/jquery/jquery-ui.js"></script>
+  <link rel="stylesheet" href="/static/ext/jquery/jquery-ui.css">
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="/static/ext/bootstrap/css/bootstrap.min.css"> 
+  <script src="/static/ext/bootstrap/js/bootstrap.min.js"></script>
+  <!-- Angular -->
+  <script src="/static/ext/angular/angular.js"></script>
+  <script src="/static/ext/angular/angular-animate.min.js"></script>
+  <script src="/static/ext/angular/angular-sanitize.min.js"></script>
+  <script src="/static/ext/angular/angular-resource.js"></script>
+  <script src="/static/ext/angular/angular-cookies.js"></script>
+  <!-- Angular Bootstrap -->
+  <script src="/static/ext/angular-bootstrap/ui-bootstrap-tpls-0.13.0.min.js"></script>
+  <!-- ngToast -->
+  <link rel="stylesheet" href="/static/ext/ngToast/ngToast.min.css"> 
+  <script src="/static/ext/ngToast/ngToast.min.js"></script>
+  <!-- Ace -->	
+  <script src="/static/ext/ace/ace.js"></script>
+  <script src="/static/ext/ace/ext-static_highlight.js"></script>
+  <!-- ContextMenu -->
+  <link rel="stylesheet" href="/static/ext/contextMenu/jquery.contextMenu.css">
+  <script src="/static/ext/contextMenu/jquery.ui.position.js"></script>
+  <script src="/static/ext/contextMenu/jquery.contextMenu.js"></script>
+  <!-- Numeral.js -->
+  <script src="/static/ext/numeral/numeral.min.js"></script>
+  <!-- Marked -->
+  <script src="/static/ext/marked/marked.min.js"></script>
+  <!-- Bootstrap-markdown -->
+  <link rel="stylesheet" href="/static/ext/bootstrap-markdown/bootstrap-markdown.min.css">
+  <script src="/static/ext/bootstrap-markdown/bootstrap-markdown.js"></script>
+  <!-- Stem -->
+  <link rel="stylesheet" href="/static/css/Stem.css">
+  <script src="/static/js/StemCore.js"></script>
+  <!-- Stem Resources -->
+  <script src="/static/js/StemResources.js"></script>
+  <!-- Stem Directives -->
+  <script src="/static/js/directives/CoreDirectives.js"></script>
+  <!-- Stem Services -->
+  <script type="text/javascript" src="/static/js/services/MenuService.js"></script>
+  <script type="text/javascript" src="/static/js/services/UserService.js"></script>
+  <script type="text/javascript" src="/static/js/services/ClipboardService.js"></script>
+  <!-- Stem Controllers -->
+  <script src="/static/js/controllers/StemControllers.js"></script>
+  <!-- ZeroClipboard -->
+  <script src="/static/ext/handsontable/zeroclipboard/ZeroClipboard.js"></script>
+  <!-- Handsontable -->
+  <link rel="stylesheet" media="screen"  href="/static/ext/handsontable/handsontable.full.min.css">
+  <script src="/static/ext/handsontable/handsontable.full.min.js"></script>
+  <!-- StemHOT -->
+  <link rel="stylesheet" media="screen"  href="/static/css/StemHOT.css">
+  <script src="/static/js/StemHOT.js"></script>
+  <!-- Extended scripts -->
+  {% block Scripts %}
+  {% endblock %}
+  <!-- Page settings -->
   <script>
   Stem.factory('PageSettings', function() {
     var settings = {
-    {% block PageSettings %}
-		    
-    {% endblock %}
+      {% block PageSettings %}
+      {% endblock %}
     };
     return settings;
   });
   </script>
 </head>
+
 <body ng-app="Stem">
   {% include 'angular/CoreDirectiveTemplates.html' %}
-  {% raw %}
-  <div data-ng-controller="HeaderCtrl">
-    <header class="navbar navbar-fixed-top navbar-inverse">
-    <div class="container">
-      <div class="navbar-header">
-        <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#topbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a href="/" class="navbar-brand">STEM</a>
-      </div>
-      
-      <nav id="topbar" class="collapse navbar-collapse" role="navigation">
-      <ul class="nav navbar-nav navbar-left">
-        <li data-ng-repeat="item in menu.items | orderBy: 'position'" 
-          ng-switch="item.menuItemType" 
-          class="{{item.menuItemClass}}" 
-          ng-class="{'dropdown': item.menuItemType === 'dropdown'}">
-          <a ng-switch-when="dropdown" class="dropdown-toggle" data-toggle="dropdown">
-            <span data-ng-bind="item.title"></span>
-            <b class="caret"></b>
-          </a>
-          <ul ng-switch-when="dropdown" class="dropdown-menu" role="menu">
-            <li data-ng-repeat="subitem in item.items | orderBy: 'position'">
-              <a data-ng-if="subitem.shouldRender();"  
-                ng-href="{{subitem.link}}" data-ng-bind="subitem.title"></a>
-            </li>
-          </ul>
-          <a ng-switch-when="action" ng-click="item.link()">
-            <div data-ng-if="item.shouldRender();"> 
-            <span data-ng-bind="item.title"></span>&nbsp;
-            <span ng-if="item.glyphicon" class="glyphicon {{item.glyphicon}}"></span>
-            </div>
-          </a>
-          <a ng-switch-default ng-href="{{item.link}}" data-ng-bind="item.title"></a>
-        </li>
-      </ul>
-      
-      <ul class = "nav navbar-nav navbar-right" ng-if="!isLoggedIn()">      
-      	<li ng-click="UserService.login()"><a>Login</a></li>
-      	<li ng-click="UserService.register()"><a>Register</a></li>
-      </ul>
-      <ul class = "nav navbar-nav navbar-right" ng-if="isLoggedIn()">
-      	<li><a ng-bind="UserService.username()"></a></li>
-      	<li ng-click="UserService.logout()"><a>Logout</a></li>
-      </ul>
-      </nav>
-    </div>
-    </header>
-    
-    <!-- Login modal dialog -->
-	<div class="modal fade" id="LoginModal">
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header" style="color: #A94442;">
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	        <h4 class="modal-title">Please sign in</h4>
-	      </div>
-	      <div class="modal-body" style="color: #A94442;">
-	        <form class="form-signin">
-	          <label for="inputEmail" class="sr-only">Email address</label>
-	          <input type="email" id="loginInputEmail" class="form-control" placeholder="Email address" required autofocus>
-	          <label for="inputPassword" class="sr-only">Password</label>
-	          <input type="password" id="loginInputPassword" class="form-control" placeholder="Password" required>
-	          <button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
-	        </form>  
-	        <div id="loginMessage" style="color: red;"></div>        
-	      </div>
-	      <div class="modal-footer">
-	      </div>
-	    </div>
-	  </div>
-	</div>
-  
-  </div>
-  {% endraw %}
-  
+  {% include 'html/NavbarTemplate.html' %}
+  <!-- Body content -->
   <section class="content">
-  {% block BodyContent %}
-    <div>
-      <h1>Simple tool for engineering modeling (STEM)</h1>
-      <h2><a href="/Models">Models</a></h2>
-      <h2><a href="/Quantities">Quantities</a></h2>
-      <h2><a href="/LibraryModules">Library modules</a></h2>
-    </div>
-  {% endblock %}
-  
-    <!-- Error modal dialog -->
-    <div class="modal fade" id="ErrorModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header" style="color: #A94442;">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title">Server error</h4>
-          </div>
-          <div class="modal-body" style="color: #A94442;">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
-          </div>
-        </div>
+    {% block BodyContent %}
+      <div>
+        <h1>Simple tool for engineering modeling (STEM)</h1>
+        <h2><a href="/Models">Models</a></h2>
+        <h2><a href="/Quantities">Quantities</a></h2>
+        <h2><a href="/LibraryModules">Library modules</a></h2>
       </div>
-    </div>
-    
-    <!-- Toast messages  -->
-    <toast></toast>
+    {% endblock %}
   </section>
+  {% include 'html/LoginDialogTemplate.html' %}
+  {% include 'html/ErrorDialogTemplate.html' %}
+  <!-- Toast messages  -->
+  <toast></toast>
 </body>
 </html>
