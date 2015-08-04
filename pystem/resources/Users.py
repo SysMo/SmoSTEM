@@ -141,7 +141,7 @@ class UserAPI(StemResource):
 			msg = Message("Welcome to STEM", recipients = [user.email])
 			msg.body = """\
 Please click on the link to activate your profile
-http://stem.sysmoltd.com/stem/api/Users/confirm&username={}&activationCode={}""".format(user.username, str(user.id))
+http://stem.sysmoltd.com/stem/api/Users/confirm?username={}&activationCode={}""".format(user.username, str(user.id))
 			mail.send(msg)
 			# Send email to admin
 			msg = Message("New user registration", recipients = ["nasko.js@gmail.com"])

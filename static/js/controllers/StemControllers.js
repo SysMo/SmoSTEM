@@ -43,7 +43,7 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResour
 	}
 	
 	$scope.duplicate = function(model) {
-		entity.$clone(function() {
+		model.$clone(function() {
 			window.location.href = $scope.editorPath + "/" + model._id;
 		});
 	}

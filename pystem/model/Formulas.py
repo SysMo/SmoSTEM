@@ -192,11 +192,11 @@ class FormulaBlockProcessor(object):
 				if (isinstance(op, ast.Add)):
 					value += opValue
 				elif (isinstance(op, ast.Sub)):
-					value += opValue
+					value -= opValue
 				elif (isinstance(op, ast.Mult)):
-					value += opValue
+					value *= opValue
 				elif (isinstance(op, ast.Div)):
-					value += opValue
+					value /= opValue
 				else:
 					raise  E.SemanticError("Illegal augmented operation", statement, self.currentFormulaBlock)
 				self.assignValue(value = value, targetNode = targetNode, scope = scope)
