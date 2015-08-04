@@ -109,18 +109,20 @@
             </li>
           </ul>
           <a ng-switch-when="action" ng-click="item.link()">
+            <div data-ng-if="item.shouldRender();"> 
             <span data-ng-bind="item.title"></span>&nbsp;
             <span ng-if="item.glyphicon" class="glyphicon {{item.glyphicon}}"></span>
+            </div>
           </a>
           <a ng-switch-default ng-href="{{item.link}}" data-ng-bind="item.title"></a>
         </li>
       </ul>
       
-      <ul class = "nav navbar-nav navbar-right" ng-if="!UserService.isAuthenticated()">      
+      <ul class = "nav navbar-nav navbar-right" ng-if="!isLoggedIn()">      
       	<li ng-click="UserService.login()"><a>Login</a></li>
       	<li ng-click="UserService.register()"><a>Register</a></li>
       </ul>
-      <ul class = "nav navbar-nav navbar-right" ng-if="UserService.isAuthenticated()">
+      <ul class = "nav navbar-nav navbar-right" ng-if="isLoggedIn()">
       	<li><a ng-bind="UserService.username()"></a></li>
       	<li ng-click="UserService.logout()"><a>Logout</a></li>
       </ul>

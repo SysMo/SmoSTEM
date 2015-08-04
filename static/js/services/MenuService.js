@@ -9,10 +9,16 @@ Stem.service('Menus', ['UserService',
 
 		// A private function for rendering decision 
 		var shouldRender = function() {
-			if (UserService.isAuthenticated()) {
-				if (this.roles.indexOf('*') >= 0) {
-					return true;
-				} else {
+			if (this.isPublic) {
+				return true;
+			}
+			
+			if (this.isAuthenticated) {
+				if (UserService.isAuthenticated()) {
+					if (this.roles.indexOf('*') >= 0) {
+						return true;
+					}
+					
 					var userRoles = UserService.roles();
 					for (var userRoleIndex in userRoles) {
 						for (var roleIndex in this.roles) {
@@ -21,9 +27,7 @@ Stem.service('Menus', ['UserService',
 							}
 						}
 					}
-				}
-			} else {
-				return this.isPublic;
+				} 
 			}
 
 			return false;
@@ -54,10 +58,11 @@ Stem.service('Menus', ['UserService',
 		};
 
 		// Add new menu object by menu id
-		this.addMenu = function(menuId, isPublic, roles) {
+		this.addMenu = function(menuId, isPublic, isAuthenticated, roles) {
 			// Create the new menu
 			this.menus[menuId] = {
-				isPublic: isPublic || false,
+				isPublic: isPublic || true,
+				isAuthenticated: isAuthenticated || false,
 				roles: roles || this.defaultRoles,
 				items: [],
 				shouldRender: shouldRender
@@ -77,7 +82,7 @@ Stem.service('Menus', ['UserService',
 		};
 
 		// Add menu item object
-		this.addMenuItem = function(menuId, menuItemTitle, menuItemURL, menuItemType, menuItemGlyphicon, isPublic, roles, position) {
+		this.addMenuItem = function(menuId, menuItemTitle, menuItemURL, menuItemType, menuItemGlyphicon, isPublic, isAuthenticated, roles, position) {
 			// Validate that the menu exists
 			this.validateMenuExistence(menuId);
 
@@ -89,6 +94,7 @@ Stem.service('Menus', ['UserService',
 				menuItemClass: menuItemType,
 				glyphicon: menuItemGlyphicon,
 				isPublic: ((isPublic === null || typeof isPublic === 'undefined') ? this.menus[menuId].isPublic : isPublic),
+				isAuthenticated: ((isAuthenticated === null || typeof isAuthenticated === 'undefined') ? this.menus[menuId].isAuthenticated : isAuthenticated),
 				roles: ((roles === null || typeof roles === 'undefined') ? this.menus[menuId].roles : roles),
 				position: position || 0,
 				items: [],
@@ -100,7 +106,7 @@ Stem.service('Menus', ['UserService',
 		};
 
 		// Add submenu item object
-		this.addSubMenuItem = function(menuId, rootMenuItemURL, menuItemTitle, menuItemURL, menuItemGlyphicon, isPublic, roles, position) {
+		this.addSubMenuItem = function(menuId, rootMenuItemURL, menuItemTitle, menuItemURL, menuItemGlyphicon, isPublic, isAuthenticated, roles, position) {
 			// Validate that the menu exists
 			this.validateMenuExistence(menuId);
 
@@ -113,6 +119,7 @@ Stem.service('Menus', ['UserService',
 						link: menuItemURL,
 						glyphicon: menuItemGlyphicon,
 						isPublic: ((isPublic === null || typeof isPublic === 'undefined') ? this.menus[menuId].items[itemIndex].isPublic : isPublic),
+						isAuthenticated: ((isAuthenticated === null || typeof isAuthenticated === 'undefined') ? this.menus[menuId].items[itemIndex].isAuthenticated : isAuthenticated),
 						roles: ((roles === null || typeof roles === 'undefined') ? this.menus[menuId].items[itemIndex].roles : roles),
 						position: position || 0,
 						shouldRender: shouldRender
@@ -159,6 +166,6 @@ Stem.service('Menus', ['UserService',
 		};
 
 		//Adding the topbar menu
-		this.addMenu('topbar', true, this.defaultRoles);
+		menu = this.addMenu('topbar');
 	}
 ]);

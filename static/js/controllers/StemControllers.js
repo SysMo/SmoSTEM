@@ -91,9 +91,23 @@ Stem.controller('ModelCollectionCtrl', function($scope, PageSettings, StemResour
 	loadModels();
 	
 	// Add a menu item for a new model
+	//menuId, menuItemTitle, menuItemURL, menuItemType, menuItemGlyphicon, isPublic, isAuthenticated, roles, position
+	Menus.addMenuItem(
+		'topbar', //menuId 
+		'New', //menuItemTitle 
+		$scope.create, //menuItemURL,
+		'action', //menuItemType
+		'glyphicon-plus', //glyphicon
+		false, //isPublic 
+		true, //isAuthenticated 
+		['user'], //roles 
+		undefined //position
+	);
+	/*
 	if (UserService.isAuthenticated()) {
 		Menus.addMenuItem('topbar', 'New', $scope.create, 'action', 'glyphicon-plus');
 	}
+	*/
 });
 
 // Page with model editor
@@ -221,13 +235,26 @@ Stem.controller('HeaderCtrl', ['$scope', 'Menus', 'UserService', 'StemResources'
 		'GoTo', //rootMenuItemURL 
 		'Library Modules', //menuItemTitle 
 		'/LibraryModules', //menuItemURL 
-		undefined, //menuItemUIRoute 
+		undefined, //glyphicon
 		false, //isPublic 
+		true, //isAuthenticated 
 		['admin'], //roles 
 		undefined //position
 	);
 
+	if (UserService.isAuthenticated()) {
+		Menus.addMenuItem('topbar', 'Logout', UserService.logout, 'action');
+		Menus.addMenuItem('topbar', UserService.username(), '', 'item');
+	} else {
+		Menus.addMenuItem('topbar', 'Login', UserService.login, 'action');
+	}
+	
 	$scope.menu = Menus.getMenu('topbar');
+	
+	$scope.isLoggedIn = function () {
+		//console.log("Check-isLoggedIn()");
+		return UserService.isAuthenticated();
+	};
 	
 	// Login form - show
 	$scope.UserService = UserService;
