@@ -56,13 +56,15 @@ Stem.controller('ModelsCtrl', ['$scope', 'PageSettings', 'StemResources', 'MenuS
 		
 		// Delete model 
 		$scope.del = function(model) {
-			model.$delete();
-			loadModels();		
+			model.$delete(function () {
+				loadModels();	
+			});
 		}
 		
 		// Duplicate model
 		$scope.duplicate = function(model) {
-			entity.$clone(function() {
+			model.$clone(function() {
+				// Tricky: should update the view only after we know the delete function has completed
 				window.location.href = $scope.editorPath + "/" + model._id;
 			});
 		}
