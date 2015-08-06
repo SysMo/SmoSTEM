@@ -99,7 +99,7 @@ class ModelCalculator(object):
 			elif (field['type'] in ['stem.ScalarField', 'stem.BoolField', 'stem.ChoiceField', 'stem.TableField']):
 				if (fieldName in scope.fields):
 					duplicateField = scope.fields[fieldName]
-					raise E.FieldError('Duplicate field (duplicate found in section {})'.format(duplicateField.section['title']),
+					raise E.FieldError(u'Duplicate field (duplicate found in section {})'.format(duplicateField.section['title']),
 									section['title'], field['name'])
 				pField = Field(field, section = section)
 				scope.fields[fieldName] = pField					 
