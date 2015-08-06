@@ -75,7 +75,7 @@
 
 <body ng-app="Stem">
   {% include 'angular/CoreDirectiveTemplates.html' %}
-  {% include 'html/NavbarTemplate.html' %}
+  {% include 'base/Navbar.html' %}
   <!-- Body content -->
   <section class="content">
     {% block BodyContent %}
@@ -88,8 +88,8 @@
       </div>
     {% endblock %}
   </section>
-  {% include 'html/LoginDialogTemplate.html' %}
-  {% include 'html/ErrorDialogTemplate.html' %}
+  {% include 'base/LoginDialog.html' %}
+  {% include 'base/ErrorDialog.html' %}
   <!-- Toast messages  -->
   <toast></toast>
 </body>
