@@ -75,21 +75,21 @@
 
 <body ng-app="Stem">
   {% include 'angular/CoreDirectiveTemplates.html' %}
-  {% include 'html/NavbarTemplate.html' %}
+  {% include 'base/Navbar.html' %}
   <!-- Body content -->
   <section class="content">
     {% block BodyContent %}
       <div>
         <h1>Simple tool for engineering modeling</h1>
-        <h1 style="color: FireBrick">STEM 1.0 beta</h1>
+        <h1 class="under-construction">STEM 1.0 beta</h1>
         <h2><a href="/Models">Models</a></h2>
         <h2><a href="/Quantities">Quantities</a></h2>
         <h2><a href="/LibraryModules">Library modules</a></h2>
       </div>
     {% endblock %}
   </section>
-  {% include 'html/LoginDialogTemplate.html' %}
-  {% include 'html/ErrorDialogTemplate.html' %}
+  {% include 'base/LoginDialog.html' %}
+  {% include 'base/ErrorDialog.html' %}
   <!-- Toast messages  -->
   <toast></toast>
 </body>

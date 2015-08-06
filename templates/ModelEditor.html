@@ -57,6 +57,7 @@ modelID: '{{modelID}}',
 	</div>
 	<div id="main" style="position: absolute; left: 150; top: 70;">
 		<div ng-if="model.board && quantitiesLoaded">
+            <div ng-show="selected">Selection from a modal: {{ selected }}</div>
             <h1 style="margin-left: 10px;">
             	<span style="color: blue; cursor: pointer;" ng-bind="model.name" ng-click="editProps()"></span>
             </h1>

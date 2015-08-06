@@ -11,6 +11,10 @@ h1 {
 	text-align: center;
 }
 
+.under-construction {
+	color: FireBrick;
+}
+
 #main {
 	width: 1090px; 
 	margin-left: 20px;

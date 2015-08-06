@@ -122,21 +122,21 @@ Stem.controller('ModelsCtrl', ['$scope', 'PageSettings', 'StemResources', 'MenuS
 /*
  * ModelEditorCtrl: editor for an individual model
  */
-Stem.controller('ModelEditorCtrl', ['$scope', 'PageSettings', 'StemResources', 'StemQuantities', 'StemLibraryModules', 'MenuService',
-	function($scope, PageSettings, StemResources, StemQuantities, StemLibraryModules, MenuService){		
+Stem.controller('ModelEditorCtrl', ['$scope', '$modal', 'PageSettings', 'StemResources', 'StemQuantities', 'StemLibraryModules', 'MenuService',
+	function($scope, $modal, PageSettings, StemResources, StemQuantities, StemLibraryModules, MenuService){		
 		// Get the model object from the server
 		$scope.model =  StemResources.Models.get({_id: PageSettings.modelID}, function() {
 			// Add the selectors for the different board parts
 		});
 		
-		// Load quantities from server
+		// Load quantities from the server
 		$scope.quantitiesLoaded = false;
 		StemQuantities.loadQuantities(function(quantities){
 			$scope.quantities = quantities;
 			$scope.quantitiesLoaded = true;
 		});
 		
-		// Load library modules from server
+		// Load library modules from the server
 		$scope.libraryModulesLoaded = false;
 		StemLibraryModules.loadLibraryModules(function(libraryModules){
 			$scope.libraryModules = libraryModules;
@@ -178,11 +178,55 @@ Stem.controller('ModelEditorCtrl', ['$scope', 'PageSettings', 'StemResources', '
 			$("#" + $scope.model._id + "-modal").modal();
 		}
 		
+		// Edit model user access
+		$scope.items = ['item1', 'item2', 'item3'];
+        $scope.animationsEnabled = true;
+		$scope.share = function () {
+			var modalInstance = $modal.open({
+				animation: $scope.animationsEnabled,
+				templateUrl: 'stem-modal-user-access.html',
+				controller: 'ModelUserAccessCtrl',
+				size: 'lg', //large
+				resolve: { 
+					items: function () {return $scope.items;}, 
+					model: function () {return $scope.model;}
+				}
+			});
+			
+			modalInstance.result.then(
+				function (selectedItem) {
+					$scope.selected = selectedItem;
+			    }, 
+			    function () {
+			    	//console.log('Modal Dialog: "Model User Access" dismissed at: ' + new Date());
+			    }
+			);
+		};
+		
 		// Manage menu items
 		MenuService.addMenuItem('mainMenu', 'Models', '/Models');
 		MenuService.addMenuItem('mainMenu', 'Compute', $scope.compute, 'action', 'glyphicon-play-circle');
 		MenuService.addMenuItem('mainMenu', 'Save', $scope.save, 'action', 'glyphicon-floppy-disk');
 		MenuService.addMenuItem('mainMenu', 'Properties', $scope.editProps, 'action', 'glyphicon-cog');
+		MenuService.addMenuItem('mainMenu', 'Share', $scope.share, 'action', 'glyphicon-share');
+	}
+]);
+
+Stem.controller('ModelUserAccessCtrl', ['$scope', '$modalInstance', 'items', 'model',
+	function ($scope, $modalInstance, items, model) {
+		$scope.model = model;
+		$scope.items = items;
+		$scope.selected = {
+			item: $scope.items[0]
+		};
+	
+		$scope.ok = function () {
+			$modalInstance.close($scope.selected.item);
+		};
+	
+		$scope.cancel = function () {
+			$modalInstance.dismiss('cancel');
+		};
 	}
 ]);
 
@@ -366,3 +410,5 @@ Stem.controller('RegisterCtrl', ['$scope', 'StemResources',
 		});
 	}
 ]);
+
+
