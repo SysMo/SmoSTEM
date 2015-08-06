@@ -182,8 +182,8 @@ Stem.controller('ModelEditorCtrl', ['$scope', '$modal', 'PageSettings', 'StemRes
 		$scope.share = function () {
 			var modalInstance = $modal.open({
 				animation: $scope.animationsEnabled,
-				templateUrl: 'myModalContent.html',
-				controller: 'ModalInstanceCtrl',
+				templateUrl: 'stem-modal-user-access.html',
+				controller: 'ModelUserAccessCtrl',
 				size: 'lg', //large
 				resolve: { 
 					items: function () {return $scope.items;}, 
@@ -210,7 +210,7 @@ Stem.controller('ModelEditorCtrl', ['$scope', '$modal', 'PageSettings', 'StemRes
 	}
 ]);
 
-Stem.controller('ModalInstanceCtrl', ['$scope', '$modalInstance', 'items', 'model',
+Stem.controller('ModelUserAccessCtrl', ['$scope', '$modalInstance', 'items', 'model',
 	function ($scope, $modalInstance, items, model) {
 		$scope.model = model;
 		$scope.items = items;
