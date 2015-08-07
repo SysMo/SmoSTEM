@@ -9,7 +9,7 @@ flaskPackages = [
  	'Flask-Security',
  	'Flask-Sendmail',
  	'Flask-WTF',
- 	'mongoengine'
+ 	'Flask-Mongoengine'
 ]
 
 mathPackages = [
@@ -17,7 +17,7 @@ mathPackages = [
 ]
 
 engineeringPackages = [
-	'coolprop'
+	#'coolprop'
 ]
 
 requiredPackages = flaskPackages + mathPackages + engineeringPackages
@@ -46,7 +46,7 @@ def getInstalledPackages():
 def installPackage(pkgName):
 	runVECmd(cmd = 'pip install {}'.format(pkgName), stdout = None)
 
-sourceCmd = 'source /srv/VirtualEnv/SmoStem/bin/activate'
+sourceCmd = 'source /srv/VirtualEnv/SmoWebPlatform/bin/activate'
 result = runVECmd(cmd = 'which python')
 print("Using {}".format(result))
 installedPackages = getInstalledPackages()
