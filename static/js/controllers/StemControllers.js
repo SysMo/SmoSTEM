@@ -212,10 +212,16 @@ Stem.controller('ModelEditorCtrl', ['$scope', '$modal', 'PageSettings', 'StemRes
 	}
 ]);
 
+/*
+ * ModelUserAccessCtrl: editor for a model user access
+ */
 Stem.controller('ModelUserAccessCtrl', ['$scope', '$modalInstance', 'items', 'model',
 	function ($scope, $modalInstance, items, model) {
 		$scope.model = model;
 		$scope.items = items;
+		
+		$scope.linkToShare = window.location.href;
+		
 		$scope.selected = {
 			item: $scope.items[0]
 		};

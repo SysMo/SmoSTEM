@@ -6,7 +6,8 @@
 	<h3 class="modal-title">Share with others</h3>
   </div>
   <div class="modal-body">
-    <div>Test {{model.name}}</div>
+    <div>Model: {{model.name}}</div>
+    <div>Link to share: <a href="{{linkToShare}}">{{linkToShare}}</a></div>
     <ul>
       <li ng-repeat="item in items">
         <a href="#" ng-click="$event.preventDefault(); selected.item = item">{{ item }}</a>
