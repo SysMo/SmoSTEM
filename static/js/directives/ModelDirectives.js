@@ -254,12 +254,12 @@ Stem.directive('stemGridLayout', function(stemClasses, ClipboardService, $timeou
 			} else {
 				element.css('width', '1060px');
 			}
-			if (scope.stemLayout.height) {
-				element.css('height', scope.stemLayout.height);
-			} else {
-				scope.stemLayout.height = '500px';
-				element.css('height', '500px');
-			}
+//			if (scope.stemLayout.height) {
+//				element.css('height', scope.stemLayout.height);
+//			} else {
+//				scope.stemLayout.height = '500px';
+//				element.css('height', '500px');
+//			}
 			element.droppable({
 				accept: scope.$parent.componentsSelector,
 				activeClass: 'droppable-hover',
@@ -298,12 +298,12 @@ Stem.directive('stemGridLayout', function(stemClasses, ClipboardService, $timeou
 					});
 				}
 			});
-			element.resizable({
-				handles: "s",
-				resize: function(event, ui) {
-					scope.stemLayout.height = ui.size.height + 'px';
-				}
-			});
+//			element.resizable({
+//				handles: "s",
+//				resize: function(event, ui) {
+//					scope.stemLayout.height = ui.size.height + 'px';
+//				}
+//			});
 			element.find('.sortables_div').sortable({
 				// restricts movement of sortables within a container
 				containment: "#" + scope.stemLayout.id + ' > .sortables_div',
@@ -361,12 +361,12 @@ Stem.directive('stemFreeLayout', function(stemClasses, $timeout) {
 			};
 		},
 		link: function(scope, element, attributes) {
-			if (scope.stemLayout.height) {
-				element.css('height', scope.stemLayout.height);
-			} else {
-				scope.stemLayout.height = '500px';
-				element.css('height', '500px');
-			}
+//			if (scope.stemLayout.height) {
+//				//element.css('height', scope.stemLayout.height);
+//			} else {
+//				//scope.stemLayout.height = '500px';
+//				//element.css('height', '500px');
+//			}
 			element.droppable({
 				accept: scope.$parent.componentsSelector + '#fields_Scalar, ' +
 						scope.$parent.componentsSelector + '#fields_TextArea, ' +
