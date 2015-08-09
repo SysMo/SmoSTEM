@@ -175,7 +175,15 @@ Stem.controller('ModelEditorCtrl', ['$scope', '$modal', 'PageSettings', 'StemRes
 		
 		// Edit model properties
 		$scope.editProps = function() {
-			$("#" + $scope.model._id + "-modal").modal();
+			var modalInstance = $modal.open({
+				animation: true,
+				templateUrl: 'stem-model-properties.html',
+				controller: 'ModelPropertiesCtrl',
+				size: 'lg', //large
+				resolve : {
+					model: function () {return $scope.model;}
+				}
+			});
 		}
 		
 		// Edit model user access
@@ -212,6 +220,17 @@ Stem.controller('ModelEditorCtrl', ['$scope', '$modal', 'PageSettings', 'StemRes
 	}
 ]);
 
+/*
+ * ModelPropertiesCtrl: editor for model properties
+ */
+Stem.controller('ModelPropertiesCtrl', ['$scope', '$modalInstance', 'model', 
+    function($scope, $modalInstance, model) {
+		$scope.model = model;
+		$scope.ok = function () {
+			$modalInstance.close();
+		};
+	}
+]);
 /*
  * ModelUserAccessCtrl: editor for a model user access
  */

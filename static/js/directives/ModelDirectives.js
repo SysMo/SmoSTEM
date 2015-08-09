@@ -31,61 +31,61 @@ Stem.directive('stemDraggable', function() {
 });
 
 
-Stem.directive('stemModal', function($timeout) {
-	return {
-		restrict : 'A',
-		scope : {
-			stemModel : '=model'
-		},
-		controller: function($scope) {
-			$scope.setImage = function() {
-				if (angular.isString($scope.stemModel.background) && $scope.stemModel.background.length > 0) {
-					$("body").css("background-image", "url('" + $scope.stemModel.background + "')");
-				}
-			}
-			$scope.setImage();
-		},
-		link: function(scope, element, attrs) {
-			scope.$watch(function() {return scope.stemModel.$resolved;}, function(newValue, oldValue){
-				scope.setImage();
-				scope.currentName = scope.stemModel.name;
-			});
-			
-			// Attching input event handler to the model name input field:
-			// if the input is invalid, the OK button is disabled
-			element.find('input').first().on('input', function(event) {
-				if (!this.checkValidity()) {
-					$('#' + scope.stemModel._id + '-OkButton').prop('disabled', true);
-					$(this).next().css('color', 'red').html('Name is required.');
-				} else {
-					$('#' + scope.stemModel._id + '-OkButton').prop('disabled', false);
-					$(this).next().html('');
-					scope.currentName = scope.stemModel.name;
-				}
-			});
-			
-			// If model name is empty when clicking on the x button, it reverts to the previous name
-			element.find('button.close').on('click', function(event) {
-				if (scope.stemModel.name == undefined) {
-					scope.stemModel.name = scope.currentName;
-				}
-				$timeout(function(){
-					scope.$apply();
-				});
-			});
-			
-			// Event triggered when the modal is shown
-			element.on('shown.bs.modal', function () {
-				element.find('input').first().focus().select();
-			});
-			element.on('show.bs.modal', function () {
-				$('#' + scope.stemModel._id + '-OkButton').prop('disabled', false);
-				element.find('input').first().next().html('');
-			});
-		},
-		templateUrl: "stem-modal.html",
-	}
-});
+//Stem.directive('stemModelProperties', function($timeout) {
+//	return {
+//		restrict : 'A',
+//		scope : {
+//			stemModel : '=model'
+//		},
+//		controller: function($scope) {
+//			$scope.setImage = function() {
+//				if (angular.isString($scope.stemModel.background) && $scope.stemModel.background.length > 0) {
+//					$("body").css("background-image", "url('" + $scope.stemModel.background + "')");
+//				}
+//			}
+//			$scope.setImage();
+//		},
+//		link: function(scope, element, attrs) {
+//			scope.$watch(function() {return scope.stemModel.$resolved;}, function(newValue, oldValue){
+//				scope.setImage();
+//				scope.currentName = scope.stemModel.name;
+//			});
+//			
+//			// Attching input event handler to the model name input field:
+//			// if the input is invalid, the OK button is disabled
+//			element.find('input').first().on('input', function(event) {
+//				if (!this.checkValidity()) {
+//					$('#' + scope.stemModel._id + '-OkButton').prop('disabled', true);
+//					$(this).next().css('color', 'red').html('Name is required.');
+//				} else {
+//					$('#' + scope.stemModel._id + '-OkButton').prop('disabled', false);
+//					$(this).next().html('');
+//					scope.currentName = scope.stemModel.name;
+//				}
+//			});
+//			
+//			// If model name is empty when clicking on the x button, it reverts to the previous name
+//			element.find('button.close').on('click', function(event) {
+//				if (scope.stemModel.name == undefined) {
+//					scope.stemModel.name = scope.currentName;
+//				}
+//				$timeout(function(){
+//					scope.$apply();
+//				});
+//			});
+//			
+//			// Event triggered when the modal is shown
+//			element.on('shown.bs.modal', function () {
+//				element.find('input').first().focus().select();
+//			});
+//			element.on('show.bs.modal', function () {
+//				$('#' + scope.stemModel._id + '-OkButton').prop('disabled', false);
+//				element.find('input').first().next().html('');
+//			});
+//		},
+//		templateUrl: "stem-model-properties.html",
+//	}
+//});
 
 Stem.directive('stemBoard', function(stemClasses, $timeout) {
 	return {

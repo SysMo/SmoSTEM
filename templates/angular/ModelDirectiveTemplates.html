@@ -21,34 +21,28 @@
   </div>
 </script>
     
-<!-- Stem Modal -->
-<script type="text/ng-template" id="stem-modal.html">
-<div class="modal fade" id="{{stemModel._id}}-modal" data-backdrop="static" data-keyboard="false">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-				<h4 class="modal-title">Properties</h4>
-			</div>
-			<div class="modal-body">
-				<form>
-					<div>name</div>
-					<input type="text" ng-model="stemModel.name" required>
-					<div></div>
-					<div>description</div>
-					<input type="text" ng-model="stemModel.description">
-					<div>background image</div>
-					<input type="text" ng-model="stemModel.background">
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button id="{{stemModel._id}}-OkButton" type="button" class="btn btn-default" data-dismiss="modal" ng-click="setImage()">OK</button>
-			</div>
-		</div>
-	</div>
+<!-- Stem Model Properties Modal -->
+<script type="text/ng-template" id="stem-model-properties.html">
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal"
+		aria-label="Close">
+		<span aria-hidden="true" ng-click="ok()">&times;</span>
+	</button>
+	<h3 class="modal-title">Properties</h3>
+</div>
+<div class="modal-body">
+	<form>
+		<div>name</div>
+		<input type="text" style="width: 500px;" ng-model="model.name" required>
+		<div></div>
+		<div>description</div>
+		<textarea ng-model="model.description" rows="10" style="width: 500px;"></textarea>
+		<div>background image</div>
+		<input type="text" style="width: 500px;" ng-model="model.background">
+	</form>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-default" ng-click="ok()">OK</button>
 </div>
 </script>
 
