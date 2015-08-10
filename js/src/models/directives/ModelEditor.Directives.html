@@ -4,11 +4,9 @@
 	<div ng-switch on="layout.type">
 		<div ng-switch-when="grid">
 			<div stem-grid-layout="layout"></div>
-			<div stem-layout-properties="layout"></div>
 		</div>
 		<div ng-switch-when="free">
 			<div stem-free-layout="layout"></div>
-			<div stem-layout-properties="layout"></div>
 		</div>
 	</div>
 </div>
@@ -22,8 +20,7 @@
   		paste="paste()"
   		duplicate="$parent.duplicateLayout(stemLayout)"
   		move-down="$parent.moveDown(stemLayout)"
-  		move-up="$parent.moveUp(stemLayout)"
-  		resize="resize()"></span>
+  		move-up="$parent.moveUp(stemLayout)"></span>
 	<!-- <button class="close" ng-click="$parent.removeLayout(stemLayout)">&times;</button> -->
 	<div class="sortables_div" style="height: 90%;">
 		<div ng-repeat="field in stemLayout.fields">
@@ -81,36 +78,7 @@
   </div>
 </script>
 
-<!-- Stem Layout Properties -->
-<script type="text/ng-template" id="stem-layout-properties.html">
-<div class="modal fade" id="{{stemLayout.id}}-modal">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-				<h4 class="modal-title">Properties</h4>
-			</div>
-			<div class="modal-body">
-				<form>
-					<div>Title</div>
-					<input type="text" ng-model="stemLayout.title">
-					<div></div>
-					<div>Image</div>
-					<input type="text" ng-model="stemLayout.image">
-					<div>Isolate variables</div>
-					<input type="checkbox" ng-model="stemLayout.hasScope">
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" id="{{stemLayout.id}}-OkButton" class="btn btn-default" data-dismiss="modal" ng-click="setImage()">OK</button>
-			</div>
-		</div>
-	</div>
-</div>
-</script>
+
 
 <!-- Stem Scalar -->
 <script type="text/ng-template" id="stem-scalar.html">

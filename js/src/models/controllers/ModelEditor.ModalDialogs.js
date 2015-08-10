@@ -1,16 +1,29 @@
-/*
+/**
  * ModelPropertiesCtrl: editor for model properties
  */
-Stem.controller('ModelPropertiesCtrl', ['$scope', '$modalInstance', 'model', 
-    function($scope, $modalInstance, model) {
+Stem.controller('ModelPropertiesCtrl', ['$scope', '$modalInstance', 'model', 'updateDisplay',
+    function($scope, $modalInstance, model, updateDisplay) {
 		$scope.model = model;
+		$scope.ok = function () {
+			$modalInstance.close();
+			updateDisplay();
+		};
+	}
+]);
+
+/**
+ * LayoutPropertiesCtrl: editor for layout properties
+ */
+Stem.controller('LayoutPropertiesCtrl', ['$scope', '$modalInstance', 'layout', 
+    function($scope, $modalInstance, layout) {
+		$scope.layout = layout;
 		$scope.ok = function () {
 			$modalInstance.close();
 		};
 	}
 ]);
 
-/*
+/**
  * ModelUserAccessCtrl: editor for a model user access
  */
 Stem.controller('ModelUserAccessCtrl', ['$scope', '$modalInstance', 'items', 'model',

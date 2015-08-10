@@ -1,11 +1,20 @@
 /*
  * ModelEditorCtrl: editor for an individual model
  */
-Stem.controller('ModelEditorCtrl', ['$scope', '$modal', 'PageSettings', 'StemResources', 'StemQuantities', 'StemLibraryModules', 'MenuService',
-	function($scope, $modal, PageSettings, StemResources, StemQuantities, StemLibraryModules, MenuService){		
+Stem.controller('ModelEditorCtrl', ['$scope', '$modal', '$timeout', 'PageSettings', 'StemResources', 'StemQuantities', 'StemLibraryModules', 'MenuService',
+	function($scope, $modal, $timeout, PageSettings, StemResources, StemQuantities, StemLibraryModules, MenuService){		
+		// Updates the model vision based on settings
+		$scope.updateDisplay = function() { 
+			if (angular.isString($scope.model.background) && $scope.model.background.length > 0) {
+				$("body").css("background-image", "url('" + $scope.model.background + "')");
+			} else {
+				$("body").css("background-image", "none");
+			}
+		};
+
 		// Get the model object from the server
 		$scope.model =  StemResources.Models.get({_id: PageSettings.modelID}, function() {
-			// Add the selectors for the different board parts
+			$timeout($scope.updateDisplay);
 		});
 		
 		// Load quantities from the server
@@ -60,7 +69,8 @@ Stem.controller('ModelEditorCtrl', ['$scope', '$modal', 'PageSettings', 'StemRes
 				controller: 'ModelPropertiesCtrl',
 				size: 'lg', //large
 				resolve : {
-					model: function () {return $scope.model;}
+					model: function () {return $scope.model;},
+					updateDisplay: function() {return $scope.updateDisplay;}
 				}
 			});
 		};

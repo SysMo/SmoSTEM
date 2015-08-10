@@ -53,7 +53,7 @@ grunt.initConfig({
 		}
 	},
 	watch : {
-		files : [ '<%= pkg.srcFiles %>' ],
+		files : [ '<%= pkg.srcFiles %>',  '<%= pkg.templateFiles %>' ],
 		tasks : [ 'default' ]
 	}
 });

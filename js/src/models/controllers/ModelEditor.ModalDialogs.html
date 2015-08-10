@@ -1,0 +1,70 @@
+<!-- Stem Model User Access -->
+<script type="text/ng-template" id="stem-modal-user-access.html">
+  <div class="modal-header">
+    <h1 class="modal-title under-construction">UNDER CONSTRUCTION!</h1>
+  <h3 class="modal-title">Share with others</h3>
+  </div>
+  <div class="modal-body">
+    <div>Model: {{model.name}}</div>
+    <div>Link to share: <a href="{{linkToShare}}">{{linkToShare}}</a></div>
+    <ul>
+      <li ng-repeat="item in items">
+        <a href="#" ng-click="$event.preventDefault(); selected.item = item">{{ item }}</a>
+      </li>
+    </ul>
+    Selected: <b>{{ selected.item }}</b>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+  </div>
+</script>
+    
+<!-- Stem Model Properties Modal -->
+<script type="text/ng-template" id="stem-model-properties.html">
+<div class="modal-header">
+  <h3 class="modal-title">Model properties</h3>
+</div>
+<div class="modal-body">
+  <form name="modelPropertiesForm" role="form">
+	<div class="form-group" ng-class="{ 'has-error': modelPropertiesForm.name.$invalid }">
+      <label>Name</label>
+      <input type="text" class="form-control" name="name" ng-model="model.name" style="width: 500px;" required>
+ 	  <p class="help-block" ng-if="modelPropertiesForm.name.$error.required">You cannot leave the model's name empty</p>
+	</div>
+	<div class="form-group">
+      <label>Description</label>
+      <textarea class="form-control" name="description" ng-model="model.description" rows="10" style="width: 500px;">
+	  </textarea>
+	</div>
+	<div class="form-group">
+      <label>Background image</label>
+      <input type="text" class="form-control" name="background" ng-model="model.background" style="width: 500px;">
+	</div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-default" ng-click="ok()" ng-disabled="modelPropertiesForm.$invalid">OK</button>
+</div>
+</script>
+
+<!-- Stem Layout Properties Modal -->
+<script type="text/ng-template" id="stem-layout-properties.html">
+<div class="modal-header">
+  <h3 class="modal-title">Layout properties</h3>
+</div>
+<div class="modal-body">
+  <form>
+    <div>Title</div>
+    <input type="text" ng-model="layout.title">
+    <div></div>
+    <div>Image</div>
+    <input type="text" ng-model="layout.image">
+    <div>Isolate variables</div>
+    <input type="checkbox" ng-model="layout.hasScope">
+  </form>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-default" ng-click="ok()">OK</button>
+</div>
+</script>

@@ -51,6 +51,7 @@ h1 {
 	margin: 10px; 
 	float: left;
 	border-radius: 10px;
+	min-height: 200px;
 }
 
 .FreeLayout {
