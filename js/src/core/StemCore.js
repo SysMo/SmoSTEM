@@ -1,13 +1,10 @@
-var Stem = angular.module('Stem',['ngResource', 'ui.bootstrap', 'ngAnimate',
-                                  'ngSanitize', 'ngToast', 'ngCookies']);
-
-Stem.config(['ngToastProvider', function(ngToast) {
-    ngToast.configure({
-    // Positioning of the toast; we use the default positioning (right, top)
-      //verticalPosition: 'bottom',
-      //horizontalPosition: 'center'
-    });
- }]);
+//Stem.config(['ngToastProvider', function(ngToast) {
+//    ngToast.configure({
+//    // Positioning of the toast; we use the default positioning (right, top)
+//      //verticalPosition: 'bottom',
+//      //horizontalPosition: 'center'
+//    });
+// }]);
 
 // Utility functions
 Stem.factory('StemUtil', function StemUtil () {
@@ -20,7 +17,7 @@ Stem.factory('StemUtil', function StemUtil () {
 		    return _p8() + _p8(true) + _p8(true) + _p8();
 		},
 		formatNumber: function (n) {
-			if (n == 0) {
+			if (n === 0) {
 				return "0";
 			}
 			if (Math.abs(n) < 1e-80){
@@ -39,10 +36,10 @@ Stem.factory('StemUtil', function StemUtil () {
 			return format ? numeral(value).format(format) : numeral(value).value();
 		}
 	};
-})
+});
 
 // Quantities
-Stem.factory('StemQuantities', function StemQuantities (StemResources, $timeout) {
+Stem.factory('StemQuantities', ['StemResources', '$timeout', function (StemResources, $timeout) {
 	var StemQuantities = {
 		quantities: {},
 		loadQuantities: function(cb) {
@@ -68,7 +65,7 @@ Stem.factory('StemQuantities', function StemQuantities (StemResources, $timeout)
 			var SIValue;
 			var unitDefinition = this.getUnitDefinition(quantity, unit);
 			SIValue = value * unitDefinition.mult + (unitDefinition.offset || 0);
-			return SIValue
+			return SIValue;
 		},
 		fromSIUnit: function(quantity, unit, SIValue) {
 			var value;
@@ -78,10 +75,10 @@ Stem.factory('StemQuantities', function StemQuantities (StemResources, $timeout)
 		},
 	};
 	return StemQuantities;
-})
+}]);
 
 // Library modules
-Stem.factory('StemLibraryModules', function StemLibraryModules (StemResources, $timeout) {
+Stem.factory('StemLibraryModules', ['StemResources', '$timeout', function (StemResources, $timeout) {
 	var StemLibraryModules = {
 		libraryModules: {},
 		loadLibraryModules: function(cb) {
@@ -94,7 +91,7 @@ Stem.factory('StemLibraryModules', function StemLibraryModules (StemResources, $
 		}
 	};
 	return StemLibraryModules;
-});
+}]);
 
 Stem.filter('getLibNamespace', function () {
 	return function (func, lib) {
@@ -107,7 +104,7 @@ Stem.filter('getLibNamespace', function () {
 });
 
 // User defined 'Classes'
-Stem.factory('stemClasses', function stemClasses(StemUtil) {
+Stem.factory('stemClasses', ['StemUtil', function (StemUtil) {
 	var classes = {};
 	function createInstanceCounter(klass) {
 		klass.instanceCounter = 0;
@@ -221,4 +218,4 @@ Stem.factory('stemClasses', function stemClasses(StemUtil) {
 	});
 	
 	return classes;
-});
+}]);

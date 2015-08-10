@@ -5,7 +5,7 @@
 Stem.service('UserService', ['$cookies', 'StemResources', function($cookies, StemResources) {
 	this.username = function() {
 		return $cookies['user.username'];
-	}
+	};
 	
 	this.roles = function() {
 		if ($cookies['user.roles'] === undefined) {
@@ -13,7 +13,7 @@ Stem.service('UserService', ['$cookies', 'StemResources', function($cookies, Ste
 		} else {
 			return $cookies['user.roles'].split('-');
 		}
-	}
+	};
 	
 	this.isAuthenticated = function() {
 		var username = this.username();
@@ -22,23 +22,23 @@ Stem.service('UserService', ['$cookies', 'StemResources', function($cookies, Ste
 		} else {
 			return false;
 		}
-	}
+	};
 	
 	this.isAdmin = function() {
 		return this.roles().indexOf('admin') >= 0;
-	}
+	};
 	
 	this.login = function() {
 		$('#LoginModal').modal("show");
-	}
+	};
 	
 	this.logout = function() {
 		StemResources.Users.logout(function () {
 			location.reload();
 		});
-	}
+	};
 	
 	this.register = function() {
 		window.location.href = "/register";
-	}
+	};
 }]);

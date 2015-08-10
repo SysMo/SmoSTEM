@@ -1,4 +1,5 @@
-Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
+Stem.factory('StemHOT', ['StemQuantities', 'StemUtil', '$timeout',
+                         function(StemQuantities, StemUtil, $timeout) {
 	var StemHOT = {};
 	
 	StemHOT.Table = function(idSelector, angularTableObj, angularScope) {
@@ -53,7 +54,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
                 cellProperties = {
                 	type: 'numeric',
                     format: table.columns[colIndex].format || '0.00'
-                }                
+                };                
                 return cellProperties;
             },
 		});
@@ -108,7 +109,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 			    			StemQuantities.toSIUnit(
 									table.columns[colIndex].quantity, table.columns[colIndex].displayUnit, 
 									parseFloat(newValue)
-							)
+							);
 			    	});
 		    	}
 		    	table.overrideInlineCss();
@@ -183,12 +184,12 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		var
         	menu = document.createElement('UL'),
         	options = [],
-        	item;
+        	item, i, len;
         menu.className = 'unitMenu';
-        for (var i=0, len=unitOptions.length; i<len; i++) {
+        for (i=0, len=unitOptions.length; i<len; i++) {
         	options.push(unitOptions[i][0]);
         }
-        for (var i=0, len=options.length; i<len; i++) {
+        for (i=0, len=options.length; i<len; i++) {
         	item = document.createElement('LI');
         	if('innerText' in item) {
         		item.innerText = options[i];
@@ -202,7 +203,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
         	menu.appendChild(item);
         }
         return menu;
-	}
+	};
 	
 	
 	// Bulding carret button
@@ -211,7 +212,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
         button.innerHTML = '\u25BC';
         button.className = 'changeUnit';
         return button;
-    }
+    };
 	
 	
 	// Setting carret button click event
@@ -239,7 +240,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
           Handsontable.Dom.removeEvent(document, 'click', removeMenu);
           Handsontable.Dom.addEvent(document, 'click', removeMenu);
         });
-    }
+    };
 	
 	// Setting customized context menu
 	StemHOT.Table.prototype.setContextMenu = function() {
@@ -265,10 +266,10 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 					"hsep1": "---------",
 					"col_left": {}, 
 					"col_right": {},
-					"hsep1": "---------",
+					"hsep2": "---------",
 					"remove_row": {},
 					"remove_col": {},
-					"hsep2": "---------",
+					"hsep3": "---------",
 					"edit_col": {name: 'Edit column'}
 				  }
 			}
@@ -294,6 +295,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 	};
 	
 	StemHOT.Table.prototype.resize = function (numRows, numCols) {
+		var i;
 		var table = this;
 		var columnsLen = this.columns.length;
 		var rowsLen = this.data.length;
@@ -302,7 +304,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 			this.columns.splice(numCols, columnsLen - numCols);
 			this.colWidths.splice(numCols, columnsLen - numCols);
 			
-			for (var i=0; i<table.data.length; i++) {
+			for (i=0; i<table.data.length; i++) {
 				table.data[i].splice(numCols, columnsLen - numCols);
 				table.displayData[i].splice(numCols, columnsLen - numCols);
 			}
@@ -311,7 +313,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 				table.columns.push({name: "c" + String(columnsLen + j), quantity: "Dimensionless", displayUnit: "-", unitOptions: ["-"]});
 				this.colWidths.push(150);
 				
-				for (var i=0; i<table.data.length; i++) {
+				for (i=0; i<table.data.length; i++) {
 					table.data[i].push(0);
 					table.displayData[i].push(0);
 				}
@@ -324,11 +326,11 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 			this.displayData.splice(numRows, rowsLen - numRows);
 		} else if (numRows > rowsLen) {
 			var newRow = [];
-			for (var i=0; i<table.columns.length; i++) {
+			for (i=0; i<table.columns.length; i++) {
 				newRow.push(0);
 			}
 			
-			for (var i=1; i<= numRows - rowsLen; i++) {				
+			for (i=1; i<= numRows - rowsLen; i++) {				
 				this.data.push(angular.copy(newRow));
 				this.displayData.push(angular.copy(newRow));
 			}
@@ -336,7 +338,7 @@ Stem.factory('StemHOT', function(StemQuantities, StemUtil, $timeout) {
 		
 		this.hot.render();
 		this.overrideInlineCss();
-	}
+	};
 	
 	return StemHOT;
-});
+}]);

@@ -1,0 +1,35 @@
+{
+  "name": "Stem",
+  "version": "1.0.0",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt-contrib-concat": "",
+    "grunt-contrib-uglify": "~0.5.0",
+    "grunt-contrib-watch": ""
+  },
+  "srcFiles": [
+  	"src/module.js",
+  	"src/core/**/*.js",
+  	"src/hot_table/**/*.js",
+  	"src/library_modules/**/*.js",
+  	"src/models/**/*.js",
+  	"src/quantities/**/*.js"
+  ],
+  "libFiles": [
+  	"lib/jquery/jquery.min.js",
+  	"lib/jquery/jquery.class.js",
+  	"lib/jquery/jquery-ui.js",
+  	"lib/bootstrap/js/bootstrap.min.js",
+  	"lib/angular/angular.js",
+  	"lib/angular/angular-animate.min.js",
+  	"lib/angular/angular-sanitize.min.js",
+  	"lib/angular/angular-resource.js",
+  	"lib/angular/angular-cookies.js",
+  	"lib/angular-bootstrap/ui-bootstrap-tpls-0.13.0.min.js",
+  	"lib/ngToast/ngToast.min.js",
+  	"lib/marked/marked.min.js",
+  	"lib/bootstrap-markdown/bootstrap-markdown.js"
+  ]
+}

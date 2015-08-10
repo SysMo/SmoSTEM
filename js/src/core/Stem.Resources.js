@@ -42,7 +42,8 @@ Stem.config(['$resourceProvider', function($resourceProvider) {
 	};
 	$resourceProvider.defaults.actions.delete.interceptor = interceptors;
 }]);
-Stem.factory('StemResources', function($resource, ngToast, $timeout) {
+Stem.factory('StemResources', ['$resource', 'ngToast', '$timeout', 
+                               function($resource, ngToast, $timeout) {
 	function ResponseHandler(response) {
 		var msg = response.headers('X-status-msg') || 'Success';
 		$timeout(function() {
@@ -90,7 +91,7 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 						} else if (valueStr == '-inf') {
 							obj[key] = -Infinity;
 						} else {
-							obj[key] = NaN
+							obj[key] = NaN;
 						}
 					}
 				} else if (angular.isArray(value) || angular.isObject(value)) {
@@ -103,33 +104,33 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 	}
 	var StemResources = {
 		StandardResource: function(resourceName, editorPath) {
-			this.editorPath = editorPath
+			this.editorPath = editorPath;
 			this.query = function(params) {
 				this.collection = StemResources[resourceName].query(params);
 				return this.collection;
-			} 
+			};
 			// Open entity editor
 			this.edit = function(entity) {
 				window.location.href = editorPath + "/" + entity._id;
-			}
+			};
 			// Delete entity on the server and reload collection
 			this.del = function(entity) {
 				entity.$delete();
 				this.collection = StemResources[resourceName].query();
-			}
+			};
 			// Create a new entity and open entity editor
 			this.create = function() {
 				var entity = new StemResources[resourceName]();
 				entity.$save(function() {
 					window.location.href = editorPath + "/" + entity._id;
 				});
-			}
+			};
 			
 			this.duplicate = function(entity) {
 				entity.$clone(function() {
 					window.location.href = editorPath + "/" + entity._id;
 				});
-			}
+			};
 		},
 		Models:
 			$resource('/stem/api/Models/:_id/:action', { _id: '@_id' }, 
@@ -219,6 +220,6 @@ Stem.factory('StemResources', function($resource, ngToast, $timeout) {
 			})
 	};
 	return StemResources;
-});
+}]);
 
 })(window, window.angular);

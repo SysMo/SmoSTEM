@@ -11,16 +11,16 @@ Stem.directive('stemListItemActions', function() {
 			moveDown: "&moveDown",
 		},
 		templateUrl: "stem-list-item-actions.html",
-		controller: function($scope, $timeout) {
+		controller: ['$scope', '$timeout', function($scope, $timeout) {
 			$scope.deleteItem = function() {
 				$timeout(function(){
 					var answer = confirm("Proceed with deletion?");
-					if (answer == true) {
+					if (answer === true) {
 					    $scope.del();
 					}
 				});
-			}
-		},
+			};
+		}],
 		link: function(scope, element, attributes) {
 			if (!("add" in attributes)) {
 				scope.add = false;
@@ -47,7 +47,7 @@ Stem.directive('stemListItemActions', function() {
 				scope.resize = false;
 			}
 		}
-	}
+	};
 });
 
 Stem.directive('stemInputNumerical', [function() {
@@ -57,19 +57,19 @@ Stem.directive('stemInputNumerical', [function() {
 		},
 		restrict: 'A',
 		templateUrl: "stem-input-numerical.html",
-		controller: function($scope, StemUtil) {
+		controller: ['$scope', 'StemUtil', function($scope, StemUtil) {
 			$scope.updateDisplay = function() {
 				$scope.displayValue = StemUtil.formatNumber($scope.numValue);
-			}
+			};
 			$scope.onInputChange = function() {
 				var numValue = parseFloat($scope.displayValue);
 				if (!isNaN(numValue)) {
 					$scope.numValue = numValue;
 				}
-			}
+			};
 			$scope.updateDisplay();
-		},
+		}],
 		link: function(scope, element, attributes) {
 		}
-	}
+	};
 }]);

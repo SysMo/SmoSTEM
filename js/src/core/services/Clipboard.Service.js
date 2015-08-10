@@ -18,7 +18,7 @@ Stem.service('ClipboardService', ['ngToast', 'StemUtil', '$timeout', function(ng
 		        timeout: 1500
 		    });  
 	    });
-	}
+	};
 	
 	this.paste = function() {
 		var pasteContent = [];
@@ -32,5 +32,5 @@ Stem.service('ClipboardService', ['ngToast', 'StemUtil', '$timeout', function(ng
 	        timeout: 1500
 	     });  
 		return pasteContent;
-	}
+	};
 }]);
