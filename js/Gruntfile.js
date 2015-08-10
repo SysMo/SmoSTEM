@@ -13,17 +13,27 @@ grunt.initConfig({
 		}
 	},	
 	concat : {
-		options : {
-			// define a string to put between each file in the
-			// concatenated output
-			separator : ';'
-		},
 		distSrc : {
+			options : {
+				separator : ';'
+			},
 			// the files to concatenate
 			src : '<%= pkg.srcFiles %>',
 			// the location of the resulting JS file
 			dest : '../static/js/<%= pkg.name %>.js'
 		},
+		distTemplates : {
+			options : {
+				banner: '{% raw %}\n',
+				footer: '\n{% endraw %}'
+			},
+			// the files to concatenate
+			src : '<%= pkg.templateFiles %>',
+			// the location of the resulting JS file
+			dest : '../templates/angular/<%= pkg.name %>AngularTemplates.html'
+		},
+		
+		
 //		distLib : {
 //			// the files to concatenate
 //			src : '<%= pkg.libFiles %>',
@@ -53,6 +63,6 @@ grunt.loadNpmTasks('grunt-contrib-concat');
 grunt.loadNpmTasks('grunt-contrib-uglify');
 grunt.loadNpmTasks('grunt-contrib-watch');
 
-grunt.registerTask('merge', ['concat:distSrc']); //, 'concat:distLib']);
+grunt.registerTask('merge', ['concat:distSrc', 'concat:distTemplates']);
 grunt.registerTask('default', [ 'jshint', 'concat', 'uglify' ]);
 };

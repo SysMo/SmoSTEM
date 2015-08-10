@@ -17,6 +17,9 @@
   	"src/models/**/*.js",
   	"src/quantities/**/*.js"
   ],
+  "templateFiles": [
+  	"src/**/*.html"
+  ],
   "libFiles": [
   	"lib/jquery/jquery.min.js",
   	"lib/jquery/jquery.class.js",
