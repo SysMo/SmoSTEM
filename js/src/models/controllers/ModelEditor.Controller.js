@@ -89,14 +89,16 @@ Stem.controller('ModelEditorCtrl', ['$scope', '$modal', '$timeout', 'PageSetting
 			});
 			
 			modalInstance.result.then(
-				function (selectedModelPublicAccess) {
-					$scope.selected = selectedModelPublicAccess;
-					
-					var selectedModelPublicAccessID = StemResources.modelPublicAccessTxt2ID(selectedModelPublicAccess);
-					if (selectedModelPublicAccessID != $scope.model.publicAccess){
-						$scope.model.publicAccess = selectedModelPublicAccessID;
+				function (newModelPublicAccess) {
+					// Set the new public access of the model					
+					var newModelPublicAccessID = StemResources.modelPublicAccessTxt2ID(newModelPublicAccess);
+					var currModelPublicAccessID = $scope.model.publicAccess;
+					if (newModelPublicAccessID != currModelPublicAccessID){
+						$scope.model.publicAccess = newModelPublicAccessID;
 						$scope.model.$update();
 					}
+					
+					//:WORK: Set the new user accesses of the model
 					//StemResources.ModelUserAccess.delete({modelID: $scope.model._id, username: 'mborisov81'}); //:WORK: 
 			    }, 
 			    function () {

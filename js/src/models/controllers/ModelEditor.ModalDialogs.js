@@ -28,16 +28,19 @@ Stem.controller('LayoutPropertiesCtrl', ['$scope', '$modalInstance', 'layout',
  */
 Stem.controller('ModelUserAccessCtrl', ['$scope', '$modalInstance', 'StemResources', 'model',
 	function ($scope, $modalInstance, StemResources, model) {
-		$scope.model = model;	
-		$scope.linkToShare = window.location.href;
+		$scope.model = model;
 		
 		$scope.modelPublicAccess = {
-			availableOptions: StemResources.getModelPublicAccesses(),
-			selected: StemResources.modelPublicAccessID2Txt($scope.model.publicAccess)
+			availableAccesses: StemResources.getModelPublicAccesses(),
+			selectedAccess: StemResources.modelPublicAccessID2Txt($scope.model.publicAccess)
 		};
-	
+		
+		$scope.modelUserAccess = {
+			userAccesses: StemResources.ModelUserAccess.get({modelID: $scope.model._id}), 
+		};
+		
 		$scope.ok = function () {
-			$modalInstance.close($scope.modelPublicAccess.selected);
+			$modalInstance.close($scope.modelPublicAccess.selectedAccess);
 		};
 	
 		$scope.cancel = function () {

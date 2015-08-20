@@ -9,8 +9,8 @@
     <div>
       <span>Any user can </span>
       <span>
-		<select name="modelPublicAccessSelect" ng-model="modelPublicAccess.selected">
-      	  <option ng-repeat="option in modelPublicAccess.availableOptions"><b>{{option}}</b></option>
+		<select name="modelPublicAccessSelect" ng-model="modelPublicAccess.selectedAccess">
+      	  <option ng-repeat="access in modelPublicAccess.availableAccesses">{{access}}</option>
     	</select>
       </span>
       <span> the model.</span>
@@ -20,6 +20,12 @@
 	<h4>User access:</h4><br/>
     <div>Who has access:</div>
     <div>:TODO:<div>
+    <select name="modelUserAccessSelect">
+      <option ng-repeat="userAccess in modelUserAccess.userAccesses">{{userAccess.username}}</option>
+    </select>
+    <div ng-repeat="userAccess in modelUserAccess.userAccesses">
+      <span>{{userAccess.username}}</span>  
+	</div>
 
   </div>
   <div class="modal-footer">
