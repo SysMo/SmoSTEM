@@ -76,7 +76,6 @@ Stem.controller('ModelEditorCtrl', ['$scope', '$modal', '$timeout', 'PageSetting
 		};
 		
 		// Edit model user access
-		$scope.items = ['item1', 'item2', 'item3'];
         $scope.animationsEnabled = true;
 		$scope.share = function () {
 			var modalInstance = $modal.open({
@@ -84,15 +83,21 @@ Stem.controller('ModelEditorCtrl', ['$scope', '$modal', '$timeout', 'PageSetting
 				templateUrl: 'stem-modal-user-access.html',
 				controller: 'ModelUserAccessCtrl',
 				size: 'lg', //large
-				resolve: { 
-					items: function () {return $scope.items;}, 
+				resolve: {
 					model: function () {return $scope.model;}
 				}
 			});
 			
 			modalInstance.result.then(
-				function (selectedItem) {
-					$scope.selected = selectedItem;
+				function (selectedModelPublicAccess) {
+					$scope.selected = selectedModelPublicAccess;
+					
+					var selectedModelPublicAccessID = StemResources.modelPublicAccessTxt2ID(selectedModelPublicAccess);
+					if (selectedModelPublicAccessID != $scope.model.publicAccess){
+						$scope.model.publicAccess = selectedModelPublicAccessID;
+						$scope.model.$update();
+					}
+					//StemResources.ModelUserAccess.delete({modelID: $scope.model._id, username: 'mborisov81'}); //:WORK: 
 			    }, 
 			    function () {
 			    	//console.log('Modal Dialog: "Model User Access" dismissed at: ' + new Date());

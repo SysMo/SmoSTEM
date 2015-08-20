@@ -5,14 +5,22 @@
   <h3 class="modal-title">Share with others</h3>
   </div>
   <div class="modal-body">
-    <div>Model: {{model.name}}</div>
-    <div>Link to share: <a href="{{linkToShare}}">{{linkToShare}}</a></div>
-    <ul>
-      <li ng-repeat="item in items">
-        <a href="#" ng-click="$event.preventDefault(); selected.item = item">{{ item }}</a>
-      </li>
-    </ul>
-    Selected: <b>{{ selected.item }}</b>
+    <h4>Public access:</h4><br/>
+    <div>
+      <span>Any user can </span>
+      <span>
+		<select name="modelPublicAccessSelect" ng-model="modelPublicAccess.selected">
+      	  <option ng-repeat="option in modelPublicAccess.availableOptions"><b>{{option}}</b></option>
+    	</select>
+      </span>
+      <span> the model.</span>
+    </div>
+
+	<hr/>
+	<h4>User access:</h4><br/>
+    <div>Who has access:</div>
+    <div>:TODO:<div>
+
   </div>
   <div class="modal-footer">
     <button class="btn btn-primary" ng-click="ok()">OK</button>

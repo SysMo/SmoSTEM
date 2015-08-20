@@ -208,7 +208,8 @@ class ModelAPI(StemResource):
 				name = modelData['name'],
 				description = modelData['description'],
 				board = Board(**modelData['board']),
-				background = modelData.get('background')
+				background = modelData.get('background'),
+				publicAccess = modelData.get('publicAccess')
 			)
 			model.save()
 			return makeJsonResponse(None, 'Model saved')

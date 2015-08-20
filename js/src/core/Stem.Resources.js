@@ -1,4 +1,5 @@
 (function(window, angular) {
+	
 var interceptors = {
 	//Provides the API for querying and manipulating models on the server
 	'response': null,
@@ -30,8 +31,6 @@ var interceptors = {
 	}
 };
 
-
-
 Stem.config(['$resourceProvider', function($resourceProvider) {
 	$resourceProvider.defaults.actions.get.interceptor = interceptors;
 	$resourceProvider.defaults.actions.query.interceptor = interceptors;
@@ -42,8 +41,10 @@ Stem.config(['$resourceProvider', function($resourceProvider) {
 	};
 	$resourceProvider.defaults.actions.delete.interceptor = interceptors;
 }]);
+
 Stem.factory('StemResources', ['$resource', 'ngToast', '$timeout', 
-                               function($resource, ngToast, $timeout) {
+    function($resource, ngToast, $timeout) {
+	
 	function ResponseHandler(response) {
 		var msg = response.headers('X-status-msg') || 'Success';
 		$timeout(function() {
@@ -56,6 +57,7 @@ Stem.factory('StemResources', ['$resource', 'ngToast', '$timeout',
 		return response.resource;
 	}
 	interceptors.response = ResponseHandler;
+	
 	function serializeMathJSON(data) {
 		var result = JSON.stringify(data, function(key, value) {
 			// Uses code from angular.toJsonReplacer
@@ -79,6 +81,7 @@ Stem.factory('StemResources', ['$resource', 'ngToast', '$timeout',
 		});
 		return result;
 	}
+	
 	function parseMathJSON(data) {
 		result = angular.fromJson(data);
 		function jsonParserReplacer(obj) {
@@ -102,6 +105,7 @@ Stem.factory('StemResources', ['$resource', 'ngToast', '$timeout',
 		jsonParserReplacer(result);
 		return result;
 	}
+	
 	var StemResources = {
 		StandardResource: function(resourceName, editorPath) {
 			this.editorPath = editorPath;
@@ -133,8 +137,7 @@ Stem.factory('StemResources', ['$resource', 'ngToast', '$timeout',
 			};
 		},
 		Models:
-			$resource('/stem/api/Models/:_id/:action', { _id: '@_id' }, 
-			{	
+			$resource('/stem/api/Models/:_id/:action', { _id: '@_id' }, {	
 				query: {
 					method: 'GET',
 					isArray: true,
@@ -174,9 +177,17 @@ Stem.factory('StemResources', ['$resource', 'ngToast', '$timeout',
 					transformResponse: parseMathJSON,
 				},
 			}),
+			publicAccessTxt: function() {
+				/*
+				(0, 'none'),
+				(100, 'list'),
+				(200, 'view'),
+				(300, 'edit')
+				*/
+				return 'list';
+			},
 		Quantities:
-			$resource('/stem/api/Quantities/:_id', { _id: '@_id' },
-			{
+			$resource('/stem/api/Quantities/:_id', { _id: '@_id' }, {
 				load: {
 					method: 'GET',
 					params: {
@@ -217,8 +228,61 @@ Stem.factory('StemResources', ['$resource', 'ngToast', '$timeout',
 						action: 'create'
 					},
 				},
-			})
+			}),
+		ModelUserAccess:
+			$resource('/stem/api/ModelUserAccess/:modelID/:username', {}, {
+				delete: { //Delete user access entry for a model
+					method: 'DELETE',
+					interceptor: interceptors,
+				},
+				set: { //Create or update user access entry for a model; use 'access' query parameter
+					method: 'POST',
+					interceptor: interceptors,
+				},
+				get: { //List user access entries for a model; use only 'modelID' path parameter
+					method: 'GET',
+					isArray: true,
+					interceptor : interceptors
+				}
+			}),
+		
+		// Util functions //:TODO:(?)
+		modelPublicAccessID2Txt: 
+			function (publicAccessID) {
+				switch(publicAccessID) {
+				    case 0:
+				        return 'none';
+				    case 100:
+				        return 'list';
+				    case 200:
+				    	return 'view';
+				    case 300:
+				    	return 'edit';
+				    default:
+				    	throw new Error('Invalid public access ' +  publicAccessID + ". The valid values are {0, 100, 200, 300}.");
+				} 
+			},
+		modelPublicAccessTxt2ID: 
+			function (publicAccessTxt) {
+				switch(publicAccessTxt) {
+				    case 'none':
+				        return 0;
+				    case 'list':
+				        return 100;
+				    case 'view':
+				    	return 200;
+				    case 'edit':
+				    	return 300;
+				    default:
+				    	throw new Error('Invalid public access ' +  publicAccessTxt + ". The valid values are {'none', 'list', 'view', 'edit'}.");
+				} 
+			},
+		getModelPublicAccesses:
+			function () {
+				return ['none', 'list', 'view', 'edit'];
+			}
 	};
+	
 	return StemResources;
 }]);
 
