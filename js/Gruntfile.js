@@ -15,7 +15,7 @@ grunt.initConfig({
 	concat : {
 		distSrc : {
 			options : {
-				separator : ';'
+				separator : ';\n'
 			},
 			// the files to concatenate
 			src : '<%= pkg.srcFiles %>',
